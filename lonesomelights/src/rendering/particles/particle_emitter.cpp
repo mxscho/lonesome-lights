@@ -14,7 +14,7 @@ ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& par
 	m_max_particle_lifetime_seconds(max_particle_lifetime_seconds),
 	m_frequency(frequency),
 	m_max_particle_count(max_particle_count),
-	m_base_vertex_buffer_object({ glm::vec3(0.0F, 0.0F, 0.0F) }, GL_ARRAY_BUFFER),
+	m_base_vertex_buffer_object({ glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.05F, 0.0F, 0.0F), glm::vec3(0.0F, 0.05F, 0.0F) }, GL_ARRAY_BUFFER),
 	m_instances_vertex_buffer_object(m_max_particle_count, GL_ARRAY_BUFFER),
 	m_particles(),
 	m_next_emission_time_seconds(current_time_seconds),
@@ -23,7 +23,7 @@ ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& par
 	m_vertex_array_object.bind();
 	m_base_vertex_buffer_object.bind();
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 	m_instances_vertex_buffer_object.bind();
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle::Data), (void*) ((0 * 3 + 0 * 1) * sizeof(GL_FLOAT)));
@@ -55,8 +55,7 @@ void ParticleEmitter::draw(const RenderProgram& render_program) const {
 	glVertexAttribDivisor(3, 1);
 	glVertexAttribDivisor(4, 1);
 	glVertexAttribDivisor(5, 1);
-	glPointSize(15.0F);
-	glDrawArraysInstanced(GL_POINTS, 0, 1, m_max_particle_count);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 3, m_max_particle_count);
 	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
