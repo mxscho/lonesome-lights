@@ -30,6 +30,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 		rendering/drawable.cpp \
 			\
 			rendering/opengl/fragment_shader.cpp \
+			rendering/opengl/frame_buffer_object.cpp \
 			rendering/opengl/render_program.cpp \
 			rendering/opengl/shader.cpp \
 			rendering/opengl/texture.cpp \
