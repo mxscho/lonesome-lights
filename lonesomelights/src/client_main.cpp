@@ -9,7 +9,7 @@
 
 // TEST
 #include "timer.h"
-#include "game/game_objects/unit.h"
+#include "game/unit.h"
 #include "networking/network_handlers/client_handlers/unit_client_handler.h"
 #include <SFML/Window.hpp>
 #include "rendering/opengl/vertex_shader.h"
@@ -21,6 +21,7 @@
 #include "rendering/opengl/vertex_buffer_objects.h"
 */
 #include "rendering/particles/particle_emitter.h"
+#include "geometry/transformable.h"
 
 void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;

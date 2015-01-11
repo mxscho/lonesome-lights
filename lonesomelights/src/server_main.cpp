@@ -6,7 +6,7 @@
 
 // TEST
 #include "timer.h"
-#include "game/game_objects/unit.h"
+#include "game/unit.h"
 #include "networking/network_handlers/server_handlers/unit_server_handler.h"
 
 void print_usage_and_die(int argc, char** argv) {
@@ -37,16 +37,16 @@ int main(int argc, char** argv) {
 	}
 	// TEST
 	Timer timer;
-	Unit unit;
-	UnitServerHandler unit_server_handler(server.create_base_network_id(), server);
-	unit.set_network_handler(unit_server_handler);
+	//Unit unit;
+	//UnitServerHandler unit_server_handler(server.create_base_network_id(), server);
+	//unit.set_network_handler(unit_server_handler);
 	while (true) {
 		server.update();
 		if (server.get_participants().size() == 0) {
 			continue;
 		}
 		
-		unit.update(timer);
+		//unit.update(timer);
 	}
     return EXIT_SUCCESS;
 }

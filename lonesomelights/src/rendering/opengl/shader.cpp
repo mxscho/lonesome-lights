@@ -4,9 +4,7 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <string>
 #include <utility>
-#include <vector>
 
 Shader::Shader(GLenum shader_type)
 	: m_shader_type(shader_type),

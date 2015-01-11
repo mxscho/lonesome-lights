@@ -29,10 +29,6 @@ RenderProgram::~RenderProgram() {
 	destroy();
 }
 
-GLuint RenderProgram::get_id() const {
-	return m_id;
-}
-
 bool RenderProgram::link(const VertexShader& vertex_shader, const FragmentShader& fragment_shader) {
 	destroy();
 
@@ -58,9 +54,28 @@ bool RenderProgram::link(const VertexShader& vertex_shader, const FragmentShader
 	m_is_generated = true;
 	return true;
 }
+
 void RenderProgram::bind() const {
 	assert(m_is_generated);
 	glUseProgram(m_id);
+}
+void RenderProgram::set_uniform(const std::string& name, float value) const {
+	assert(m_is_generated);
+	bind();
+	
+	int uniform_location = glGetUniformLocation(m_id, name.c_str());
+	glUniform1f(uniform_location, value);
+	
+	RenderProgram::unbind_any();
+}
+void RenderProgram::set_uniform(const std::string& name, const glm::vec3& value) const {
+	assert(m_is_generated);
+	bind();
+	
+	int uniform_location = glGetUniformLocation(m_id, name.c_str());
+	glUniform3f(uniform_location, value.x, value.y, value.z);
+	
+	RenderProgram::unbind_any();
 }
 void RenderProgram::destroy() {
 	if (m_is_generated) {

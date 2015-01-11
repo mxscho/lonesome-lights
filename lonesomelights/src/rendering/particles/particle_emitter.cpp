@@ -42,11 +42,9 @@ ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& par
 void ParticleEmitter::draw(const RenderProgram& render_program) const {
 	Drawable::draw(render_program);
 	
-	render_program.bind();
-	
-	int uniform_location = glGetUniformLocation(render_program.get_id(), "u_current_time_seconds");
-	glUniform1f(uniform_location, m_current_time_seconds);
-	
+	render_program.set_uniform("u_current_time_seconds", m_current_time_seconds);
+
+	render_program.bind();	
 	m_vertex_array_object.bind();
 
 	glVertexAttribDivisor(0, 0);

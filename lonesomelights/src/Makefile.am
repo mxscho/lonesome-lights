@@ -5,10 +5,14 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 	timer.cpp \
 	updatable.cpp \
 		\
-		game/game_object.cpp \
+		game/unit.cpp \
 			\
-			game/game_objects/unit.cpp \
+			game/map/map.cpp \
+			game/map/tile.cpp \
+			game/map/floor_tile.cpp \
 			\
+		geometry/transformable.cpp \
+		\
 		networking/client.cpp \
 		networking/participant.cpp \
 		networking/network_handler.cpp \
@@ -28,6 +32,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			rendering/opengl/fragment_shader.cpp \
 			rendering/opengl/render_program.cpp \
 			rendering/opengl/shader.cpp \
+			rendering/opengl/texture.cpp \
 			rendering/opengl/vertex_array_object.cpp \
 			rendering/opengl/vertex_buffer_objects.cpp \
 			rendering/opengl/vertex_shader.cpp \
@@ -47,6 +52,6 @@ __top_builddir__bin_lonesomelights_CXXFLAGS = -std=c++11 -pedantic-errors -Wall 
 __top_builddir__bin_lonesomelights_server_CXXFLAGS = $(__top_builddir__bin_lonesomelights_CXXFLAGS)
 __top_builddir__bin_lonesomelights_client_CXXFLAGS = $(__top_builddir__bin_lonesomelights_CXXFLAGS)
 
-__top_builddir__bin_lonesomelights_LDADD = -lGL -lGLEW -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
+__top_builddir__bin_lonesomelights_LDADD = -lpng -lGL -lGLEW -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 __top_builddir__bin_lonesomelights_server_LDADD = $(__top_builddir__bin_lonesomelights_LDADD)
 __top_builddir__bin_lonesomelights_client_LDADD = $(__top_builddir__bin_lonesomelights_LDADD)
