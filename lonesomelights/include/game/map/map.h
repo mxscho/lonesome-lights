@@ -5,10 +5,13 @@
 #include "geometry/transformable.h"
 #include "networking/networkable.h"
 #include "rendering/drawable.h"
+#include "rendering/opengl/vertex_array_object.h"
+#include "rendering/opengl/vertex_buffer_object.h"
 #include "updatable.h"
 
 #include <memory>
 #include <vector>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 class RenderProgram;
@@ -29,6 +32,9 @@ private:
 	unsigned int m_width;
 	unsigned int m_height;
 	std::vector<std::unique_ptr<Tile>> m_tiles;
+	VertexBufferObject<glm::vec3> m_vertices_vbo;
+	VertexBufferObject<GLushort> m_elements_vbo;
+	VertexArrayObject m_vertex_array_object;
 };
 
 #endif

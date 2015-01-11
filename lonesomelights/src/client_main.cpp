@@ -15,11 +15,7 @@
 #include "rendering/opengl/vertex_shader.h"
 #include "rendering/opengl/fragment_shader.h"
 #include "rendering/opengl/render_program.h"
-/*
-#include "rendering/opengl/vertex_array_object.h"
-#include "rendering/opengl/vertex_buffer_object.h"
-#include "rendering/opengl/vertex_buffer_objects.h"
-*/
+#include "game/map/map.h"
 #include "rendering/particles/particle_emitter.h"
 #include "geometry/transformable.h"
 
@@ -102,6 +98,20 @@ int main(int argc, char** argv) {
 	}
 	ParticleEmitter particle_emitter(glm::vec3(-0.5F, 0.0F, 0.0F), glm::vec3(0.25F, 0.5F, 0.0F), glm::vec3(0.0F, -0.25F, 0.0F), 4.5F, 4.5F, 4.0F, timer.get_current_time_seconds(), 50);
 	
+	VertexShader map_vertex_shader;
+	if (!map_vertex_shader.load_from_file("res/shaders/map_vertex.glsl")) {
+		return EXIT_FAILURE;
+	}
+	FragmentShader map_fragment_shader;
+	if (!map_fragment_shader.load_from_file("res/shaders/map_fragment.glsl")) {
+		return EXIT_FAILURE;
+	}
+	RenderProgram map_emitter_render_program;
+	if (!map_emitter_render_program.link(map_vertex_shader, map_fragment_shader)) {
+		return EXIT_FAILURE;
+	}
+	Map map(glm::mat4(), 1, 1);
+	
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -114,7 +124,9 @@ int main(int argc, char** argv) {
 		
 		timer.advance();
 		client.update();
+		map.update(timer);
 		particle_emitter.update(timer);
+		map.draw(map_emitter_render_program);
 		particle_emitter.draw(particle_emitter_render_program);
 		
 		//unit.update(timer);

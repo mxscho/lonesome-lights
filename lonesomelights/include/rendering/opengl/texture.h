@@ -6,10 +6,9 @@
 
 class Texture {
 public:
-	static void unbind_any_from(GLenum texture, GLenum target);
 	static void unbind_any(GLenum texture);
 
-	explicit Texture(GLenum target);
+	Texture();
 	Texture(const Texture& texture) = delete;
 	Texture(Texture&& texture);
 	Texture& operator=(const Texture& texture) = delete;
@@ -25,7 +24,6 @@ public:
 private:
 	GLuint m_id;
 	bool m_is_generated;
-	GLenum m_target;
 	unsigned int m_width;
 	unsigned int m_height;
 };

@@ -34,6 +34,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			rendering/opengl/render_program.cpp \
 			rendering/opengl/shader.cpp \
 			rendering/opengl/texture.cpp \
+			rendering/opengl/textures.cpp \
 			rendering/opengl/vertex_array_object.cpp \
 			rendering/opengl/vertex_buffer_objects.cpp \
 			rendering/opengl/vertex_shader.cpp \

@@ -1,8 +1,10 @@
-#ifndef __RENDERING__OPENGL__VERTEX_ARRAY_OBJECT_H__
-#define __RENDERING__OPENGL__VERTEX_ARRAY_OBJECT_H__
+#ifndef __RENDERING__OPENGL__FRAME_BUFFER_OBJECT_H__
+#define __RENDERING__OPENGL__FRAME_BUFFER_OBJECT_H__
 
 #include <GL/glew.h>
 #include <vector>
+
+class Texture;
 
 // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
@@ -19,21 +21,20 @@ public:
 	
 	GLuint get_id() const;
 	bool check_status() const;
-	void attach_depthbuffer_from_texture(GLuint texture);
-	void attach_colorbuffer_from_texture(GLuint texture);
-	void setDrawbuffers();
-
+	void attach_depthbuffer_from_texture(const Texture& texture);
+	void attach_colorbuffer_from_texture(const Texture& texture);
+	void set_drawbuffers();
 	
 	void bind();
 private:
-	void attach_texture(GLenum attachment, GLuint texture);
+	void attach_texture(GLenum attachment, const Texture& texture);
 
 	unsigned int m_width;
 	unsigned int m_height;
 	bool m_is_generated;
 	GLuint m_id;
-	unsigned int m_number_of_colorbuffers;
-	std::vector<GLenum> m_drawBuffers;
+	unsigned int m_colorbuffers_count;
+	std::vector<GLenum> m_drawbuffers;
 	bool m_drawbuffers_set;
 };
 

@@ -3,6 +3,8 @@
 #include <cassert>
 #include <utility>
 
+#include "rendering/opengl/texture.h"
+
 void FrameBufferObject::unbind_any() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -12,10 +14,9 @@ FrameBufferObject::FrameBufferObject(unsigned int width, unsigned int height)
 	m_height(height),
 	m_is_generated(true),
 	m_id(),
-	m_number_of_colorbuffers(0),
-	m_drawBuffers(),
+	m_colorbuffers_count(0),
+	m_drawbuffers(),
 	m_drawbuffers_set(true) {
-	
 	glGenFramebuffers(1, &m_id);
 }
 FrameBufferObject::FrameBufferObject(FrameBufferObject&& frame_buffer_object)
@@ -45,24 +46,26 @@ bool FrameBufferObject::check_status() const {
 	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }
 
-void FrameBufferObject::attach_depthbuffer_from_texture(GLuint texture) {
+void FrameBufferObject::attach_depthbuffer_from_texture(const Texture& texture) {
 	assert(m_is_generated);
-	// TODO: bind texture
+	texture.bind(GL_TEXTURE0);
 	attach_texture(GL_DEPTH_ATTACHMENT, texture);
+	Texture::unbind_any(GL_TEXTURE0);
 }
 
-void FrameBufferObject::attach_colorbuffer_from_texture(GLuint texture) {
+void FrameBufferObject::attach_colorbuffer_from_texture(const Texture& texture) {
 	assert(m_is_generated);
-	// TODO: bind texture
-	m_drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + m_number_of_colorbuffers);
-	attach_texture(m_drawBuffers[m_number_of_colorbuffers], texture);
-	m_number_of_colorbuffers++;
+	texture.bind(GL_TEXTURE1 + m_colorbuffers_count);
+	m_drawbuffers.push_back(GL_COLOR_ATTACHMENT0 + m_colorbuffers_count);
+	attach_texture(m_drawbuffers[m_colorbuffers_count], texture);
+	Texture::unbind_any(GL_TEXTURE1 + m_colorbuffers_count);
+	++m_colorbuffers_count;
 	m_drawbuffers_set = false;
 }
 
-void FrameBufferObject::setDrawbuffers() {
-	if (m_number_of_colorbuffers > 0) {
-		glDrawBuffers(m_number_of_colorbuffers, m_drawBuffers.data());
+void FrameBufferObject::set_drawbuffers() {
+	if (m_colorbuffers_count > 0) {
+		glDrawBuffers(m_colorbuffers_count, m_drawbuffers.data());
 	} else {
 		glDrawBuffer(GL_NONE);
 	}
@@ -72,15 +75,14 @@ void FrameBufferObject::setDrawbuffers() {
 void FrameBufferObject::bind() {
 	assert(m_is_generated);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_id);
-	// render in the whole framebuffer from bottom left to top right
+	// Render in the whole framebuffer from bottom left to top right.
 	glViewport(0, 0, m_width, m_height);
 	if (!m_drawbuffers_set) {
-		setDrawbuffers();
+		set_drawbuffers();
 	}
 }
 
-void FrameBufferObject::attach_texture(GLenum attachment, GLuint texture) {
+void FrameBufferObject::attach_texture(GLenum attachment, const Texture& texture) {
 	assert(m_is_generated);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture, 0);
-
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture.get_id(), 0);
 }

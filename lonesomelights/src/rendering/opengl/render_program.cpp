@@ -1,5 +1,7 @@
 #include "rendering/opengl/render_program.h"
 
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/type_ptr.hpp>
 #include <cassert>
 #include <iostream>
 #include <utility>
@@ -59,6 +61,15 @@ void RenderProgram::bind() const {
 	assert(m_is_generated);
 	glUseProgram(m_id);
 }
+void RenderProgram::set_uniform(const std::string& name, GLuint value) const {
+	assert(m_is_generated);
+	bind();
+	
+	int uniform_location = glGetUniformLocation(m_id, name.c_str());
+	glUniform1ui(uniform_location, value);
+	
+	RenderProgram::unbind_any();
+}
 void RenderProgram::set_uniform(const std::string& name, float value) const {
 	assert(m_is_generated);
 	bind();
@@ -74,6 +85,15 @@ void RenderProgram::set_uniform(const std::string& name, const glm::vec3& value)
 	
 	int uniform_location = glGetUniformLocation(m_id, name.c_str());
 	glUniform3f(uniform_location, value.x, value.y, value.z);
+	
+	RenderProgram::unbind_any();
+}
+void RenderProgram::set_uniform(const std::string& name, const glm::mat4& value) const {
+	assert(m_is_generated);
+	bind();
+	
+	int uniform_location = glGetUniformLocation(m_id, name.c_str());
+	glUniformMatrix4fv(uniform_location, 1, GL_FALSE, glm::value_ptr(value));
 	
 	RenderProgram::unbind_any();
 }

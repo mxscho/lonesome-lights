@@ -35,8 +35,8 @@ ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& par
 	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Particle::Data), (void*) ((3 * 3 + 0 * 1) * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(5);
 	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(Particle::Data), (void*) ((3 * 3 + 1 * 1) * sizeof(GL_FLOAT)));
-	VertexBufferObjects::unbind_any();
 	VertexArrayObject::unbind_any();
+	VertexBufferObjects::unbind_any();
 }
 
 void ParticleEmitter::draw(const RenderProgram& render_program) const {

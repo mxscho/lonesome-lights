@@ -22,8 +22,10 @@ public:
 	bool link(const VertexShader& vertex_shader, const FragmentShader& fragment_shader);
 	
 	void bind() const;
+	void set_uniform(const std::string& name, GLuint value) const;
 	void set_uniform(const std::string& name, float value) const;
 	void set_uniform(const std::string& name, const glm::vec3& value) const;
+	void set_uniform(const std::string& name, const glm::mat4& value) const;
 	void destroy();
 private:
 	bool m_is_generated;
