@@ -11,7 +11,7 @@ Map::Map(const glm::mat4& local_transformation, unsigned int width, unsigned int
 	m_width(width),
 	m_height(height),
 	m_tiles(m_width * m_height),
-	m_vertices_vbo({ glm::vec3(-1.0F, -1.0F, 0.0F), glm::vec3(1.0F, -1.0F, 0.0F), glm::vec3(1.0F, 1.0F, 0.0F), glm::vec3(-1.0F, 1.0F, 0.0F) }, GL_ARRAY_BUFFER),
+	m_vertices_vbo({ glm::vec3(-1.0F, 0.0F, -1.0F), glm::vec3(1.0F, 0.0F, -1.0F), glm::vec3(1.0F, 0.0F, 1.0F), glm::vec3(-1.0F, 0.0F, 1.0F) }, GL_ARRAY_BUFFER),
 	m_elements_vbo({
 		0, 1, 2,
 		2, 3, 0
@@ -37,17 +37,15 @@ void Map::delete_tile(unsigned int x, unsigned int y) {
 	m_tiles[y * m_width + x].reset();
 }
 
-void Map::draw(const RenderProgram& render_program) const {
-	Drawable::draw(render_program);
+void Map::draw(const RenderProgram& render_program, const Camera& camera) const {
+	Drawable::draw(render_program, camera);
+	Drawable::prepare_draw(render_program, camera);
 	
 	const Texture& texture = Textures::get_texture("map");
 	
 	render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
-	render_program.set_uniform("u_view_transformation", glm::mat4());
-	render_program.set_uniform("u_projection_transformation", glm::mat4());
 	render_program.set_uniform("u_texture", texture.get_id());
 
-	render_program.bind();	
 	m_vertex_array_object.bind();
 	
 	texture.bind(GL_TEXTURE0);
@@ -57,7 +55,7 @@ void Map::draw(const RenderProgram& render_program) const {
 	Texture::unbind_any(GL_TEXTURE0);
 	
 	VertexArrayObject::unbind_any();
-	RenderProgram::unbind_any();
+	Drawable::finalize_draw(render_program);
 }
 
 void Map::update(const Timer& timer) {

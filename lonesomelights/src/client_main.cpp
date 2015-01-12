@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -18,13 +19,17 @@
 #include "game/map/map.h"
 #include "rendering/particles/particle_emitter.h"
 #include "geometry/transformable.h"
+#include "geometry/game_camera.h"
 
-void print_usage_and_die(int argc, char** argv) {
+static unsigned int window_width = 800;
+static unsigned int window_height = 600;
+
+static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
 	exit(EXIT_FAILURE);
 }
 
-std::string get_args_host(int argc, char** argv) {
+static std::string get_args_host(int argc, char** argv) {
 	if (argc <= 1) {
 		print_usage_and_die(argc, argv);
 	}
@@ -38,7 +43,7 @@ std::string get_args_host(int argc, char** argv) {
 	return host;
 }
 
-unsigned int get_args_port(int argc, char** argv) {
+static unsigned int get_args_port(int argc, char** argv) {
 	if (argc <= 2) {
 		print_usage_and_die(argc, argv);
 	}
@@ -60,7 +65,7 @@ int main(int argc, char** argv) {
 	settings.antialiasingLevel = 4;
 	settings.majorVersion = 3;
 	settings.minorVersion = 3;
-	sf::Window window(sf::VideoMode(800, 600), "Lonesome Lights", sf::Style::Default, settings);
+	sf::Window window(sf::VideoMode(window_width, window_height), "Lonesome Lights", sf::Style::Default, settings);
 	GLenum glew_error = glewInit();
 	if (glew_error != GLEW_OK) {
 		std::cerr << "Rendering: Glew initialization failed." << std::endl;
@@ -112,6 +117,8 @@ int main(int argc, char** argv) {
 	}
 	Map map(glm::mat4(), 1, 1);
 	
+	GameCamera game_camera(glm::vec2(0.0F, 0.0F), 1.33F);
+	
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -119,15 +126,28 @@ int main(int argc, char** argv) {
 				window.close();
 			}
 		}
+		sf::Vector2i mouse_position_vec2i = sf::Mouse::getPosition(window);
+		glm::vec2 mouse_position((float) mouse_position_vec2i.x / window_width * 2.0F - 1.0F, (1.0F - (float) mouse_position_vec2i.y / window_height) * 2.0F - 1.0F);
+		if (std::abs(mouse_position.x) > 0.95F || std::abs(mouse_position.y) > 0.95F) {
+			mouse_position = glm::normalize(mouse_position);
+			game_camera.set_velocity(mouse_position);
+		} else {
+			game_camera.set_velocity(glm::vec2(0.0F));
+		}
+		
+		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		timer.advance();
+		game_camera.update(timer);
 		client.update();
+		
 		map.update(timer);
 		particle_emitter.update(timer);
-		map.draw(map_emitter_render_program);
-		particle_emitter.draw(particle_emitter_render_program);
+		particle_emitter.draw(particle_emitter_render_program, game_camera);
+		map.draw(map_emitter_render_program, game_camera);
+		
 		
 		//unit.update(timer);
 

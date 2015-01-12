@@ -6,12 +6,13 @@
 #include "rendering/drawable.h"
 #include "updatable.h"
 
+class Camera;
 class RenderProgram;
 class Timer;
 
 class Unit : public Drawable, public Networkable, public Updatable, public Transformable {
 public:
-	void draw(const RenderProgram& render_program) const override final;
+	void draw(const RenderProgram& render_program, const Camera& camera) const override final;
 	
 	void update(const Timer& timer) override final;
 };

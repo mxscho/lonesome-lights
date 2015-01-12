@@ -1,0 +1,27 @@
+#ifndef __GEOMETRY__CAMERA_H__
+#define __GEOMETRY__CAMERA_H__
+
+#include <glm/glm.hpp>
+#include <string>
+
+class RenderProgram;
+
+class Camera {
+public:
+	void bind_to_render_program(const RenderProgram& render_program, const std::string& uniform_view_transformation_name, const std::string& uniform_projection_transformation_name) const;
+protected:
+	static Camera create_from_view_direction(const glm::vec3& eye_position, const glm::vec3& view_direction, const glm::vec3& up_direction, const glm::mat4& projection_transformation);
+
+	Camera(const glm::vec3& eye_position, const glm::vec3& center_position, const glm::vec3& up_direction, const glm::mat4& projection_transformation);
+	
+	void change_position(const glm::vec3& offset);
+	
+	glm::vec3 m_eye_position;
+	glm::vec3 m_center_position;
+	glm::vec3 m_up_direction;
+private:
+	glm::mat4 m_view_transformation;
+	glm::mat4 m_projection_transformation;
+};
+
+#endif

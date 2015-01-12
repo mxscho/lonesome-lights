@@ -10,6 +10,7 @@
 #include "rendering/particles/particle.h"
 #include "updatable.h"
 
+class Camera;
 class RenderProgram;
 class Timer;
 
@@ -17,7 +18,7 @@ class ParticleEmitter : public Drawable, public Updatable {
 public:
 	ParticleEmitter(const glm::vec3& position, const glm::vec3& particle_start_velocity, const glm::vec3& particle_acceleration, float min_particle_lifetime_seconds, float max_particle_lifetime_seconds, float frequency, float current_time_seconds, unsigned int max_particle_count);
 	
-	void draw(const RenderProgram& render_program) const override final;
+	void draw(const RenderProgram& render_program, const Camera& camera) const override final;
 	void update(const Timer& timer) override final;
 private:
 	glm::vec3 m_position;

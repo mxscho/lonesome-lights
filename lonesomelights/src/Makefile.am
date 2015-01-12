@@ -11,6 +11,9 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			game/map/tile.cpp \
 			game/map/floor_tile.cpp \
 			\
+		geometry/camera.cpp \
+		geometry/game_camera.cpp \
+		geometry/perspective_camera.cpp \
 		geometry/transformable.cpp \
 		\
 		networking/client.cpp \

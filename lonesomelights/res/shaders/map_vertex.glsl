@@ -10,7 +10,7 @@ out vec2 pass_texture_coordinates;
 
 void main() {
 	vec4 position = u_projection_transformation * u_view_transformation * u_model_transformation * vec4(in_position, 1.0);
-	pass_texture_coordinates = (in_position.xy + vec2(1.0)) / 2.0;
+	pass_texture_coordinates = (in_position.xz + vec2(1.0)) / 2.0;
 	
 	gl_Position = position;
 }

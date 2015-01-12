@@ -3,11 +3,12 @@
 
 #include "game/map/tile.h"
 
+class Camera;
 class RenderProgram;
 
 class FloorTile : public Tile {
 public:
-	void draw(const RenderProgram& render_program) const override final;
+	void draw(const RenderProgram& render_program, const Camera& camera) const override final;
 };
 
 #endif

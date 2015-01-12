@@ -14,6 +14,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+class Camera;
 class RenderProgram;
 class Timer;
 
@@ -25,7 +26,7 @@ public:
 	void add_tile(unsigned int x, unsigned int y, std::unique_ptr<Tile>&& tile);
 	void delete_tile(unsigned int x, unsigned int y);
 	
-	void draw(const RenderProgram& render_program) const override final;
+	void draw(const RenderProgram& render_program, const Camera& camera) const override final;
 
 	void update(const Timer& timer) override final;
 private:

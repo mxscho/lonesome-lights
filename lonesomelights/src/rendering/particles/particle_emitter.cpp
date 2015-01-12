@@ -39,12 +39,12 @@ ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& par
 	VertexBufferObjects::unbind_any();
 }
 
-void ParticleEmitter::draw(const RenderProgram& render_program) const {
-	Drawable::draw(render_program);
+void ParticleEmitter::draw(const RenderProgram& render_program, const Camera& camera) const {
+	Drawable::draw(render_program, camera);
+	Drawable::prepare_draw(render_program, camera);
 	
 	render_program.set_uniform("u_current_time_seconds", m_current_time_seconds);
 
-	render_program.bind();	
 	m_vertex_array_object.bind();
 
 	glVertexAttribDivisor(0, 0);
@@ -56,7 +56,8 @@ void ParticleEmitter::draw(const RenderProgram& render_program) const {
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 3, m_max_particle_count);
 	
 	VertexArrayObject::unbind_any();
-	RenderProgram::unbind_any();
+	
+	Drawable::finalize_draw(render_program);
 }
 void ParticleEmitter::update(const Timer& timer) {
 	Updatable::update(timer);
