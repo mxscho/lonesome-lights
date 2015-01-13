@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+class Camera;
 class FragmentShader;
 class VertexShader;
 
@@ -26,6 +27,7 @@ public:
 	void set_uniform(const std::string& name, float value) const;
 	void set_uniform(const std::string& name, const glm::vec3& value) const;
 	void set_uniform(const std::string& name, const glm::mat4& value) const;
+	void set_uniforms(const std::string& view_transformation_uniform_name, const std::string& projection_transformation_uniform_name, const Camera& camera) const;
 	void destroy();
 private:
 	bool m_is_generated;

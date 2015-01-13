@@ -9,10 +9,12 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			\
 			game/map/map.cpp \
 			game/map/tile.cpp \
-			game/map/floor_tile.cpp \
 			\
 		geometry/camera.cpp \
-		geometry/game_camera.cpp \
+		geometry/inertial_movable.cpp \
+		geometry/inertial_movement.cpp \
+		geometry/map_camera.cpp \
+		geometry/movement.cpp \
 		geometry/perspective_camera.cpp \
 		geometry/transformable.cpp \
 		\
@@ -35,6 +37,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			rendering/opengl/fragment_shader.cpp \
 			rendering/opengl/frame_buffer_object.cpp \
 			rendering/opengl/render_program.cpp \
+			rendering/opengl/render_programs.cpp \
 			rendering/opengl/shader.cpp \
 			rendering/opengl/texture.cpp \
 			rendering/opengl/textures.cpp \

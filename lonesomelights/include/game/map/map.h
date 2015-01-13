@@ -12,7 +12,6 @@
 #include <memory>
 #include <vector>
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
 class Camera;
 class RenderProgram;
@@ -20,13 +19,13 @@ class Timer;
 
 class Map : public Drawable, public Networkable, public Updatable, public Transformable {
 public:
-	Map(const glm::mat4& local_transformation, unsigned int width, unsigned int height);
+	Map(unsigned int width, unsigned int height);
 
 	Tile& get_tile(unsigned int x, unsigned int y);
-	void add_tile(unsigned int x, unsigned int y, std::unique_ptr<Tile>&& tile);
+	void set_tile(unsigned int x, unsigned int y, std::unique_ptr<Tile>&& tile);
 	void delete_tile(unsigned int x, unsigned int y);
 	
-	void draw(const RenderProgram& render_program, const Camera& camera) const override final;
+	void draw(const Camera& camera) const override final;
 
 	void update(const Timer& timer) override final;
 private:

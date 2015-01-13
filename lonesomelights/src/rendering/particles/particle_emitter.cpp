@@ -1,12 +1,13 @@
 #include "rendering/particles/particle_emitter.h"
 
 #include "rendering/opengl/render_program.h"
+#include "rendering/opengl/render_programs.h"
 #include "timer.h"
 
 #include <iostream>
 
 ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& particle_start_velocity, const glm::vec3& particle_acceleration, float min_particle_lifetime_seconds, float max_particle_lifetime_seconds, float frequency, float current_time_seconds, unsigned int max_particle_count)
-	: Drawable(),
+	: Drawable(RenderPrograms::get_render_program("particle_emitter")), // TODO
 	m_position(position),
 	m_particle_start_velocity(particle_start_velocity),
 	m_particle_acceleration(particle_acceleration),
@@ -37,14 +38,16 @@ ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& par
 	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(Particle::Data), (void*) ((3 * 3 + 1 * 1) * sizeof(GL_FLOAT)));
 	VertexArrayObject::unbind_any();
 	VertexBufferObjects::unbind_any();
+	
+	//Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
 }
 
-void ParticleEmitter::draw(const RenderProgram& render_program, const Camera& camera) const {
-	Drawable::draw(render_program, camera);
-	Drawable::prepare_draw(render_program, camera);
-	
-	render_program.set_uniform("u_current_time_seconds", m_current_time_seconds);
+void ParticleEmitter::draw(const Camera& camera) const {
+	Drawable::draw(camera);
 
+	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", camera);
+	
+	Drawable::m_render_program.bind();
 	m_vertex_array_object.bind();
 
 	glVertexAttribDivisor(0, 0);
@@ -56,23 +59,23 @@ void ParticleEmitter::draw(const RenderProgram& render_program, const Camera& ca
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 3, m_max_particle_count);
 	
 	VertexArrayObject::unbind_any();
-	
-	Drawable::finalize_draw(render_program);
+	RenderProgram::unbind_any();
 }
 void ParticleEmitter::update(const Timer& timer) {
 	Updatable::update(timer);
 	
-	m_current_time_seconds = timer.get_current_time_seconds();
+	float current_time_seconds = timer.get_current_time_seconds();
+	Drawable::m_render_program.set_uniform("u_current_time_seconds", current_time_seconds);
 	
 	for (auto i_particle = m_particles.begin(); i_particle != m_particles.end(); ) {
-		if (i_particle->is_alive(m_current_time_seconds)) {
+		if (i_particle->is_alive(current_time_seconds)) {
 			++i_particle;
 		} else {
 			i_particle = m_particles.erase(i_particle);
 		}
 	}
 	
-	while (m_next_emission_time_seconds <= m_current_time_seconds) {
+	while (m_next_emission_time_seconds <= current_time_seconds) {
 		assert(m_particles.size() < m_max_particle_count);
 		m_particles.push_back(Particle(m_instances_vertex_buffer_object.claim_bucket(), m_position, m_particle_start_velocity, m_particle_acceleration, m_next_emission_time_seconds, m_min_particle_lifetime_seconds /* TODO: Random lifetime. */));
 		m_next_emission_time_seconds += 1.0F / m_frequency;

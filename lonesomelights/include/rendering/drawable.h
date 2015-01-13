@@ -6,10 +6,11 @@ class RenderProgram;
 
 class Drawable {
 public:
-	virtual void draw(const RenderProgram& render_program, const Camera& camera) const = 0;
+	Drawable(const RenderProgram& render_program);
+
+	virtual void draw(const Camera& camera) const = 0;
 protected:
-	void prepare_draw(const RenderProgram& render_program, const Camera& camera) const;
-	void finalize_draw(const RenderProgram& render_program) const;
+	const RenderProgram& m_render_program;
 };
 
 #endif

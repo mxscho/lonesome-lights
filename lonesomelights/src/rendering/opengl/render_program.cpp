@@ -6,6 +6,7 @@
 #include <iostream>
 #include <utility>
 
+#include "geometry/camera.h"
 #include "rendering/opengl/fragment_shader.h"
 #include "rendering/opengl/vertex_shader.h"
 
@@ -88,6 +89,10 @@ void RenderProgram::set_uniform(const std::string& name, const glm::mat4& value)
 	
 	int uniform_location = glGetUniformLocation(m_id, name.c_str());
 	glUniformMatrix4fv(uniform_location, 1, GL_FALSE, glm::value_ptr(value));
+}
+void RenderProgram::set_uniforms(const std::string& view_transformation_uniform_name, const std::string& projection_transformation_uniform_name, const Camera& camera) const {
+	set_uniform(view_transformation_uniform_name, camera.get_view_transformation());
+	set_uniform(projection_transformation_uniform_name, camera.get_projection_transformation());
 }
 void RenderProgram::destroy() {
 	if (m_is_generated) {

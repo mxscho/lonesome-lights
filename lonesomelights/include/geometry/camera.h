@@ -8,7 +8,8 @@ class RenderProgram;
 
 class Camera {
 public:
-	void bind_to_render_program(const RenderProgram& render_program, const std::string& uniform_view_transformation_name, const std::string& uniform_projection_transformation_name) const;
+	const glm::mat4& get_view_transformation() const;
+	const glm::mat4& get_projection_transformation() const;
 protected:
 	static Camera create_from_view_direction(const glm::vec3& eye_position, const glm::vec3& view_direction, const glm::vec3& up_direction, const glm::mat4& projection_transformation);
 
