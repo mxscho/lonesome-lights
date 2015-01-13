@@ -16,6 +16,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 		geometry/inertial_movable.cpp \
 		geometry/map_camera.cpp \
 		geometry/movement.cpp \
+		geometry/path_finder.cpp \
 		geometry/perspective_camera.cpp \
 		geometry/transformable.cpp \
 		\
