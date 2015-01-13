@@ -11,8 +11,9 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			game/map/tile.cpp \
 			\
 		geometry/camera.cpp \
+		geometry/constant_accelerating_movement.cpp \
+		geometry/constant_movement.cpp \
 		geometry/inertial_movable.cpp \
-		geometry/inertial_movement.cpp \
 		geometry/map_camera.cpp \
 		geometry/movement.cpp \
 		geometry/perspective_camera.cpp \

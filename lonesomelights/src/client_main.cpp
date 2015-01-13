@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
 	ParticleEmitter particle_emitter(glm::vec3(-0.5F, 0.0F, 0.0F), glm::vec3(0.25F, 0.5F, 0.0F), glm::vec3(0.0F, -0.25F, 0.0F), 4.5F, 4.5F, 4.0F, timer.get_current_time_seconds(), 50);
 	
 	Map map(20, 20);
-	Unit unit(glm::vec2(1.0F, 1.0F), map, 0.5F, 0.5F, 0.5F);
+	Unit unit(glm::vec2(1.0F, 1.0F), map, 1.0F, 0.5F, 0.5F);
 	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
 	unit.set_network_handler(unit_client_handler);*/
 	
@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
 				if (event.mouseButton.button == sf::Mouse::Left) {
 					std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, event.mouseButton.x, event.mouseButton.y);
 					if (world_position.first) {
-						unit.set_target_position(timer, world_position.second);
+						unit.set_target_position(timer, glm::vec2(world_position.second.x, world_position.second.z));
 					}
 				}
 			}

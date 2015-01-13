@@ -26,6 +26,10 @@ Unit::Unit(const glm::vec2& position, const Map& map, float max_velocity, float 
 	Drawable::m_render_program.set_uniform("u_texture", texture.get_id());
 }
 
+void Unit::set_target_position(const Timer& timer, const glm::vec2& target_position) {
+	InertialMovable::set_target_position(timer, glm::vec3(target_position.x, 0.1F, target_position.y));
+}
+
 void Unit::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 

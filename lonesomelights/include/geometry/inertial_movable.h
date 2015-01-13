@@ -1,9 +1,12 @@
-#include <glm/glm.hpp>
-#include <memory>
+#ifndef __GEOMETRY__INERTIAL_MOVABLE_H__
+#define __GEOMETRY__INERTIAL_MOVABLE_H__
 
-#include "geometry/inertial_movement.h"
-#include "updatable.h"
+#include <glm/glm.hpp>
+
+#include "geometry/constant_accelerating_movement.h"
+#include "geometry/constant_movement.h"
 #include "geometry/transformable.h"
+#include "updatable.h"
 
 class Timer;
 
@@ -13,15 +16,21 @@ public:
 	
 	void set_target_position(const Timer& timer, const glm::vec3& target_position);
 	
-	void update(const Timer& timer) override;
+	virtual void update(const Timer& timer);
 private:
+	float m_velocity;
 	float m_max_velocity;
 	float m_acceleration;
 	float m_decceleration;
-	float m_velocity;
+	ConstantMovement m_constant_movement;
+	ConstantAcceleratingMovement m_accelerating_movement;
+	ConstantAcceleratingMovement m_deccelerating_movement;
 	glm::vec3 m_start_position;
 	float m_start_velocity;
 	float m_start_time_seconds;
 	glm::vec3 m_target_position;
-	std::unique_ptr<InertialMovement> m_movement;
+	float m_constant_movement_time_seconds;
+	float m_acceleration_time_seconds;
 };
+
+#endif
