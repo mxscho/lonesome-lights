@@ -11,7 +11,10 @@ Tile::Tile(const Map& map, unsigned int x, unsigned int y)
 	: Drawable(RenderPrograms::get_render_program("tile")),
 	Networkable(),
 	Transformable(glm::translate(glm::vec3((float) x, 0.0F, (float) y)), map),
-	m_vertices_vbo({ glm::vec3(0.0F, 0.0001F, 0.0F), glm::vec3(1.0F, 0.0001F, 0.0F), glm::vec3(1.0F, 0.0001F, 1.0F), glm::vec3(0.0F, 0.0001F, 1.0F) }, GL_ARRAY_BUFFER),
+	m_map(map),
+	m_x(x),
+	m_y(y),
+	m_vertices_vbo({ glm::vec3(0.0F, 0.0001F, 0.0F), glm::vec3(get_size(), 0.0001F, 0.0F), glm::vec3(get_size(), 0.0001F, get_size()), glm::vec3(0.0F, 0.0001F, get_size()) }, GL_ARRAY_BUFFER),
 	m_vertex_array_object()	{
 	m_vertex_array_object.bind();
 	m_vertices_vbo.bind();
@@ -19,6 +22,19 @@ Tile::Tile(const Map& map, unsigned int x, unsigned int y)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 	VertexArrayObject::unbind_any();
 	VertexBufferObjects::unbind_any();
+}
+
+unsigned int Tile::get_x() const {
+	return m_x;
+}
+unsigned int Tile::get_y() const {
+	return m_y;
+}
+float Tile::get_size() const {
+	return m_map.get_tile_size();
+}
+bool Tile::is_walkable() const {
+	return true;
 }
 
 void Tile::draw(const Camera& camera) const {

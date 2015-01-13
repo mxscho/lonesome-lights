@@ -6,23 +6,24 @@
 
 #include <glm/glm.hpp>
 
-Map::Map(unsigned int width, unsigned int height)
+Map::Map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size)
 	: Drawable(RenderPrograms::get_render_program("map")),
 	Networkable(),
 	Updatable(),
 	Transformable(glm::mat4()),
-	m_width(width),
-	m_height(height),
-	m_tiles(m_width * m_height),
-	m_vertices_vbo({ glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(m_width, 0.0F, 0.0F), glm::vec3(m_width, 0.0F, m_height), glm::vec3(0.0F, 0.0F, m_height) }, GL_ARRAY_BUFFER),
+	m_tile_count_x(tile_count_x),
+	m_tile_count_y(tile_count_y),
+	m_tile_size(tile_size),
+	m_tiles(m_tile_count_x * m_tile_count_y),
+	m_vertices_vbo({ glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(m_tile_count_x, 0.0F, 0.0F), glm::vec3(m_tile_count_x, 0.0F, m_tile_count_y), glm::vec3(0.0F, 0.0F, m_tile_count_y) }, GL_ARRAY_BUFFER),
 	m_elements_vbo({
 		0, 1, 2,
 		2, 3, 0
 	}, GL_ELEMENT_ARRAY_BUFFER),
 	m_vertex_array_object() {
-	for (unsigned int i_y = 0; i_y < height; ++i_y) {
-		for (unsigned int i_x = 0; i_x < width; ++i_x) {
-			set_tile(i_x, i_y, std::unique_ptr<Tile>(new Tile(*this, i_x, i_y)));
+	for (unsigned int i_y = 0; i_y < m_tile_count_y; ++i_y) {
+		for (unsigned int i_x = 0; i_x < m_tile_count_x; ++i_x) {
+			set_tile(std::unique_ptr<Tile>(new Tile(*this, i_x, i_y)));
 		}
 	}
 	
@@ -39,15 +40,27 @@ Map::Map(unsigned int width, unsigned int height)
 	Drawable::m_render_program.set_uniform("u_texture", texture.get_id());
 }
 
-Tile& Map::get_tile(unsigned int x, unsigned int y) {
-	return *m_tiles[y * m_width + x];
+unsigned int Map::get_tile_count_x() const {
+	return m_tile_count_x;
 }
-void Map::set_tile(unsigned int x, unsigned int y, std::unique_ptr<Tile>&& tile) {
+unsigned int Map::get_tile_count_y() const {
+	return m_tile_count_y;
+}
+float Map::get_tile_size() const {
+	return m_tile_size;
+}
+Tile& Map::get_tile(unsigned int x, unsigned int y) {
+	assert(!!m_tiles[y * m_tile_count_x + x]);
+	return *m_tiles[y * m_tile_count_x + x];
+}
+void Map::set_tile(std::unique_ptr<Tile>&& tile) {
+	unsigned int x = tile->get_x();
+	unsigned int y = tile->get_y();
 	delete_tile(x, y);
-	m_tiles[y * m_width + x] = std::move(tile);
+	m_tiles[y * m_tile_count_x + x] = std::move(tile);
 }
 void Map::delete_tile(unsigned int x, unsigned int y) {
-	m_tiles[y * m_width + x].reset();
+	m_tiles[y * m_tile_count_x + x].reset();
 }
 
 void Map::draw(const Camera& camera) const {
@@ -69,7 +82,9 @@ void Map::draw(const Camera& camera) const {
 	RenderProgram::unbind_any();
 	
 	for (auto& i_tile : m_tiles) {
-		i_tile->draw(camera);
+		if (!!i_tile) {
+			i_tile->draw(camera);
+		}
 	}
 }
 

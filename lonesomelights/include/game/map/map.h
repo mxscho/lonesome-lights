@@ -19,18 +19,22 @@ class Timer;
 
 class Map : public Drawable, public Networkable, public Updatable, public Transformable {
 public:
-	Map(unsigned int width, unsigned int height);
+	Map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size);
 
+	unsigned int get_tile_count_x() const;
+	unsigned int get_tile_count_y() const;
+	float get_tile_size() const;
 	Tile& get_tile(unsigned int x, unsigned int y);
-	void set_tile(unsigned int x, unsigned int y, std::unique_ptr<Tile>&& tile);
+	void set_tile(std::unique_ptr<Tile>&& tile);
 	void delete_tile(unsigned int x, unsigned int y);
 	
 	void draw(const Camera& camera) const override final;
 
 	void update(const Timer& timer) override final;
 private:
-	unsigned int m_width;
-	unsigned int m_height;
+	unsigned int m_tile_count_x;
+	unsigned int m_tile_count_y;
+	float m_tile_size;
 	std::vector<std::unique_ptr<Tile>> m_tiles;
 	VertexBufferObject<glm::vec3> m_vertices_vbo;
 	VertexBufferObject<GLushort> m_elements_vbo;
