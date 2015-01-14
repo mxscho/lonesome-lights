@@ -19,6 +19,7 @@ public:
 	Unit(const glm::vec2& position, const Map& map, float max_velocity, float acceleration, float decceleration);
 
 	void set_target_position(const Timer& timer, const glm::vec2& target_position);
+	void add_target_position_to_path(const Timer& timer, const glm::vec2& target_position);
 	
 	void draw(const Camera& camera) const override final;
 	

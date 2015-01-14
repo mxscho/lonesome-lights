@@ -162,10 +162,14 @@ int main(int argc, char** argv) {
 			} else if (event.type == sf::Event::MouseWheelMoved) {
 				map_camera.change_zoom(event.mouseWheel.delta);
 			} else if (event.type == sf::Event::MouseButtonPressed) {
-				if (event.mouseButton.button == sf::Mouse::Left) {
+				if (event.mouseButton.button == sf::Mouse::Right) {
 					std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, event.mouseButton.x, event.mouseButton.y);
 					if (world_position.first) {
-						unit.set_target_position(timer, glm::vec2(world_position.second.x, world_position.second.z));
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+							unit.add_target_position_to_path(timer, glm::vec2(world_position.second.x, world_position.second.z));
+						} else {
+							unit.set_target_position(timer, glm::vec2(world_position.second.x, world_position.second.z));
+						}
 					}
 				}
 			}
