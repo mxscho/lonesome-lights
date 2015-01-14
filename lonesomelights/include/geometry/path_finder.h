@@ -41,6 +41,7 @@ private:
 	
 	std::string get_node_id(glm::uvec2 tile_coordinates, glm::uvec2 node_coordinates);
 	std::string get_nearest_node(glm::vec2 point);
+	std::string get_nearest_walkable_node(glm::vec2 point);
 	void insert_into_open_list(Node node, bool greedy);
 	bool delete_node_in_list(Node node);
 	void add_neighbors_to_open_list(Node node, glm::vec2 end_node_position, bool greedy);
