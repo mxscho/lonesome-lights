@@ -26,6 +26,7 @@
 #include "rendering/particles/particle_emitter.h"
 #include "geometry/transformable.h"
 #include "geometry/map_camera.h"
+#include "geometry/path_finder.h"
 
 static unsigned int window_width = 800;
 static unsigned int window_height = 600;
@@ -147,7 +148,7 @@ int main(int argc, char** argv) {
 	
 	ParticleEmitter particle_emitter(glm::vec3(-0.5F, 0.0F, 0.0F), glm::vec3(0.25F, 0.5F, 0.0F), glm::vec3(0.0F, -0.25F, 0.0F), 4.5F, 4.5F, 4.0F, timer.get_current_time_seconds(), 50);
 	
-	Map map(20, 20, 1.0F);
+	Map map = Map::create_test_map(1.0F);
 	Unit unit(glm::vec2(1.0F, 1.0F), map, 1.0F, 0.5F, 0.5F);
 	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
 	unit.set_network_handler(unit_client_handler);*/
@@ -183,6 +184,26 @@ int main(int argc, char** argv) {
 			map_camera.set_velocity(glm::vec2(0.0F));
 		}
 		
+		static bool is_wireframe_mode = false;
+		static bool is_wireframe_key_down = false;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			if (!is_wireframe_key_down) {
+				is_wireframe_mode = !is_wireframe_mode;
+			}
+			is_wireframe_key_down = true;
+		}
+		else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			is_wireframe_key_down = false;
+		}
+		if (is_wireframe_mode) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		} else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		
+		//glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

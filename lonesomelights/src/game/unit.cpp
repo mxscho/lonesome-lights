@@ -3,7 +3,6 @@
 #include "game/map/map.h"
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
-#include "rendering/opengl/textures.h"
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
@@ -22,8 +21,6 @@ Unit::Unit(const glm::vec2& position, const Map& map, float max_velocity, float 
 	VertexBufferObjects::unbind_any();
 	
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
-	const Texture& texture = Textures::get_texture("map");
-	Drawable::m_render_program.set_uniform("u_texture", texture.get_id());
 }
 
 void Unit::set_target_position(const Timer& timer, const glm::vec2& target_position) {

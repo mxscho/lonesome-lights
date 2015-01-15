@@ -4,21 +4,20 @@
 #include "game/map/tile.h"
 #include "geometry/transformable.h"
 #include "networking/networkable.h"
-#include "rendering/drawable.h"
-#include "rendering/opengl/vertex_array_object.h"
-#include "rendering/opengl/vertex_buffer_object.h"
 #include "updatable.h"
 
 #include <memory>
 #include <vector>
-#include <GL/glew.h>
 
 class Camera;
 class RenderProgram;
 class Timer;
 
-class Map : public Drawable, public Networkable, public Updatable, public Transformable {
+class Map : public Networkable, public Updatable, public Transformable {
 public:
+	static Map create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size);
+	static Map create_test_map(float tile_size);
+
 	Map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size);
 
 	unsigned int get_tile_count_x() const;
@@ -28,7 +27,7 @@ public:
 	void set_tile(std::unique_ptr<Tile>&& tile);
 	void delete_tile(unsigned int x, unsigned int y);
 	
-	void draw(const Camera& camera) const override final;
+	void draw(const Camera& camera) const;
 
 	void update(const Timer& timer) override final;
 private:
@@ -36,9 +35,6 @@ private:
 	unsigned int m_tile_count_y;
 	float m_tile_size;
 	std::vector<std::unique_ptr<Tile>> m_tiles;
-	VertexBufferObject<glm::vec3> m_vertices_vbo;
-	VertexBufferObject<GLushort> m_elements_vbo;
-	VertexArrayObject m_vertex_array_object;
 };
 
 #endif

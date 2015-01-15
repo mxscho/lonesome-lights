@@ -13,20 +13,16 @@ class Timer;
 
 class Tile : public Drawable, public Networkable, public Transformable {
 public:
-	Tile(const Map& map, unsigned int x, unsigned int y);
+	Tile(const Map& map, unsigned int x, unsigned int y, const RenderProgram& render_program);
 
 	unsigned int get_x() const;
 	unsigned int get_y() const;
 	float get_size() const;
-	bool is_walkable() const;
-	
-	void draw(const Camera& camera) const override final;
+	virtual bool is_walkable() const;
 private:
 	const Map& m_map;
 	unsigned int m_x;
 	unsigned int m_y;
-	VertexBufferObject<glm::vec3> m_vertices_vbo;
-	VertexArrayObject m_vertex_array_object;
 };
 
 #endif

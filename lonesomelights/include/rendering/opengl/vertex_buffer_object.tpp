@@ -86,6 +86,11 @@ VertexBufferObject<T>::~VertexBufferObject() {
 }
 
 template<typename T>
+unsigned int VertexBufferObject<T>::get_size() const {
+	return m_size;
+}
+
+template<typename T>
 typename VertexBufferObject<T>::Bucket VertexBufferObject<T>::claim_bucket() {
 	unsigned int unused_index = m_unused_indices.front();
 	m_unused_indices.pop_front();

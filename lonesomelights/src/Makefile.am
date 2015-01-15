@@ -8,6 +8,8 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 		game/unit.cpp \
 			\
 			game/map/map.cpp \
+			game/map/floor_tile.cpp \
+			game/map/rock_tile.cpp \
 			game/map/tile.cpp \
 			\
 		geometry/camera.cpp \

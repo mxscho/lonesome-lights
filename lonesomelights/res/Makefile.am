@@ -8,4 +8,5 @@ EXTRA_DIST = \
 	shaders/tile_fragment.glsl \
 	shaders/tile_vertex.glsl
 	\
-	textures/map.png
+	textures/floor_tile.png
+	textures/rock_tile.png

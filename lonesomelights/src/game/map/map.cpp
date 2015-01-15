@@ -1,43 +1,45 @@
 #include "game/map/map.h"
 
-#include "rendering/opengl/render_program.h"
-#include "rendering/opengl/render_programs.h"
-#include "rendering/opengl/textures.h"
+#include "game/map/floor_tile.h"
+#include "game/map/rock_tile.h"
 
 #include <glm/glm.hpp>
 
+Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size) {
+	Map map(tile_count_x, tile_count_y, tile_size);
+	for (unsigned int i_y = 0; i_y < map.get_tile_count_y(); ++i_y) {
+		for (unsigned int i_x = 0; i_x < map.get_tile_count_x(); ++i_x) {
+			map.set_tile(std::unique_ptr<Tile>(new FloorTile(map, i_x, i_y)));
+		}
+	}
+	return map;
+}
+
+Map Map::create_test_map(float tile_size) {
+	Map map = create_empty_map(20, 20, tile_size);
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 9, 9, RockTile::CliffType::NegativeXNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 9, 10, RockTile::CliffType::NegativeX))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 9, 11, RockTile::CliffType::NegativeXPositiveY))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 10, 9, RockTile::CliffType::NegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 10, 10, RockTile::CliffType::None))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 10, 11, RockTile::CliffType::PositiveY))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 11, 9, RockTile::CliffType::PositiveXNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 11, 10, RockTile::CliffType::PositiveX))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 11, 11, RockTile::CliffType::PositiveXPositiveY))));
+	
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 13, 11, RockTile::CliffType::NegativeXPositiveYNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 14, 11, RockTile::CliffType::PositiveXPositiveYNegativeY))));
+	return map;
+}
+
 Map::Map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size)
-	: Drawable(RenderPrograms::get_render_program("map")),
-	Networkable(),
+	: Networkable(),
 	Updatable(),
 	Transformable(glm::mat4()),
 	m_tile_count_x(tile_count_x),
 	m_tile_count_y(tile_count_y),
 	m_tile_size(tile_size),
-	m_tiles(m_tile_count_x * m_tile_count_y),
-	m_vertices_vbo({ glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(m_tile_count_x, 0.0F, 0.0F), glm::vec3(m_tile_count_x, 0.0F, m_tile_count_y), glm::vec3(0.0F, 0.0F, m_tile_count_y) }, GL_ARRAY_BUFFER),
-	m_elements_vbo({
-		0, 1, 2,
-		2, 3, 0
-	}, GL_ELEMENT_ARRAY_BUFFER),
-	m_vertex_array_object() {
-	for (unsigned int i_y = 0; i_y < m_tile_count_y; ++i_y) {
-		for (unsigned int i_x = 0; i_x < m_tile_count_x; ++i_x) {
-			set_tile(std::unique_ptr<Tile>(new Tile(*this, i_x, i_y)));
-		}
-	}
-	
-	m_vertex_array_object.bind();
-	m_vertices_vbo.bind();
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-	m_elements_vbo.bind();
-	VertexArrayObject::unbind_any();
-	VertexBufferObjects::unbind_any();
-	
-	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
-	const Texture& texture = Textures::get_texture("map");
-	Drawable::m_render_program.set_uniform("u_texture", texture.get_id());
+	m_tiles(m_tile_count_x * m_tile_count_y) {	
 }
 
 unsigned int Map::get_tile_count_x() const {
@@ -64,23 +66,6 @@ void Map::delete_tile(unsigned int x, unsigned int y) {
 }
 
 void Map::draw(const Camera& camera) const {
-	Drawable::draw(camera);
-
-	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", camera);
-
-	Drawable::m_render_program.bind();
-	m_vertex_array_object.bind();
-	
-	const Texture& texture = Textures::get_texture("map");
-	texture.bind(GL_TEXTURE0);
-	
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-	
-	Texture::unbind_any(GL_TEXTURE0);
-	
-	VertexArrayObject::unbind_any();
-	RenderProgram::unbind_any();
-	
 	for (auto& i_tile : m_tiles) {
 		if (!!i_tile) {
 			i_tile->draw(camera);

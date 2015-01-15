@@ -33,6 +33,8 @@ public:
 	VertexBufferObject& operator=(const VertexBufferObject& vertex_buffer_object) = delete;
 	VertexBufferObject& operator=(VertexBufferObject&& vertex_buffer_object);
 	~VertexBufferObject();
+	
+	unsigned int get_size() const;
 
 	Bucket claim_bucket();
 	
@@ -41,7 +43,7 @@ public:
 	void destroy();
 private:
 	VertexBufferObject(unsigned int size, GLenum target, GLenum usage, const std::vector<T>& data);
-
+	
 	GLuint m_id;
 	bool m_is_generated;
 	GLenum m_target;
