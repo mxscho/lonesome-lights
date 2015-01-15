@@ -50,7 +50,9 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			rendering/opengl/vertex_shader.cpp \
 			\
 			rendering/particles/particle.cpp \
-			rendering/particles/particle_emitter.cpp
+			rendering/particles/particle_emitter.cpp \
+			\
+			rendering/tinyobjloader/tiny_obj_loader.cpp
 
 __top_builddir__bin_lonesomelights_server_SOURCES = $(__top_builddir__bin_lonesomelights_SOURCES) \
 	server_main.cpp
