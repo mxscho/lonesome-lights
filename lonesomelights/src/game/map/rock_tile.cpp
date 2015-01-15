@@ -141,7 +141,7 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 }
 
 bool RockTile::is_walkable() const {
-	return true;
+	return false;
 }
 
 void RockTile::draw(const Camera& camera) const {

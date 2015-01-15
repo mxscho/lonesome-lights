@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <list>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -149,6 +150,8 @@ int main(int argc, char** argv) {
 	ParticleEmitter particle_emitter(glm::vec3(-0.5F, 0.0F, 0.0F), glm::vec3(0.25F, 0.5F, 0.0F), glm::vec3(0.0F, -0.25F, 0.0F), 4.5F, 4.5F, 4.0F, timer.get_current_time_seconds(), 50);
 	
 	Map map = Map::create_test_map(1.0F);
+	PathFinder path_finder(map, 8);
+	
 	Unit unit(glm::vec2(1.0F, 1.0F), map, 1.0F, 0.5F, 0.5F);
 	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
 	unit.set_network_handler(unit_client_handler);*/
@@ -169,7 +172,8 @@ int main(int argc, char** argv) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
 							unit.add_target_position_to_path(timer, glm::vec2(world_position.second.x, world_position.second.z));
 						} else {
-							unit.set_target_position(timer, glm::vec2(world_position.second.x, world_position.second.z));
+							std::list<glm::vec2> path = path_finder.get_shortest_path(unit.get_position_vec2(), glm::vec2(world_position.second.x, world_position.second.z), false);
+							unit.set_target_path(timer, path);
 						}
 					}
 				}
