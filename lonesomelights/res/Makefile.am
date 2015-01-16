@@ -1,4 +1,7 @@
 EXTRA_DIST = \
+	models/unit_0.mtl
+	models/unit_0.obj
+	\
 	shaders/map_fragment.glsl \
 	shaders/map_vertex.glsl \
 	shaders/particle_emitter_fragment.glsl \

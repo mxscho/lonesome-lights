@@ -30,7 +30,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "rendering/tinyobjloader/tiny_obj_loader.h"
+#include "rendering/obj_loader/tiny_obj_loader.h"
 
 namespace tinyobj {
 
