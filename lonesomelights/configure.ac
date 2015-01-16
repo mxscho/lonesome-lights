@@ -11,10 +11,12 @@ AC_CONFIG_FILES([Makefile res/Makefile src/Makefile])
 # Checks for programs.
 AC_PROG_CXX
 
-# Checks for libraries.
+# Checks for pkg-configs.
+PKG_CHECK_MODULES(SFML, sfml-all >= 2.1)
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h GL/glew.h glm/glm.hpp SFML/Audio.hpp SFML/Graphics.hpp SFML/Network.hpp SFML/System.hpp SFML/Window.hpp])
+AC_CHECK_HEADERS([GL/glew.h])
+AC_CHECK_HEADERS([glm/glm.hpp])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -22,10 +24,5 @@ AC_CHECK_HEADER_STDBOOL
 # Checks for library functions.
 AC_CHECK_LIB([GL], [main])
 AC_CHECK_LIB([GLEW], [main])
-AC_CHECK_LIB([sfml-audio], [main])
-AC_CHECK_LIB([sfml-graphics], [main])
-AC_CHECK_LIB([sfml-network], [main])
-AC_CHECK_LIB([sfml-system], [main])
-AC_CHECK_LIB([sfml-window], [main])
 
 AC_OUTPUT

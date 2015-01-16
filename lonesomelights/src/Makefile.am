@@ -59,13 +59,14 @@ __top_builddir__bin_lonesomelights_server_SOURCES = $(__top_builddir__bin_loneso
 __top_builddir__bin_lonesomelights_client_SOURCES = $(__top_builddir__bin_lonesomelights_SOURCES) \
 	client_main.cpp
 
-__top_builddir__bin_lonesomelights_CPPFLAGS = -I$(top_srcdir)/include
+__top_builddir__bin_lonesomelights_CPPFLAGS = -I$(top_srcdir)/include $(SFML_CPPFLAGS)
 __top_builddir__bin_lonesomelights_server_CPPFLAGS = $(__top_builddir__bin_lonesomelights_CPPFLAGS)
 __top_builddir__bin_lonesomelights_client_CPPFLAGS = $(__top_builddir__bin_lonesomelights_CPPFLAGS)
 __top_builddir__bin_lonesomelights_CXXFLAGS = -std=c++11 -pedantic-errors -Wall -Werror -g
 __top_builddir__bin_lonesomelights_server_CXXFLAGS = $(__top_builddir__bin_lonesomelights_CXXFLAGS)
 __top_builddir__bin_lonesomelights_client_CXXFLAGS = $(__top_builddir__bin_lonesomelights_CXXFLAGS)
 
-__top_builddir__bin_lonesomelights_LDADD = -lpng -lGL -lGLEW -lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
+__top_builddir__bin_lonesomelights_LDADD = -lpng -lGL -lGLEW $(SFML_LIBS)
+#-lsfml-audio -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 __top_builddir__bin_lonesomelights_server_LDADD = $(__top_builddir__bin_lonesomelights_LDADD)
 __top_builddir__bin_lonesomelights_client_LDADD = $(__top_builddir__bin_lonesomelights_LDADD)
