@@ -36,7 +36,6 @@ private:
 	float m_start_velocity;
 	float m_start_time_seconds;
 	std::list<glm::vec3> m_target_path;
-	bool m_is_target_set;
 	float m_constant_movement_time_seconds;
 	float m_acceleration_time_seconds;
 	float m_decceleration_time_seconds;

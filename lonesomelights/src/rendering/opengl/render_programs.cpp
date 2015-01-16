@@ -8,11 +8,11 @@
 const RenderProgram& RenderPrograms::get_render_program(const std::string& name) {
 	if (RenderPrograms::m_render_programs.find(name) == RenderPrograms::m_render_programs.end()) {
 		VertexShader vertex_shader;
-		!vertex_shader.load_from_file(std::string("res/shaders/") + name + std::string("_vertex.glsl"));
+		vertex_shader.load_from_file(std::string("res/shaders/") + name + std::string("_vertex.glsl"));
 		FragmentShader fragment_shader;
-		!fragment_shader.load_from_file(std::string("res/shaders/") + name + std::string("_fragment.glsl"));
+		fragment_shader.load_from_file(std::string("res/shaders/") + name + std::string("_fragment.glsl"));
 		RenderProgram render_program;
-		!render_program.link(vertex_shader, fragment_shader);
+		render_program.link(vertex_shader, fragment_shader);
 		
 		RenderPrograms::m_render_programs.insert(std::make_pair(name, std::move(render_program)));
 	}
