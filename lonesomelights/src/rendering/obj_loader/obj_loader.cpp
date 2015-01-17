@@ -4,6 +4,10 @@ const std::vector<GLfloat>& ObjLoader::get_obj_positions(const std::string& name
 	ObjLoader::get_obj(name);
 	return m_obj_shapes.find(name)->second[shape_index].mesh.positions;
 }
+const std::vector<GLfloat>& ObjLoader::get_obj_normals(const std::string& name, unsigned int shape_index) {
+	ObjLoader::get_obj(name);
+	return m_obj_shapes.find(name)->second[shape_index].mesh.normals;
+}
 const std::vector<GLuint>& ObjLoader::get_obj_elements(const std::string& name, unsigned int shape_index) {
 	ObjLoader::get_obj(name);
 	return m_obj_shapes.find(name)->second[shape_index].mesh.indices;
@@ -11,11 +15,12 @@ const std::vector<GLuint>& ObjLoader::get_obj_elements(const std::string& name, 
 
 void ObjLoader::get_obj(const std::string& name) {
 	if (ObjLoader::m_obj_shapes.find(name) == ObjLoader::m_obj_shapes.end()) {
-		std::string file_path = "res/models/" + name + ".obj";
+		std::string obj_file_path = "res/models/" + name + ".obj";
+		std::string mtl_file_path = "res/models/" + name + ".mtl";
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
 
-		tinyobj::LoadObj(shapes, materials, file_path.c_str());
+		tinyobj::LoadObj(shapes, materials, obj_file_path.c_str(), mtl_file_path.c_str());
 		ObjLoader::m_obj_shapes.insert(std::make_pair(name, shapes));
 	}
 }

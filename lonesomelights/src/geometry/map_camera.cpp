@@ -6,7 +6,6 @@
 MapCamera::MapCamera(const Map& map, const glm::vec2& eye_position, float aspect)
 	: PerspectiveCamera(PerspectiveCamera::create_from_view_direction(glm::vec3(eye_position.x, 7.5F, eye_position.y), glm::vec3(1.0F, -1.0F, 1.0F), glm::vec3(1.0F, 1.0F, 1.0F), 70.0F, aspect, 0.1F, 1000.0F)),
 	Updatable(),
-	Transformable(glm::mat4(), map),
 	m_velocity(0.0F) {
 }
 

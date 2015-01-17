@@ -6,16 +6,17 @@
 
 #include <iostream>
 
-ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& particle_start_velocity, const glm::vec3& particle_acceleration, float min_particle_lifetime_seconds, float max_particle_lifetime_seconds, float frequency, float current_time_seconds, unsigned int max_particle_count)
+ParticleEmitter::ParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, float billboard_size, float current_time_seconds, unsigned int max_particle_count)
 	: Drawable(RenderPrograms::get_render_program("particle_emitter")), // TODO
-	m_position(position),
-	m_particle_start_velocity(particle_start_velocity),
-	m_particle_acceleration(particle_acceleration),
-	m_min_particle_lifetime_seconds(min_particle_lifetime_seconds),
-	m_max_particle_lifetime_seconds(max_particle_lifetime_seconds),
-	m_frequency(frequency),
+	Updatable(),
+	Transformable(transformation, parent_transformable),
+	m_particle_offset(),
+	m_particle_start_velocity(),
+	m_particle_acceleration(),
+	m_particle_lifetime_seconds(),
+	m_frequency(),
 	m_max_particle_count(max_particle_count),
-	m_base_vertex_buffer_object({ glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.05F, 0.0F, 0.0F), glm::vec3(0.0F, 0.05F, 0.0F) }, GL_ARRAY_BUFFER),
+	m_base_vertex_buffer_object({ glm::vec3(-billboard_size / 2.0F, -billboard_size / 2.0F, 0.0F), glm::vec3(billboard_size / 2.0F, -billboard_size / 2.0F, 0.0F), glm::vec3(billboard_size / 2.0F, billboard_size / 2.0F, 0.0F), glm::vec3(-billboard_size / 2.0F, billboard_size / 2.0F, 0.0F) }, GL_ARRAY_BUFFER),
 	m_instances_vertex_buffer_object(m_max_particle_count, GL_ARRAY_BUFFER),
 	m_particles(),
 	m_next_emission_time_seconds(current_time_seconds),
@@ -38,14 +39,13 @@ ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& par
 	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(Particle::Data), (void*) ((3 * 3 + 1 * 1) * sizeof(GL_FLOAT)));
 	VertexArrayObject::unbind_any();
 	VertexBufferObjects::unbind_any();
-	
-	//Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
 }
 
 void ParticleEmitter::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 
-	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", camera);
+	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
+	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
 	
 	Drawable::m_render_program.bind();
 	m_vertex_array_object.bind();
@@ -56,7 +56,7 @@ void ParticleEmitter::draw(const Camera& camera) const {
 	glVertexAttribDivisor(3, 1);
 	glVertexAttribDivisor(4, 1);
 	glVertexAttribDivisor(5, 1);
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 3, m_max_particle_count);
+	glDrawArraysInstanced(GL_QUADS, 0, 4, m_max_particle_count);
 	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
@@ -77,7 +77,8 @@ void ParticleEmitter::update(const Timer& timer) {
 	
 	while (m_next_emission_time_seconds <= current_time_seconds) {
 		assert(m_particles.size() < m_max_particle_count);
-		m_particles.push_back(Particle(m_instances_vertex_buffer_object.claim_bucket(), m_position, m_particle_start_velocity, m_particle_acceleration, m_next_emission_time_seconds, (m_min_particle_lifetime_seconds + m_max_particle_lifetime_seconds) / 2.0F /* TODO: Random lifetime. */));
+		recalculate_properties();
+		m_particles.push_back(Particle(m_instances_vertex_buffer_object.claim_bucket(), m_particle_offset, m_particle_start_velocity, m_particle_acceleration, m_next_emission_time_seconds, m_particle_lifetime_seconds));
 		m_next_emission_time_seconds += 1.0F / m_frequency;
 	}
 	

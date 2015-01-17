@@ -6,7 +6,7 @@
 
 // TEST
 #include "timer.h"
-#include "game/unit.h"
+#include "game/units/unit.h"
 #include "networking/network_handlers/server_handlers/unit_server_handler.h"
 
 void print_usage_and_die(int argc, char** argv) {

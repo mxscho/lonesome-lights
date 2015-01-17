@@ -5,6 +5,12 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 
+const glm::vec3& Camera::get_eye_position() const {
+	return m_eye_position;
+}
+const glm::vec3& Camera::get_up_direction() const {
+	return m_up_direction;
+}
 const glm::mat4& Camera::get_view_transformation() const {
 	return m_view_transformation;
 }

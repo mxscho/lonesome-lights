@@ -4,13 +4,12 @@
 #include <glm/glm.hpp>
 
 #include "geometry/perspective_camera.h"
-#include "geometry/transformable.h"
 #include "updatable.h"
 
 class Map;
 class Timer;
 
-class MapCamera : public PerspectiveCamera, public Updatable, public Transformable {
+class MapCamera : public PerspectiveCamera, public Updatable {
 public:
 	MapCamera(const Map& map, const glm::vec2& eye_position, float aspect);
 	

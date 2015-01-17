@@ -5,12 +5,14 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 	timer.cpp \
 	updatable.cpp \
 		\
-		game/unit.cpp \
 			\
 			game/map/map.cpp \
 			game/map/floor_tile.cpp \
 			game/map/rock_tile.cpp \
 			game/map/tile.cpp \
+			\
+			game/units/unit.cpp \
+			game/units/laser_unit.cpp \
 			\
 		geometry/camera.cpp \
 		geometry/constant_accelerating_movement.cpp \
@@ -51,6 +53,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			\
 			rendering/particles/particle.cpp \
 			rendering/particles/particle_emitter.cpp \
+			rendering/particles/spheric_particle_emitter.cpp \
 			\
 			rendering/obj_loader/obj_loader.cpp \
 			rendering/obj_loader/tiny_obj_loader.cpp

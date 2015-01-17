@@ -11,6 +11,7 @@
 class ObjLoader {
 public:
 	static const std::vector<GLfloat>& get_obj_positions(const std::string& name, unsigned int shape_index);
+	static const std::vector<GLfloat>& get_obj_normals(const std::string& name, unsigned int shape_index);
 	static const std::vector<GLuint>& get_obj_elements(const std::string& name, unsigned int shape_index);
 private:
 	static void get_obj(const std::string& name);
