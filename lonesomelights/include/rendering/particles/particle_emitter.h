@@ -18,9 +18,11 @@ class Timer;
 
 class ParticleEmitter : public Drawable, public Updatable, public Transformable {
 public:
-	ParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, float billboard_size, float current_time_seconds, unsigned int max_particle_count);	
+	ParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const std::string& fragment_shader_name, const glm::vec2& billboard_size, bool orientate_towards_velocity, unsigned int max_particle_count);
 
-	void draw(const Camera& camera) const override final;
+	void set_emitting(bool is_emitting);
+	
+	void draw(const Camera& camera) const override;
 	void update(const Timer& timer) override final;
 protected:
 	virtual void recalculate_properties() = 0;
@@ -31,6 +33,9 @@ protected:
 	float m_particle_lifetime_seconds;
 	float m_frequency;
 private:
+	bool m_is_emitting;
+	bool m_orientate_towards_velocity;
+	float m_current_time_seconds;
 	unsigned int m_max_particle_count;
 	VertexBufferObject<glm::vec3> m_base_vertex_buffer_object;
 	VertexBufferObject<Particle::Data> m_instances_vertex_buffer_object;

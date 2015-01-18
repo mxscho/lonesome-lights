@@ -15,11 +15,13 @@ public:
 	void set_position(const glm::vec3& position);
 	
 	const glm::mat4& get_global_transformation() const;
-private:
+	glm::mat4 get_global_transformation(const glm::mat4& additional_local_transformation) const;
+protected:
 	void recalculate_global_transformation();
-
+private:
 	const Transformable* m_parent_transformable;
 	glm::mat4 m_local_transformation;
+	glm::mat4 m_parent_transformation;
 	glm::mat4 m_global_transformation;
 };
 

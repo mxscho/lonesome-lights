@@ -26,11 +26,13 @@
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
 #include "game/map/map.h"
-#include "rendering/particles/spheric_particle_emitter.h"
+#include "rendering/particles/particle_systems/explosion.h"
+#include "rendering/particles/linear_particle_emitter.h"
 #include "geometry/transformable.h"
 #include "geometry/map_camera.h"
 #include "geometry/path_finder.h"
 #include "rendering/obj_loader/obj_loader.h"
+#include "rendering/opengl/textures.h"
 
 static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
 
@@ -152,17 +154,18 @@ int main(int argc, char** argv) {
 	Map map = Map::create_test_map(1.0F);
 	PathFinder path_finder(map, 12);
 	
-	SphericParticleEmitter spheric_particle_emitter(
-		glm::translate(glm::vec3(8.0F, 3.0F, 8.0F)), // Transformation
-		map, // Parent transformable
-		0.05F, // Billboard size
-		timer.get_current_time_seconds(), // Current time (seconds)
-		0.0F, // Radius
-		0.5F, // Particle start velocity
-		0.0F, // Particle acceleration
-		5.0F, // Minimum particle lifetime (seconds)
-		8.0F, // Maximum particle lifetime (seconds)
-		200.0F  // Frequency
+	Explosion explosion(glm::translate(glm::vec3(8.0F, 3.0F, 8.0F)), map, 1.0F);
+	LinearParticleEmitter linear_particle_emitter(
+		glm::translate(glm::vec3(5.0F, 0.0F, 5.0F)), // Transformation
+		map, // Transformable
+		glm::vec2(3.0F * 0.2F, 0.2F), // Billboard size
+		Textures::get_texture("particles/laser"), // Texture
+		glm::vec3(0.0F, 0.5F, 0.0F), // Start color
+		glm::vec3(0.0F, 0.5F, 0.0F), // End color
+		glm::vec3(20.0F, 0.0F, 20.0F), // Particle start velocity
+		0.0F, // Particle offset
+		5.0F, // Maximum particle distance
+		100.0F  // Frequency
 	);
 	
 	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map);
@@ -170,35 +173,7 @@ int main(int argc, char** argv) {
 	laser_unit.set_network_handler(unit_client_handler);*/
 	
 	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
-	
-	
-	
-	
-	
-	// --------
-	
-	VertexBufferObject<GLfloat> positions_vbo(ObjLoader::get_obj_positions("unit_0", 0), GL_ARRAY_BUFFER);
-	VertexBufferObject<GLuint> elements_vbo(ObjLoader::get_obj_elements("unit_0", 0), GL_ELEMENT_ARRAY_BUFFER);
-	VertexArrayObject vao;
-	vao.bind();
-	positions_vbo.bind();
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-	elements_vbo.bind();
-	VertexArrayObject::unbind_any();
-	VertexBufferObjects::unbind_any();
-	
-	// --------	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -246,7 +221,7 @@ int main(int argc, char** argv) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 		
-		//glEnable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glFrontFace(GL_CCW);
 		glEnable(GL_DEPTH_TEST);
@@ -259,29 +234,22 @@ int main(int argc, char** argv) {
 		client.update();
 		
 		map.update(timer);
-		spheric_particle_emitter.update(timer);
 		laser_unit->update(timer);
 		
-		spheric_particle_emitter.draw(map_camera);
+		static float trigger_explosion_time_seconds;
+		trigger_explosion_time_seconds += timer.get_delta_time_seconds();
+		if (trigger_explosion_time_seconds >= 1.0F && explosion.has_finished()) {
+			trigger_explosion_time_seconds = 0.0F;
+			explosion.trigger(timer.get_current_time_seconds());
+		}
+		explosion.update(timer);
+		
+		linear_particle_emitter.update(timer);
+		
 		map.draw(map_camera);
 		laser_unit->draw(map_camera);
-		
-		// ----------
-		
-		const RenderProgram& render_program = RenderPrograms::get_render_program("unit");
-
-		render_program.set_uniform("u_model_transformation", glm::mat4());
-		render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", map_camera);
-
-		render_program.bind();
-		vao.bind();
-		
-		//glDrawElements(GL_TRIANGLES, elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
-		
-		VertexArrayObject::unbind_any();
-		RenderProgram::unbind_any();
-		
-		// ----------
+		explosion.draw(map_camera);
+		linear_particle_emitter.draw(map_camera);
 
 		window.display();
 	}

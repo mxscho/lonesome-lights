@@ -4,6 +4,7 @@
 #include "game/units/unit.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
+#include "rendering/particles/spheric_particle_emitter.h"
 
 #include <list>
 #include <memory>
@@ -26,11 +27,18 @@ private:
 		glm::vec3 normal;
 	};
 	
-	LaserUnit(const glm::vec2& position, const Map& map, const std::vector<Data>& vertices, const std::vector<GLuint>& elements);
+	LaserUnit(const glm::vec2& position, const Map& map, const std::vector<Data>& vertices, const std::vector<unsigned int>& vertex_counts);
 
 	VertexBufferObject<Data> m_vertices_vbo;
-	VertexBufferObject<GLuint> m_elements_vbo;
-	VertexArrayObject m_vertex_array_object;
+	std::vector<unsigned int> m_vertex_counts;
+	VertexBufferObject<GLuint> m_vine_elements_vbo;
+	VertexBufferObject<GLuint> m_ball_elements_vbo;
+	VertexArrayObject m_vine_vao;
+	VertexArrayObject m_ball_vao;
+	glm::mat4 m_vine_transformation;
+	glm::mat4 m_ball_transformation;
+	
+	SphericParticleEmitter m_sparks;
 };
 
 #endif

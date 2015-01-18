@@ -62,6 +62,13 @@ void RenderProgram::bind() const {
 	assert(m_is_generated);
 	glUseProgram(m_id);
 }
+void RenderProgram::set_uniform(const std::string& name, bool value) const {
+	assert(m_is_generated);
+	bind();
+	
+	int uniform_location = glGetUniformLocation(m_id, name.c_str());
+	glUniform1ui(uniform_location, value);
+}
 void RenderProgram::set_uniform(const std::string& name, GLuint value) const {
 	assert(m_is_generated);
 	bind();
@@ -75,6 +82,13 @@ void RenderProgram::set_uniform(const std::string& name, float value) const {
 	
 	int uniform_location = glGetUniformLocation(m_id, name.c_str());
 	glUniform1f(uniform_location, value);
+}
+void RenderProgram::set_uniform(const std::string& name, const glm::vec2& value) const {
+	assert(m_is_generated);
+	bind();
+	
+	int uniform_location = glGetUniformLocation(m_id, name.c_str());
+	glUniform2f(uniform_location, value.x, value.y);
 }
 void RenderProgram::set_uniform(const std::string& name, const glm::vec3& value) const {
 	assert(m_is_generated);
