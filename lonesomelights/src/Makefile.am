@@ -5,6 +5,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 	timer.cpp \
 	updatable.cpp \
 		\
+		game/player.cpp \
 			\
 			game/map/map.cpp \
 			game/map/floor_tile.cpp \
@@ -57,6 +58,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			rendering/particles/spheric_particle_emitter.cpp \
 				\
 				rendering/particles/particle_systems/explosion.cpp \
+				rendering/particles/particle_systems/laser.cpp \
 				\
 			rendering/obj_loader/obj_loader.cpp \
 			rendering/obj_loader/tiny_obj_loader.cpp

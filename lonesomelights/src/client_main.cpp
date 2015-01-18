@@ -27,14 +27,15 @@
 #include "rendering/opengl/render_programs.h"
 #include "game/map/map.h"
 #include "rendering/particles/particle_systems/explosion.h"
-#include "rendering/particles/linear_particle_emitter.h"
+#include "rendering/particles/particle_systems/laser.h"
 #include "geometry/transformable.h"
 #include "geometry/map_camera.h"
 #include "geometry/path_finder.h"
 #include "rendering/obj_loader/obj_loader.h"
 #include "rendering/opengl/textures.h"
+#include "game/player.h"
 
-static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
+static sf::VideoMode video_mode = sf::VideoMode(800, 600);//sf::VideoMode::getDesktopMode();
 
 static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
@@ -155,22 +156,12 @@ int main(int argc, char** argv) {
 	PathFinder path_finder(map, 12);
 	
 	Explosion explosion(glm::translate(glm::vec3(8.0F, 3.0F, 8.0F)), map, 1.0F);
-	LinearParticleEmitter linear_particle_emitter(
-		glm::translate(glm::vec3(5.0F, 0.0F, 5.0F)), // Transformation
-		map, // Transformable
-		glm::vec2(3.0F * 0.2F, 0.2F), // Billboard size
-		Textures::get_texture("particles/laser"), // Texture
-		glm::vec3(0.0F, 0.5F, 0.0F), // Start color
-		glm::vec3(0.0F, 0.5F, 0.0F), // End color
-		glm::vec3(20.0F, 0.0F, 20.0F), // Particle start velocity
-		0.0F, // Particle offset
-		5.0F, // Maximum particle distance
-		100.0F  // Frequency
-	);
 	
-	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map);
+	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
+	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
 	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
 	laser_unit.set_network_handler(unit_client_handler);*/
+	laser_unit->start_shooting(glm::vec2(5.0F, 2.0F));
 	
 	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 
@@ -244,12 +235,9 @@ int main(int argc, char** argv) {
 		}
 		explosion.update(timer);
 		
-		linear_particle_emitter.update(timer);
-		
 		map.draw(map_camera);
 		laser_unit->draw(map_camera);
 		explosion.draw(map_camera);
-		linear_particle_emitter.draw(map_camera);
 
 		window.display();
 	}

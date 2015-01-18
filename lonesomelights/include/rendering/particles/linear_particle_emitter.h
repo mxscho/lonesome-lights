@@ -13,7 +13,9 @@ class Timer;
 class LinearParticleEmitter : public ParticleEmitter {
 public:
 	LinearParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const glm::vec2& billboard_size,
-		const Texture& texture, const glm::vec3& start_color, const glm::vec3& end_color, const glm::vec3& particle_start_velocity, float particle_offset, float max_particle_distance, float frequency);
+	const Texture& texture, const glm::vec3& start_color, const glm::vec3& end_color, float particle_velocity, unsigned int max_particle_count, float frequency);
+	
+	void set_target(const glm::vec3& target);
 	
 	void draw(const Camera& camera) const override final;
 protected:
@@ -22,7 +24,8 @@ private:
 	const Texture& m_texture;
 	glm::vec3 m_start_color;
 	glm::vec3 m_end_color;
-	float m_max_particle_distance;
+	float m_particle_velocity;
+	glm::vec3 m_target;
 };
 
 #endif

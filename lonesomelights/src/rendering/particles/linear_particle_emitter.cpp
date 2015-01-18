@@ -9,19 +9,20 @@
 #include "rendering/opengl/texture.h"
 
 LinearParticleEmitter::LinearParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const glm::vec2& billboard_size,
-	const Texture& texture, const glm::vec3& start_color, const glm::vec3& end_color, const glm::vec3& particle_start_velocity, float particle_offset, float max_particle_distance, float frequency)
-	: ParticleEmitter(transformation, parent_transformable, "linear_particle_emitter", billboard_size, true,
-		static_cast<unsigned int>(ceil(max_particle_distance / glm::length(particle_start_velocity) * frequency * 2.0F)) + 10
-	),
+	const Texture& texture, const glm::vec3& start_color, const glm::vec3& end_color, float particle_velocity, unsigned int max_particle_count, float frequency)
+	: ParticleEmitter(transformation, parent_transformable, "linear_particle_emitter", billboard_size, true, max_particle_count),
 	m_texture(texture),
 	m_start_color(start_color),
 	m_end_color(end_color),
-	m_max_particle_distance(max_particle_distance) {
-	ParticleEmitter::m_particle_offset = particle_offset * glm::normalize(particle_start_velocity);
-	ParticleEmitter::m_particle_start_velocity = particle_start_velocity;
+	m_particle_velocity(particle_velocity),
+	m_target() {
+	ParticleEmitter::m_particle_offset = glm::vec3(0.0F, 0.0F, 0.0F);
 	ParticleEmitter::m_particle_acceleration = glm::vec3(0.0F);
 	ParticleEmitter::m_frequency = frequency;
-	ParticleEmitter::m_particle_lifetime_seconds = max_particle_distance / glm::length(particle_start_velocity);
+}
+
+void LinearParticleEmitter::set_target(const glm::vec3& target) {
+	m_target = target;
 }
 
 void LinearParticleEmitter::draw(const Camera& camera) const {
@@ -42,4 +43,7 @@ void LinearParticleEmitter::draw(const Camera& camera) const {
 }
 
 void LinearParticleEmitter::recalculate_properties() {
+	glm::vec3 position_to_target = m_target - Transformable::get_position();
+	ParticleEmitter::m_particle_start_velocity = m_particle_velocity * glm::normalize(position_to_target);
+	ParticleEmitter::m_particle_lifetime_seconds = glm::length(position_to_target) / m_particle_velocity;
 }

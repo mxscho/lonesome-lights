@@ -23,7 +23,7 @@ public:
 	void set_emitting(bool is_emitting);
 	
 	void draw(const Camera& camera) const override;
-	void update(const Timer& timer) override final;
+	void update(const Timer& timer) override;
 protected:
 	virtual void recalculate_properties() = 0;
 

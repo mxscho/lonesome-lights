@@ -10,12 +10,13 @@
 
 class Camera;
 class Map;
+class Player;
 class RenderProgram;
 class Timer;
 
 class Unit : public Drawable, public Networkable, public InertialMovable {
 public:
-	Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, float max_velocity, float acceleration, float decceleration);
+	Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration);
 
 	glm::vec2 get_position_vec2() const;
 	
@@ -24,6 +25,8 @@ public:
 	void add_target_position_to_path(const Timer& timer, const glm::vec2& target_position);
 	
 	void update(const Timer& timer) override;
+protected:
+	const Player& m_player;
 };
 
 #endif
