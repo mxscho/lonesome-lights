@@ -44,7 +44,9 @@ private:
 	std::string get_nearest_walkable_node(glm::vec2 point);
 	void insert_into_open_list(Node node, bool greedy);
 	bool delete_node_in_list(Node node);
-	void add_neighbors_to_open_list(Node node, glm::vec2 end_node_position, bool greedy);
+	void add_neighbors_to_open_list(Node node, Node last_node, glm::vec2 end_node_position, bool greedy);
+	float safe_acos(float x);
+	bool is_walkable(glm::vec2 start, glm::vec2 end);
 	
 };
 #endif
