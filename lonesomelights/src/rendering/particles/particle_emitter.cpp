@@ -113,7 +113,6 @@ void ParticleEmitter::draw_deferred(const Camera& camera, const Texture& color_t
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
 	
-	Texture::unbind_any(GL_TEXTURE0);
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
