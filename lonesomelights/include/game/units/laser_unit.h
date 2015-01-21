@@ -2,6 +2,7 @@
 #define __GAME__UNITS__LASER_UNIT_H__
 
 #include "game/units/unit.h"
+#include "rendering/drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
 #include "rendering/particles/particle_systems/laser.h"
@@ -15,7 +16,7 @@
 
 class Player;
 
-class LaserUnit : public Unit {
+class LaserUnit : public Drawable, public Unit {
 public:
 	static std::unique_ptr<LaserUnit> create(const glm::vec2& position, const Map& map, const Player& player);
 

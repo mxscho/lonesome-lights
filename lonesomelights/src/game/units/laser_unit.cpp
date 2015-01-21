@@ -4,6 +4,7 @@
 #include "game/player.h"
 #include "rendering/obj_loader/obj_loader.h"
 #include "rendering/opengl/render_program.h"
+#include "rendering/opengl/render_programs.h"
 #include "rendering/opengl/textures.h"
 #include "timer.h"
 
@@ -32,7 +33,7 @@ std::unique_ptr<LaserUnit> LaserUnit::create(const glm::vec2& position, const Ma
 }
 
 void LaserUnit::start_shooting(const glm::vec2& position) {
-	m_laser.set_target(glm::vec3(position.x, 0.0F, position.y));
+	m_laser.set_target(glm::vec3(position.x, Transformable::get_position().y, position.y));
 	m_laser.set_enabled(true);
 }
 void LaserUnit::stop_shooting() {
@@ -41,6 +42,10 @@ void LaserUnit::stop_shooting() {
 
 void LaserUnit::draw(const Camera& camera) const {
 	Drawable::draw(camera);
+	
+	Unit::draw(camera);
+	
+	m_laser.draw(camera);
 
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
 	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
@@ -58,8 +63,6 @@ void LaserUnit::draw(const Camera& camera) const {
 	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
-	
-	m_laser.draw(camera);
 }
 void LaserUnit::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
 	m_laser.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
@@ -86,7 +89,8 @@ LaserUnit::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 }
 
 LaserUnit::LaserUnit(const glm::vec2& position, const Map& map, const Player& player, const std::vector<LaserUnit::Data>& vertices, const std::vector<unsigned int>& vertex_counts)
-	: Unit(glm::translate(glm::vec3(0.0F, 0.2F, 0.0F)) * glm::scale(glm::vec3(0.0075F, 0.0075F, 0.0075F)), position, map, player, 1.0F, 0.5F, 0.5F),
+	: Drawable(RenderPrograms::get_render_program("unit")),
+	Unit(glm::translate(glm::vec3(0.0F, 0.3F, 0.0F)) * glm::scale(glm::vec3(0.0075F, 0.0075F, 0.0075F)), position, map, player, 1.0F, 0.5F, 0.5F),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_vertex_counts(vertex_counts),
 	m_vine_elements_vbo(ObjLoader::get_obj_elements("unit_0", 0), GL_ELEMENT_ARRAY_BUFFER),

@@ -5,7 +5,9 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 	timer.cpp \
 	updatable.cpp \
 		\
+		game/game.cpp \
 		game/player.cpp \
+		game/player_handler.cpp \
 			\
 			game/map/map.cpp \
 			game/map/floor_tile.cpp \
@@ -14,6 +16,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			\
 			game/units/unit.cpp \
 			game/units/laser_unit.cpp \
+			game/units/selection_circle.cpp \
 			\
 		geometry/camera.cpp \
 		geometry/constant_accelerating_movement.cpp \

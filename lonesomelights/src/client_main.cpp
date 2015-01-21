@@ -19,6 +19,8 @@
 
 // TEST
 #include "timer.h"
+#include "game/player_handler.h"
+#include "game/game.h"
 #include "game/units/laser_unit.h"
 #include "networking/network_handlers/client_handlers/unit_client_handler.h"
 #include <SFML/Window.hpp>
@@ -159,6 +161,9 @@ int main(int argc, char** argv) {
 	
 	Explosion explosion(glm::translate(glm::vec3(8.0F, 0.2F, 8.0F)), map, 1.0F);
 	
+	Game game;
+	PlayerHandler player_handler(game);
+	
 	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
 	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
 	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
@@ -167,15 +172,6 @@ int main(int argc, char** argv) {
 	
 	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 
-	
-	
-	
-	
-	
-	
-	
-	// ---------------------------
-	
 	FrameBufferObject frame_buffer_object(video_mode.width, video_mode.height);
 	Texture color_texture;
 	bool result = color_texture.generate_empty(video_mode.width, video_mode.height, GL_TEXTURE0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -210,16 +206,6 @@ int main(int argc, char** argv) {
 	VertexArrayObject::unbind_any();
 	VertexBufferObjects::unbind_any();
 	
-	// ---------------------------
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -228,9 +214,11 @@ int main(int argc, char** argv) {
 			} else if (event.type == sf::Event::MouseWheelMoved) {
 				map_camera.change_zoom(event.mouseWheel.delta);
 			} else if (event.type == sf::Event::MouseButtonPressed) {
-				if (event.mouseButton.button == sf::Mouse::Right) {
-					std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, event.mouseButton.x, event.mouseButton.y);
-					if (world_position.first) {
+				std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, event.mouseButton.x, event.mouseButton.y);
+				if (world_position.first) {
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						player_handler.on_mouse_select(world_position.second, true);
+					} else if (event.mouseButton.button == sf::Mouse::Right) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
 							laser_unit->add_target_position_to_path(timer, glm::vec2(world_position.second.x, world_position.second.z));
 						} else {
@@ -258,7 +246,8 @@ int main(int argc, char** argv) {
 		client.update();
 		
 		map.update(timer);
-		laser_unit->update(timer);
+		game.update(timer);
+		//laser_unit->update(timer);
 		
 		static float trigger_explosion_time_seconds;
 		trigger_explosion_time_seconds += timer.get_delta_time_seconds();
@@ -300,8 +289,9 @@ int main(int argc, char** argv) {
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		map.draw(map_camera);
-		laser_unit->draw(map_camera);
+		//map.draw(map_camera);
+		game.draw(map_camera);
+		//laser_unit->draw(map_camera);
 		explosion.draw(map_camera);
 		
 		FrameBufferObject::unbind_any();
@@ -336,7 +326,8 @@ int main(int argc, char** argv) {
 		
 		// Deferred rendering to screen.
 		
-		laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+		game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+		//laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		
 		window.display();
