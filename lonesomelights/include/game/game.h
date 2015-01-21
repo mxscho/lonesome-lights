@@ -18,6 +18,7 @@ class Game : public Networkable, public Updatable {
 public:
 	Game();
 	
+	Map& get_map();
 	std::vector<std::unique_ptr<Unit>>& get_own_units();
 	
 	void draw(const Camera& camera) const;

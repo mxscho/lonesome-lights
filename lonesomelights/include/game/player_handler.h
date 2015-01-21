@@ -3,6 +3,7 @@
 
 #include "game/game.h"
 #include "game/units/unit.h"
+#include "geometry/path_finder.h"
 #include "updatable.h"
 
 #include <glm/glm.hpp>
@@ -15,9 +16,10 @@ public:
 	
 	void update(const Timer& timer) override final;
 	
-	void on_mouse_select(const glm::vec3& position, bool is_left);
+	void on_mouse_select(const Timer& timer, const glm::vec3& position, bool is_left, bool is_shift);
 private:
 	Game& m_game;
+	PathFinder m_path_finder;
 	Unit* m_selected_unit;
 };
 

@@ -22,6 +22,9 @@ Game::Game()
 	m_opponent_units.push_back(LaserUnit::create(glm::vec2(7.0F, 3.0F), m_map, m_opponent_player));
 }
 
+Map& Game::get_map() {
+	return m_map;
+}
 std::vector<std::unique_ptr<Unit>>& Game::get_own_units() {
 	return m_own_units;
 }

@@ -157,21 +157,7 @@ int main(int argc, char** argv) {
 	timer.advance();
 	
 	Map map = Map::create_test_map(1.0F);
-	
-	
-	// -- for test map' base ---
-	Tile& base_up = map.get_tile(2, 7);
-	Tile& base_down = map.get_tile(2, 5);
-	Tile& base_left = map.get_tile(1, 6);
-	Tile& base_right = map.get_tile(3, 6);
-	base_up.set_is_walkable(false);
-	base_down.set_is_walkable(false);
-	base_left.set_is_walkable(false);
-	base_right.set_is_walkable(false);
-	// --------------------
-	
-	
-	PathFinder path_finder(map, 2);
+	PathFinder path_finder(map, 12);
 	
 	Explosion explosion(glm::translate(glm::vec3(8.0F, 0.2F, 8.0F)), map, 1.0F);
 	
@@ -187,7 +173,6 @@ int main(int argc, char** argv) {
 	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 
 	FrameBufferObject frame_buffer_object;
-
 	Texture color_texture;
 	bool result = color_texture.generate_empty(video_mode.width, video_mode.height, GL_TEXTURE0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
 	assert(result);
@@ -232,13 +217,12 @@ int main(int argc, char** argv) {
 				std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, event.mouseButton.x, event.mouseButton.y);
 				if (world_position.first) {
 					if (event.mouseButton.button == sf::Mouse::Left) {
-						player_handler.on_mouse_select(world_position.second, true);
+						player_handler.on_mouse_select(timer, world_position.second, true, false);
 					} else if (event.mouseButton.button == sf::Mouse::Right) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-							laser_unit->add_target_position_to_path(timer, glm::vec2(world_position.second.x, world_position.second.z));
+							player_handler.on_mouse_select(timer, world_position.second, false, true);
 						} else {
-							std::list<glm::vec2> path = path_finder.get_shortest_path(laser_unit->get_position_vec2(), glm::vec2(world_position.second.x, world_position.second.z), false);
-							laser_unit->set_target_path(timer, path);
+							player_handler.on_mouse_select(timer, world_position.second, false, false);
 						}
 					}
 				}

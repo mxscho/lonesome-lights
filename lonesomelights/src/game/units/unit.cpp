@@ -26,6 +26,10 @@ void Unit::set_selected(bool is_selected) {
 	m_is_selected = is_selected;
 }
 
+glm::vec2 Unit::get_target_position_vec2() const {
+	glm::vec3 target_position = InertialMovable::get_target_position();
+	return glm::vec2(target_position.x, target_position.z);
+}
 void Unit::set_target_path(const Timer& timer, const std::list<glm::vec2>& target_path) {
 	if (target_path.size() == 0) {
 		return;
@@ -42,6 +46,17 @@ void Unit::set_target_position(const Timer& timer, const glm::vec2& target_posit
 }
 void Unit::add_target_position_to_path(const Timer& timer, const glm::vec2& target_position) {
 	InertialMovable::add_target_position_to_path(timer, glm::vec3(target_position.x, InertialMovable::get_position().y, target_position.y));
+}
+void Unit::add_target_path_to_path(const Timer& timer, const std::list<glm::vec2>& target_path) {
+	if (target_path.size() == 0) {
+		return;
+	}
+
+	std::list<glm::vec3> target_path_vec3;
+	for (auto& i_target_position : target_path) {
+		target_path_vec3.push_back(glm::vec3(i_target_position.x, InertialMovable::get_position().y, i_target_position.y));
+	}
+	InertialMovable::add_target_path_to_path(timer, target_path_vec3);
 }
 
 void Unit::draw(const Camera& camera) const {

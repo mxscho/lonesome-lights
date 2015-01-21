@@ -29,6 +29,9 @@ bool InertialMovable::is_moving() const {
 	return m_is_moving;
 }
 
+glm::vec3 InertialMovable::get_target_position() const {
+	return m_target_path.size() > 0 ? m_target_path.back() : Transformable::get_position();
+}
 void InertialMovable::set_target_path(const Timer& timer, const std::list<glm::vec3>& target_path) {
 	m_start_position = Transformable::get_position();
 	m_start_velocity = m_velocity;
@@ -76,6 +79,11 @@ void InertialMovable::add_target_position_to_path(const Timer& timer, const glm:
 	std::list<glm::vec3> target_path = m_target_path;
 	target_path.push_back(target_position);
 	set_target_path(timer, target_path);
+}
+void InertialMovable::add_target_path_to_path(const Timer& timer, const std::list<glm::vec3>& target_path) {
+	std::list<glm::vec3> new_target_path = m_target_path;
+	new_target_path.insert(new_target_path.end(), target_path.begin(), target_path.end());
+	set_target_path(timer, new_target_path);
 }
 void InertialMovable::set_target_position(const Timer& timer, const glm::vec3& target_position) {
 	set_target_path(timer, { target_position });
