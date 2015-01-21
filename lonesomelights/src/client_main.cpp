@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
 	
 	// ---------------------------
 	
-	FrameBufferObject frame_buffer_object(video_mode.width, video_mode.height);
+	FrameBufferObject frame_buffer_object;
 	Texture color_texture;
 	bool result = color_texture.generate_empty(video_mode.width, video_mode.height, GL_TEXTURE0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
 	assert(result);

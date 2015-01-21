@@ -12,7 +12,7 @@ class FrameBufferObject {
 public:
 	static void unbind_any();
 
-	FrameBufferObject(unsigned int width, unsigned int height);
+	FrameBufferObject();
 	FrameBufferObject(const FrameBufferObject& vertex_array_object) = delete;
 	FrameBufferObject(FrameBufferObject&& vertex_array_object);
 	FrameBufferObject& operator=(const FrameBufferObject& vertex_array_object) = delete;
@@ -29,8 +29,6 @@ public:
 private:
 	void attach_texture(GLenum attachment, const Texture& texture);
 
-	unsigned int m_width;
-	unsigned int m_height;
 	bool m_is_generated;
 	GLuint m_id;
 	unsigned int m_colorbuffers_count;

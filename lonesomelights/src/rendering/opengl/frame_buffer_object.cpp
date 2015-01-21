@@ -9,10 +9,8 @@ void FrameBufferObject::unbind_any() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-FrameBufferObject::FrameBufferObject(unsigned int width, unsigned int height)
-	: m_width(width),
-	m_height(height),
-	m_is_generated(true),
+FrameBufferObject::FrameBufferObject()
+	: m_is_generated(true),
 	m_id(),
 	m_colorbuffers_count(0),
 	m_drawbuffers() {
