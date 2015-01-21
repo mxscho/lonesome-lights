@@ -1,4 +1,5 @@
 #include <array>
+#include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -34,6 +35,7 @@
 #include "rendering/obj_loader/obj_loader.h"
 #include "rendering/opengl/textures.h"
 #include "game/player.h"
+#include "rendering/opengl/frame_buffer_object.h"
 
 static sf::VideoMode video_mode = sf::VideoMode(800, 600);//sf::VideoMode::getDesktopMode();
 
@@ -155,7 +157,7 @@ int main(int argc, char** argv) {
 	Map map = Map::create_test_map(1.0F);
 	PathFinder path_finder(map, 12);
 	
-	Explosion explosion(glm::translate(glm::vec3(8.0F, 3.0F, 8.0F)), map, 1.0F);
+	Explosion explosion(glm::translate(glm::vec3(8.0F, 0.2F, 8.0F)), map, 1.0F);
 	
 	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
 	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
@@ -165,6 +167,59 @@ int main(int argc, char** argv) {
 	
 	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 
+	
+	
+	
+	
+	
+	
+	
+	// ---------------------------
+	
+	FrameBufferObject frame_buffer_object(video_mode.width, video_mode.height);
+	Texture color_texture;
+	bool result = color_texture.generate_empty(video_mode.width, video_mode.height, GL_TEXTURE0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
+	assert(result);
+	Texture position_texture;
+	result = position_texture.generate_empty(video_mode.width, video_mode.height, GL_TEXTURE1, GL_RGBA32F, GL_RGBA, GL_FLOAT);
+	assert(result);
+	Texture normal_texture;
+	result = normal_texture.generate_empty(video_mode.width, video_mode.height, GL_TEXTURE2, GL_RGBA32F, GL_RGBA, GL_FLOAT);
+	assert(result);
+	Texture depth_texture;
+	result = depth_texture.generate_empty(video_mode.width, video_mode.height, GL_TEXTURE3, GL_DEPTH_COMPONENT32, GL_DEPTH_COMPONENT, GL_FLOAT);
+	assert(result);
+	
+	frame_buffer_object.bind();
+	frame_buffer_object.attach_colorbuffer_from_texture(color_texture);
+	frame_buffer_object.attach_colorbuffer_from_texture(position_texture);
+	frame_buffer_object.attach_colorbuffer_from_texture(normal_texture);
+	frame_buffer_object.attach_depthbuffer_from_texture(depth_texture);
+	frame_buffer_object.finalize_attaching();
+	result = frame_buffer_object.check_status();
+	assert(result);
+	
+	FrameBufferObject::unbind_any();
+	
+	VertexArrayObject fbo_vao;
+	VertexBufferObject<glm::vec2> fbo_vbo({ glm::vec2(-1.0F, -1.0F), glm::vec2(1.0F, -1.0F), glm::vec2(1.0F, 1.0F), glm::vec2(-1.0F, 1.0F) }, GL_ARRAY_BUFFER);
+	fbo_vao.bind();
+	fbo_vbo.bind();
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+	VertexArrayObject::unbind_any();
+	VertexBufferObjects::unbind_any();
+	
+	// ---------------------------
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -195,29 +250,7 @@ int main(int argc, char** argv) {
 			map_camera.set_velocity(glm::vec2(0.0F));
 		}
 		
-		static bool is_wireframe_mode = false;
-		static bool is_wireframe_key_down = false;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			if (!is_wireframe_key_down) {
-				is_wireframe_mode = !is_wireframe_mode;
-			}
-			is_wireframe_key_down = true;
-		}
-		else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			is_wireframe_key_down = false;
-		}
-		if (is_wireframe_mode) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		} else {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-		
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW);
-		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// Update scene.
 		
 		timer.advance();
 		
@@ -235,10 +268,77 @@ int main(int argc, char** argv) {
 		}
 		explosion.update(timer);
 		
+		// Settings for rendering.
+		
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
+		glEnable(GL_DEPTH_TEST);
+		
+		static bool is_wireframe_mode = false;
+		static bool is_wireframe_key_down = false;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			if (!is_wireframe_key_down) {
+				is_wireframe_mode = !is_wireframe_mode;
+			}
+			is_wireframe_key_down = true;
+		}
+		else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			is_wireframe_key_down = false;
+		}
+		if (is_wireframe_mode) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		} else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		
+		glClearColor(0.0F, 0.0F, 0.2F, 0.0F);
+		
+		// Render scene to scene texture.
+		
+		frame_buffer_object.bind();
+		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 		map.draw(map_camera);
 		laser_unit->draw(map_camera);
 		explosion.draw(map_camera);
+		
+		FrameBufferObject::unbind_any();
+		
+		// Render scene texture to screen.
+		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		const RenderProgram& render_program = RenderPrograms::get_render_program("deferred");
+		render_program.set_uniform("u_color_texture", 0);
+		render_program.set_uniform("u_position_texture", 1);
+		render_program.set_uniform("u_normal_texture", 2);
+		render_program.set_uniform("u_depth_texture", 3);
 
+		render_program.bind();
+		fbo_vao.bind();
+
+		color_texture.bind(GL_TEXTURE0);
+		position_texture.bind(GL_TEXTURE1);
+		normal_texture.bind(GL_TEXTURE2);
+		depth_texture.bind(GL_TEXTURE3);
+		
+		glDrawArrays(GL_QUADS, 0, 4);
+
+		Texture::unbind_any(GL_TEXTURE0);
+		Texture::unbind_any(GL_TEXTURE1);
+		Texture::unbind_any(GL_TEXTURE2);
+		Texture::unbind_any(GL_TEXTURE3);
+
+		VertexArrayObject::unbind_any();
+		RenderProgram::unbind_any();
+		
+		// Deferred rendering to screen.
+		
+		laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+		explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+		
 		window.display();
 	}
 	

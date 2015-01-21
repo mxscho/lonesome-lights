@@ -69,12 +69,12 @@ void RenderProgram::set_uniform(const std::string& name, bool value) const {
 	int uniform_location = glGetUniformLocation(m_id, name.c_str());
 	glUniform1ui(uniform_location, value);
 }
-void RenderProgram::set_uniform(const std::string& name, GLuint value) const {
+void RenderProgram::set_uniform(const std::string& name, int value) const {
 	assert(m_is_generated);
 	bind();
 	
 	int uniform_location = glGetUniformLocation(m_id, name.c_str());
-	glUniform1ui(uniform_location, value);
+	glUniform1i(uniform_location, value);
 }
 void RenderProgram::set_uniform(const std::string& name, float value) const {
 	assert(m_is_generated);

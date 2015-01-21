@@ -16,6 +16,7 @@ public:
 		const Texture& texture, const glm::vec3& start_color, const glm::vec3& end_color, float radius, float particle_start_velocity, float gravity, float min_particle_lifetime_seconds, float max_particle_lifetime_seconds, float frequency);
 	
 	void draw(const Camera& camera) const override final;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const override final;
 protected:
 	void recalculate_properties() override final;
 private:

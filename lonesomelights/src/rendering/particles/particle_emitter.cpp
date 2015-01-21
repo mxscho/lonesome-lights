@@ -2,12 +2,13 @@
 
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
+#include "rendering/opengl/texture.h"
 #include "timer.h"
 
 #include <cassert>
 
 ParticleEmitter::ParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const std::string& fragment_shader_name, const glm::vec2& billboard_size, bool orientate_towards_velocity, unsigned int max_particle_count)
-	: Drawable(RenderPrograms::get_render_program("particle_emitter", fragment_shader_name)),
+	: DeferredDrawable(RenderPrograms::get_render_program("particle_emitter", fragment_shader_name), RenderPrograms::get_render_program("deferred_particle_emitter")),
 	Updatable(),
 	Transformable(transformation, parent_transformable),
 	m_particle_offset(),
@@ -19,7 +20,7 @@ ParticleEmitter::ParticleEmitter(const glm::mat4& transformation, const Transfor
 	m_orientate_towards_velocity(orientate_towards_velocity),
 	m_current_time_seconds(),
 	m_max_particle_count(max_particle_count),
-	m_base_vertex_buffer_object({ glm::vec3(-billboard_size.x / 2.0F, -billboard_size.y / 2.0F, 0.0F), glm::vec3(billboard_size.x / 2.0F, -billboard_size.y / 2.0F, 0.0F), glm::vec3(billboard_size.x / 2.0F, billboard_size.y / 2.0F, 0.0F), glm::vec3(-billboard_size.x / 2.0F, billboard_size.y / 2.0F, 0.0F) }, GL_ARRAY_BUFFER),
+	m_base_vertex_buffer_object({ glm::vec2(-billboard_size.x / 2.0F, -billboard_size.y / 2.0F), glm::vec2(billboard_size.x / 2.0F, -billboard_size.y / 2.0F), glm::vec2(billboard_size.x / 2.0F, billboard_size.y / 2.0F), glm::vec2(-billboard_size.x / 2.0F, billboard_size.y / 2.0F) }, GL_ARRAY_BUFFER),
 	m_instances_vertex_buffer_object(m_max_particle_count, GL_ARRAY_BUFFER),
 	m_particles(),
 	m_next_emission_time_seconds(-1.0F),
@@ -27,7 +28,7 @@ ParticleEmitter::ParticleEmitter(const glm::mat4& transformation, const Transfor
 	m_vertex_array_object.bind();
 	m_base_vertex_buffer_object.bind();
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 	m_instances_vertex_buffer_object.bind();
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle::Data), (void*) ((0 * 3 + 0 * 1) * sizeof(GL_FLOAT)));
@@ -69,6 +70,55 @@ void ParticleEmitter::draw(const Camera& camera) const {
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
 }
+void ParticleEmitter::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	glDepthMask(GL_FALSE);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	
+	DeferredDrawable::draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_color_texture", 0);
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_position_texture", 1);
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_normal_texture", 2);
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_depth_texture", 3);
+	
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
+	DeferredDrawable::m_deferred_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_orientate_towards_velocity", false);
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_current_time_seconds", m_current_time_seconds);
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_lighting_intensity", 0.05F);
+	
+	DeferredDrawable::m_deferred_render_program.bind();
+	m_vertex_array_object.bind();
+	
+	color_texture.bind(GL_TEXTURE0);
+	position_texture.bind(GL_TEXTURE1);
+	normal_texture.bind(GL_TEXTURE2);
+	depth_texture.bind(GL_TEXTURE3);
+	
+	glVertexAttribDivisor(0, 0);
+	glVertexAttribDivisor(1, 1);
+	glVertexAttribDivisor(2, 1);
+	glVertexAttribDivisor(3, 1);
+	glVertexAttribDivisor(4, 1);
+	glVertexAttribDivisor(5, 1);
+	glDrawArraysInstanced(GL_QUADS, 0, 4, m_max_particle_count);
+	
+	Texture::unbind_any(GL_TEXTURE0);
+	Texture::unbind_any(GL_TEXTURE1);
+	Texture::unbind_any(GL_TEXTURE2);
+	Texture::unbind_any(GL_TEXTURE3);
+	
+	VertexArrayObject::unbind_any();
+	RenderProgram::unbind_any();
+	
+	Texture::unbind_any(GL_TEXTURE0);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
+
 void ParticleEmitter::update(const Timer& timer) {
 	Updatable::update(timer);
 	

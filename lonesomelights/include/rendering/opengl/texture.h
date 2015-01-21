@@ -18,6 +18,7 @@ public:
 	GLuint get_id() const;
 	
 	bool load_from_file(const std::string& file_path, GLenum texture);
+	bool generate_empty(unsigned int width, unsigned int height, GLenum texture, GLint internal_format, GLenum format, GLenum type);
 	
 	void bind(GLenum texture) const;
 	void destroy();

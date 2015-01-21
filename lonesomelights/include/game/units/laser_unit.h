@@ -23,6 +23,7 @@ public:
 	void stop_shooting();
 	
 	void draw(const Camera& camera) const override final;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	
 	void update(const Timer& timer) override final;
 private:
@@ -45,7 +46,6 @@ private:
 	glm::mat4 m_ball_transformation;
 	
 	Laser m_laser;
-	SphericParticleEmitter m_flames;
 };
 
 #endif

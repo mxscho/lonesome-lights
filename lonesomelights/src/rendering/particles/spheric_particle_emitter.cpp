@@ -25,11 +25,12 @@ SphericParticleEmitter::SphericParticleEmitter(const glm::mat4& transformation, 
 }
 
 void SphericParticleEmitter::draw(const Camera& camera) const {
+	glDepthMask(GL_FALSE);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	
-	Drawable::m_render_program.set_uniform("u_texture", m_texture.get_id());
+	Drawable::m_render_program.set_uniform("u_texture", 0);
 	Drawable::m_render_program.set_uniform("u_start_color", m_start_color);
 	Drawable::m_render_program.set_uniform("u_end_color", m_end_color);
 	m_texture.bind(GL_TEXTURE0);
@@ -39,6 +40,13 @@ void SphericParticleEmitter::draw(const Camera& camera) const {
 	Texture::unbind_any(GL_TEXTURE0);
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
+void SphericParticleEmitter::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_start_color", m_start_color);
+	DeferredDrawable::m_deferred_render_program.set_uniform("u_end_color", m_end_color);
+	
+	ParticleEmitter::draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 }
 
 void SphericParticleEmitter::recalculate_properties() {

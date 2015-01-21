@@ -18,6 +18,7 @@ public:
 	void set_enabled(bool is_enabled);
 	
 	void draw(const Camera& camera) const;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	
 	void update(const Timer& timer) override final;
 private:

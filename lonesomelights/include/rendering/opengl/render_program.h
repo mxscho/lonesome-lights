@@ -24,7 +24,7 @@ public:
 	
 	void bind() const;
 	void set_uniform(const std::string& name, bool value) const;
-	void set_uniform(const std::string& name, GLuint value) const;
+	void set_uniform(const std::string& name, int value) const;
 	void set_uniform(const std::string& name, float value) const;
 	void set_uniform(const std::string& name, const glm::vec2& value) const;
 	void set_uniform(const std::string& name, const glm::vec3& value) const;
@@ -33,6 +33,7 @@ public:
 	void destroy();
 private:
 	bool m_is_generated;
+public:
 	GLuint m_id;
 };
 

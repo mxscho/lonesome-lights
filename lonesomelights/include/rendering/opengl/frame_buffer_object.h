@@ -23,7 +23,7 @@ public:
 	bool check_status() const;
 	void attach_depthbuffer_from_texture(const Texture& texture);
 	void attach_colorbuffer_from_texture(const Texture& texture);
-	void set_drawbuffers();
+	void finalize_attaching();
 	
 	void bind();
 private:
@@ -35,7 +35,6 @@ private:
 	GLuint m_id;
 	unsigned int m_colorbuffers_count;
 	std::vector<GLenum> m_drawbuffers;
-	bool m_drawbuffers_set;
 };
 
 #endif

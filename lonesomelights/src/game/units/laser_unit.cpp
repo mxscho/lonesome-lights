@@ -59,14 +59,15 @@ void LaserUnit::draw(const Camera& camera) const {
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
 	
-	//m_flames.draw(camera);
 	m_laser.draw(camera);
+}
+void LaserUnit::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	m_laser.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 }
 
 void LaserUnit::update(const Timer& timer) {
 	Unit::update(timer);
 	
-	//m_flames.update(timer);
 	m_laser.Transformable::set_position(Transformable::get_position());
 	m_laser.update(timer);
 	
@@ -95,21 +96,7 @@ LaserUnit::LaserUnit(const glm::vec2& position, const Map& map, const Player& pl
 	m_vine_transformation(),
 	m_ball_transformation(),
 
-	m_laser(glm::translate(Transformable::get_position()), map, Unit::m_player.get_color()),
-	m_flames(
-		glm::translate(glm::vec3(0.0F, -0.1F, 0.0F)), // Transformation
-		*this, // Parent transformable
-		glm::vec2(0.1F, 0.1F), // Billboard size
-		Textures::get_texture("particles/smoke"), // Texture
-		Unit::m_player.get_color(), // Start color
-		glm::vec3(0.8F, 0.8F, 0.8F), // End color
-		30.0F, // Radius
-		3.0F, // Particle start velocity
-		-0.3F, // Gravity
-		1.0F, // Minimum particle lifetime (seconds)
-		1.5F, // Maximum particle lifetime (seconds)
-		10.0F  // Frequency
-	) {
+	m_laser(glm::translate(Transformable::get_position()), map, Unit::m_player.get_color()) {
 	
 	m_vine_vao.bind();
 	m_vertices_vbo.bind();

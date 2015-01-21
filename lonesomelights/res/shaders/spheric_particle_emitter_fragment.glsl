@@ -10,7 +10,9 @@ in vec3 pass_instance_position;
 
 in vec2 pass_texel;
 
-out vec4 out_color;
+layout(location = 0) out vec4 out_color;
+layout(location = 1) out vec4 out_position;
+layout(location = 2) out vec4 out_normal;
 
 void main() {
 	if (pass_instance_lifetime_seconds <= pass_local_time_seconds || length(pass_instance_position) < 0) {
@@ -25,4 +27,7 @@ void main() {
 	} else if (time_factor < 0.1) {
 		out_color.rgb *= time_factor / 0.1;
 	}
+	
+	out_position = vec4(0.0);
+	out_normal = vec4(0.0);
 }

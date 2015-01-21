@@ -113,6 +113,17 @@ void Explosion::draw(const Camera& camera) const {
 	m_flash.draw(camera);
 	m_smoke.draw(camera);
 }
+void Explosion::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	if (m_has_finished) {
+		return;
+	}
+
+	m_smoke_trails.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_sparks.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_flames.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_flash.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_smoke.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+}
 
 void Explosion::update(const Timer& timer) {
 	if (m_has_finished) {

@@ -39,6 +39,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 				networking/network_handlers/client_handlers/unit_client_handler.cpp \
 				networking/network_handlers/server_handlers/unit_server_handler.cpp \
 				\
+		rendering/deferred_drawable.cpp \
 		rendering/drawable.cpp \
 			\
 			rendering/opengl/fragment_shader.cpp \

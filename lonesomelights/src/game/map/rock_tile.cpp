@@ -155,7 +155,7 @@ void RockTile::draw(const Camera& camera) const {
 	// Draw cliffs.
 	
 	const Texture& texture = Textures::get_texture("rock_tile");
-	Drawable::m_render_program.set_uniform("u_texture", texture.get_id());
+	Drawable::m_render_program.set_uniform("u_texture", 0);
 	
 	m_cliff_vao.bind();
 	texture.bind(GL_TEXTURE0);

@@ -2,6 +2,10 @@ EXTRA_DIST = \
 	models/unit_0.mtl
 	models/unit_0.obj
 	\
+	shaders/deferred_particle_emitter_vertex.glsl \
+	shaders/deferred_particle_emitter_fragment.glsl \
+	shaders/deferred_fragment.glsl \
+	shaders/deferred_vertex.glsl \
 	shaders/floor_tile_fragment.glsl \
 	shaders/floor_tile_vertex.glsl \
 	shaders/linear_particle_emitter_fragment.glsl \

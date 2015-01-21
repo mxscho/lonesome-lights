@@ -523,14 +523,14 @@ float PathFinder::safe_acos (float x) {
 
 bool PathFinder::is_walkable(glm::vec2 start, glm::vec2 end) {
 	float slope = (end.y - start.y) / (end.x - start.x);
-	int steps = std::abs(end.x - start.x) / m_tile_size;
+	unsigned int steps = std::abs(end.x - start.x) / m_tile_size;
 	float current_x = std::min(start.x, end.x);
 	float current_y = (start.x < end.x) ? start.y : end.y;
 	
 	if (steps == 0) {
 		float real_end_y = (start.x < end.x) ? end.y : start.y;
 		if (slope > 0.0f) {
-			while ((int) current_y < m_tile_count_y && current_y < real_end_y) {
+			while (current_y < static_cast<float>(m_tile_count_y) && current_y < real_end_y) {
 				Tile& current_tile = m_map.get_tile((int) current_x, (int) current_y);
 				if (!current_tile.is_walkable()) {
 					return false;
@@ -551,13 +551,13 @@ bool PathFinder::is_walkable(glm::vec2 start, glm::vec2 end) {
 	current_y = (start.x < end.x) ? start.y : end.y;
 
 	for (unsigned int i = 0; i <= steps; ++i) {
-		if ((int) current_x >= m_tile_count_x || (int) current_y >= m_tile_count_y) {
+		if (current_x >= static_cast<float>(m_tile_count_x) || current_y >= static_cast<float>(m_tile_count_y)) {
 			return false;
 		}
 		
 		float y = current_y;
 		if (slope > 0.0f) {
-			while ((int) y < m_tile_count_y && y < current_y + m_tile_size * slope) {
+			while (y < static_cast<float>(m_tile_count_y) && y < current_y + m_tile_size * slope) {
 				Tile& current_tile = m_map.get_tile((int) current_x, (int) y);
 				if (!current_tile.is_walkable()) {
 					return false;

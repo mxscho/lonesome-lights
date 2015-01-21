@@ -1,6 +1,7 @@
 #include "rendering/particles/particle_systems/laser.h"
 
 #include "rendering/opengl/textures.h"
+#include <iostream>
 
 Laser::Laser(const glm::mat4& transformation, const Transformable& parent_transformable, const glm::vec3& color)
 	: Updatable(),
@@ -51,6 +52,14 @@ void Laser::draw(const Camera& camera) const {
 
 	m_laser.draw(camera);
 	m_sparks.draw(camera);
+}
+void Laser::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	if (!m_is_enabled) {
+		return;
+	}
+
+	m_laser.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_sparks.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 }
 
 void Laser::update(const Timer& timer) {

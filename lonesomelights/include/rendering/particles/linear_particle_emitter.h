@@ -18,6 +18,7 @@ public:
 	void set_target(const glm::vec3& target);
 	
 	void draw(const Camera& camera) const override final;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const override final;
 protected:
 	void recalculate_properties() override final;
 private:

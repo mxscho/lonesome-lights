@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "geometry/transformable.h"
-#include "rendering/drawable.h"
+#include "rendering/deferred_drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
 #include "rendering/particles/particle.h"
@@ -16,13 +16,14 @@ class Camera;
 class RenderProgram;
 class Timer;
 
-class ParticleEmitter : public Drawable, public Updatable, public Transformable {
+class ParticleEmitter : public DeferredDrawable, public Updatable, public Transformable {
 public:
 	ParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const std::string& fragment_shader_name, const glm::vec2& billboard_size, bool orientate_towards_velocity, unsigned int max_particle_count);
 
 	void set_emitting(bool is_emitting);
 	
 	void draw(const Camera& camera) const override;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const override;
 	void update(const Timer& timer) override;
 protected:
 	virtual void recalculate_properties() = 0;
@@ -37,7 +38,7 @@ private:
 	bool m_orientate_towards_velocity;
 	float m_current_time_seconds;
 	unsigned int m_max_particle_count;
-	VertexBufferObject<glm::vec3> m_base_vertex_buffer_object;
+	VertexBufferObject<glm::vec2> m_base_vertex_buffer_object;
 	VertexBufferObject<Particle::Data> m_instances_vertex_buffer_object;
 	std::list<Particle> m_particles;
 	float m_next_emission_time_seconds;

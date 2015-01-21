@@ -1,5 +1,6 @@
 #include "rendering/opengl/render_programs.h"
 
+#include <cassert>
 #include <utility>
 
 #include "rendering/opengl/fragment_shader.h"
@@ -9,9 +10,11 @@ const RenderProgram& RenderPrograms::get_render_program(const std::string& verte
 	std::string render_program_name = vertex_shader_name + "$" + fragment_shader_name;
 	if (RenderPrograms::m_render_programs.find(render_program_name) == RenderPrograms::m_render_programs.end()) {
 		VertexShader vertex_shader;
-		vertex_shader.load_from_file(std::string("res/shaders/") + vertex_shader_name + std::string("_vertex.glsl"));
+		bool result = vertex_shader.load_from_file(std::string("res/shaders/") + vertex_shader_name + std::string("_vertex.glsl"));
+		assert(result);
 		FragmentShader fragment_shader;
-		fragment_shader.load_from_file(std::string("res/shaders/") + fragment_shader_name + std::string("_fragment.glsl"));
+		result = fragment_shader.load_from_file(std::string("res/shaders/") + fragment_shader_name + std::string("_fragment.glsl"));
+		assert(result);
 		RenderProgram render_program;
 		render_program.link(vertex_shader, fragment_shader);
 		

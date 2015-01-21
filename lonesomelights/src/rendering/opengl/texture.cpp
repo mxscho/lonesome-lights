@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cassert>
 #include <fstream>
-#include <iostream>
 #include <utility>
 #include <glm/glm.hpp>
 #include <png++/png.hpp>
@@ -48,19 +47,40 @@ bool Texture::load_from_file(const std::string& file_path, GLenum texture) {
 		for (unsigned int x = 0; x < m_width; ++x) {
 			png::rgba_pixel rgba_pixel = image.get_pixel(x, m_height - 1 - y);
 			pixels.push_back(glm::vec4(rgba_pixel.red / 255.0F, rgba_pixel.green / 255.0F, rgba_pixel.blue / 255.0F, rgba_pixel.alpha / 255.0F));
-			// TODO: Check format.
 		}
 	}
 	
+	glGenTextures(1, &m_id);
+	
 	m_is_generated = true;
 	
-	glGenTextures(1, &m_id);
 	bind(texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_FLOAT, pixels.data());
+	Texture::unbind_any(texture);
+	
+	return true;
+}
+
+bool Texture::generate_empty(unsigned int width, unsigned int height, GLenum texture, GLint internal_format, GLenum format, GLenum type) {
+	destroy();
+
+	m_width = width,
+	m_height = height;
+	
+	glGenTextures(1, &m_id);
+	
+	m_is_generated = true;
+	
+	bind(texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, m_width, m_height, 0, format, type, nullptr);
 	Texture::unbind_any(texture);
 	
 	return true;
