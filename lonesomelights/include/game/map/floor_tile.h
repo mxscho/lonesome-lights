@@ -14,8 +14,6 @@ class Timer;
 class FloorTile : public Tile {
 public:
 	FloorTile(const Map& map, unsigned int x, unsigned int y);
-
-	bool is_walkable() const override final;
 	
 	void draw(const Camera& camera) const override final;
 private:

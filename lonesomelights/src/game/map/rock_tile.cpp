@@ -140,10 +140,6 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 	return RockTile(map, x, y, cliff_type, cliff_vertices, floor_vertices, floor_elements);
 }
 
-bool RockTile::is_walkable() const {
-	return false;
-}
-
 void RockTile::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 
@@ -199,6 +195,8 @@ RockTile::RockTile(const Map& map, unsigned int x, unsigned int y, const CliffTy
 	m_floor_vertices_vbo(floor_vertices, GL_ARRAY_BUFFER),
 	m_floor_elements_vbo(floor_elements, GL_ELEMENT_ARRAY_BUFFER),
 	m_floor_vao() {
+	
+	Tile::set_is_walkable(false);
 	
 	m_cliff_vao.bind();
 	m_cliff_vertices_vbo.bind();

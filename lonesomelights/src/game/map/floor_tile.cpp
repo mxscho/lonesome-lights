@@ -16,10 +16,6 @@ FloorTile::FloorTile(const Map& map, unsigned int x, unsigned int y)
 	VertexBufferObjects::unbind_any();
 }
 
-bool FloorTile::is_walkable() const {
-	return true;
-}
-
 void FloorTile::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 

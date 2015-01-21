@@ -292,6 +292,13 @@ std::list<glm::vec2> PathFinder::get_shortest_path(glm::vec2 start_point, glm::v
 				result_vector.erase(result_vector.begin() + 1);
 			}
 		}
+		if (result_vector.size() > 2) {
+			glm::vec2 start1 = result_vector[2] - result_vector[0];
+			glm::vec2 start2 = result_vector[1] - result_vector[0];
+			if (glm::length(start1) <= glm::length (start2)) {
+				result_vector.erase(result_vector.begin() + 1);
+			}
+		}
 		
 		if (result_vector.size() > 2) {
 			for (unsigned int i = 1; i < result_vector.size() - 1; ++i) {
@@ -305,7 +312,7 @@ std::list<glm::vec2> PathFinder::get_shortest_path(glm::vec2 start_point, glm::v
 			}
 		}
 		
-		/*if (result_vector.size() > 2) {
+		if (result_vector.size() > 2) {
 			unsigned int i = 0;
 			while (i < result_vector.size() - 2) {
 				if (is_walkable(result_vector[i], result_vector[i + 2])) {
@@ -314,7 +321,7 @@ std::list<glm::vec2> PathFinder::get_shortest_path(glm::vec2 start_point, glm::v
 					i++;
 				}
 			}
-		}*/
+		}
 
 		/*if (is_walkable(result_vector[0], result_vector[result_vector.size() - 1])) {
 			glm::vec2 destiny = result_vector[result_vector.size() - 1];
@@ -499,16 +506,16 @@ void PathFinder::add_neighbors_to_open_list(Node node, Node last_node, glm::vec2
 			current_node.previous_node = node.id;
 			current_node.bee_line = glm::length(current_node.position - end_node_position);
 			current_node.already_walked = node.weights_to_neighbors[i] + node.already_walked;
-		//	if (node.id == last_node.id) {
+			if (node.id == last_node.id) {
 				current_node.key = current_node.already_walked + current_node.bee_line;
-			/*} else {
+			} else {
 				glm::vec2 dir1 = glm::normalize(node.position - last_node.position);
 				glm::vec2 dir2 = glm::normalize(current_node.position - node.position);
 				float angle = acos(glm::dot(dir1, dir2));
 				
 				float penalty = (angle / 3.1415f) * 2.0f * m_tile_size;
 				current_node.key = current_node.already_walked + current_node.bee_line + penalty;
-			}*/
+			}
 			// and try to insert it into the openList
 			insert_into_open_list(current_node, greedy);
 		}

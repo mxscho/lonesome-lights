@@ -2,8 +2,13 @@
 
 #include "game/map/floor_tile.h"
 #include "game/map/rock_tile.h"
+#include "game/map/base_tile.h"
 
 #include <glm/glm.hpp>
+
+
+//test
+#include <iostream>
 
 Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size) {
 	Map map(tile_count_x, tile_count_y, tile_size);
@@ -12,6 +17,7 @@ Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, 
 			map.set_tile(std::unique_ptr<Tile>(new FloorTile(map, i_x, i_y)));
 		}
 	}
+	
 	return map;
 }
 
@@ -29,6 +35,7 @@ Map Map::create_test_map(float tile_size) {
 	
 	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 13, 11, RockTile::CliffType::NegativeXPositiveYNegativeY))));
 	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 14, 11, RockTile::CliffType::PositiveXPositiveYNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(map, 2, 6))));
 	return map;
 }
 

@@ -8,6 +8,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 		game/player.cpp \
 			\
 			game/map/map.cpp \
+			game/map/base_tile.cpp \
 			game/map/floor_tile.cpp \
 			game/map/rock_tile.cpp \
 			game/map/tile.cpp \

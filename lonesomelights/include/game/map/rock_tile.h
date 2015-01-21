@@ -39,8 +39,6 @@ public:
 	};
 
 	static RockTile create(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type);
-
-	bool is_walkable() const override final;
 	
 	void draw(const Camera& camera) const override final;
 private:

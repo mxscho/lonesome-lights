@@ -18,11 +18,13 @@ public:
 	unsigned int get_x() const;
 	unsigned int get_y() const;
 	float get_size() const;
-	virtual bool is_walkable() const;
+	bool is_walkable() const;
+	void set_is_walkable(bool walkable);
 private:
 	const Map& m_map;
 	unsigned int m_x;
 	unsigned int m_y;
+	bool m_walkable;
 };
 
 #endif

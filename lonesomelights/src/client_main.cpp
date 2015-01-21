@@ -155,7 +155,21 @@ int main(int argc, char** argv) {
 	timer.advance();
 	
 	Map map = Map::create_test_map(1.0F);
-	PathFinder path_finder(map, 12);
+	
+	
+	// -- for test map' base ---
+	Tile& base_up = map.get_tile(2, 7);
+	Tile& base_down = map.get_tile(2, 5);
+	Tile& base_left = map.get_tile(1, 6);
+	Tile& base_right = map.get_tile(3, 6);
+	base_up.set_is_walkable(false);
+	base_down.set_is_walkable(false);
+	base_left.set_is_walkable(false);
+	base_right.set_is_walkable(false);
+	// --------------------
+	
+	
+	PathFinder path_finder(map, 2);
 	
 	Explosion explosion(glm::translate(glm::vec3(8.0F, 0.2F, 8.0F)), map, 1.0F);
 	
@@ -166,12 +180,6 @@ int main(int argc, char** argv) {
 	laser_unit->start_shooting(glm::vec2(5.0F, 2.0F));
 	
 	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
-
-	
-	
-	
-	
-	
 	
 	
 	// ---------------------------
