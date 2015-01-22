@@ -16,7 +16,11 @@ Laser::Laser(const glm::mat4& transformation, const Transformable& parent_transf
 		color, // Start color
 		color, // End color
 		20.0F, // Particle velocity
-		1000, // Maximum particle count (should fit for about 100x100 map)
+		static_cast<unsigned int>(ceil(
+			100.0F * // Frequency
+			(10.0F / // Distance
+			20.0F) * // Particle velocity
+			1.1F)) + 10, // Maximum particle count (should fit for about 10 range laser)
 		100.0F  // Frequency
 	), m_sparks(
 		transformation, // Transformation

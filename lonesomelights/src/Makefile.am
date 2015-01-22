@@ -5,6 +5,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 	timer.cpp \
 	updatable.cpp \
 		\
+		game/attackable.cpp \
 		game/game.cpp \
 		game/player.cpp \
 		game/player_handler.cpp \
@@ -57,6 +58,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			rendering/opengl/vertex_buffer_objects.cpp \
 			rendering/opengl/vertex_shader.cpp \
 			\
+			rendering/particles/health_bar_particle_emitter.cpp \
 			rendering/particles/linear_particle_emitter.cpp \
 			rendering/particles/particle.cpp \
 			rendering/particles/particle_emitter.cpp \

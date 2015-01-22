@@ -96,6 +96,13 @@ typename VertexBufferObject<T>::Bucket VertexBufferObject<T>::claim_bucket() {
 	m_unused_indices.pop_front();
 	return VertexBufferObject<T>::Bucket(*this, unused_index);
 }
+template<typename T>
+void VertexBufferObject<T>::clear() {
+	m_changed_begin_index = 0;
+	m_changed_end_index = m_data.size();
+	m_data = std::vector<T>(m_data.size());
+	update();
+}
 
 template<typename T>
 void VertexBufferObject<T>::bind() const {

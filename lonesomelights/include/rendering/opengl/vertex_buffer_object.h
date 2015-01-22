@@ -37,6 +37,7 @@ public:
 	unsigned int get_size() const;
 
 	Bucket claim_bucket();
+	void clear();
 	
 	void bind() const;
 	void update();

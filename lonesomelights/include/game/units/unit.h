@@ -1,6 +1,7 @@
 #ifndef __GAME__UNITS__UNIT_H__
 #define __GAME__UNITS__UNIT_H__
 
+#include "game/attackable.h"
 #include "game/units/selection_circle.h"
 #include "geometry/inertial_movable.h"
 #include "networking/networkable.h"
@@ -16,13 +17,18 @@ class Player;
 class RenderProgram;
 class Timer;
 
-class Unit : public Networkable, public InertialMovable {
+class Unit : public Attackable, public Networkable, public InertialMovable {
 public:
-	Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration);
+	Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration, float max_health);
 
-	glm::vec2 get_position_vec2() const;
+	virtual float get_attack_range() const = 0;
+	
+	glm::vec2 get_position_vec2() const override final;
 	bool is_selected() const;
-	void set_selected(bool is_selected);
+	void unselect();
+	void select(const glm::vec3& color);
+	void unhover();
+	void hover(const glm::vec3& color);
 	
 	glm::vec2 get_target_position_vec2() const;
 	void set_target_path(const Timer& timer, const std::list<glm::vec2>& target_path);
@@ -36,6 +42,7 @@ public:
 protected:
 	const Player& m_player;
 	bool m_is_selected;
+	bool m_is_hovered;
 	SelectionCircle m_selection_circle;
 };
 

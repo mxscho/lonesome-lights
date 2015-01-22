@@ -136,7 +136,7 @@ void ParticleEmitter::update(const Timer& timer) {
 	while (m_next_emission_time_seconds <= m_current_time_seconds) {
 		assert(m_particles.size() < m_max_particle_count);
 		recalculate_properties();
-		if (m_is_emitting) {
+		if (m_is_emitting && m_next_emission_time_seconds + m_particle_lifetime_seconds > m_current_time_seconds) {
 			m_particles.push_back(Particle(m_instances_vertex_buffer_object.claim_bucket(), m_particle_offset, m_particle_start_velocity, m_particle_acceleration, m_next_emission_time_seconds, m_particle_lifetime_seconds));
 		}
 		m_next_emission_time_seconds += 1.0F / m_frequency;

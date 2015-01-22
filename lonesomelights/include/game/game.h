@@ -20,6 +20,7 @@ public:
 	
 	Map& get_map();
 	std::vector<std::unique_ptr<Unit>>& get_own_units();
+	std::vector<std::unique_ptr<Unit>>& get_opponent_units();
 	
 	void draw(const Camera& camera) const;
 	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;

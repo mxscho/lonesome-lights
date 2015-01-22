@@ -16,6 +16,7 @@ public:
 	
 	void update(const Timer& timer) override final;
 	
+	void on_mouse_hover(const Timer& timer, const glm::vec3& position);
 	void on_mouse_select(const Timer& timer, const glm::vec3& position, bool is_left, bool is_shift);
 private:
 	Game& m_game;

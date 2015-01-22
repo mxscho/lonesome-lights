@@ -15,8 +15,11 @@ class SelectionCircle : public Drawable, public Transformable {
 public:
 	SelectionCircle(const glm::mat4& transformation, const Map& map);
 
+	void set_color(const glm::vec3& color);
+	
 	void draw(const Camera& camera) const override final;
 protected:
+	glm::vec3 m_color;
 	VertexBufferObject<glm::vec2> m_selected_circle_vbo;
 	VertexArrayObject m_selected_circle_vao;
 };

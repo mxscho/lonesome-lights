@@ -1,6 +1,7 @@
 #ifndef __GAME__UNITS__LASER_UNIT_H__
 #define __GAME__UNITS__LASER_UNIT_H__
 
+#include "game/attackable.h"
 #include "game/units/unit.h"
 #include "rendering/drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
@@ -20,10 +21,14 @@ class LaserUnit : public Drawable, public Unit {
 public:
 	static std::unique_ptr<LaserUnit> create(const glm::vec2& position, const Map& map, const Player& player);
 
-	void start_shooting(const glm::vec2& position);
+	float get_attack_range() const override final;
+	
+	Attackable* get_shooting_target() const;
+	void start_shooting(Attackable* attackable);
 	void stop_shooting();
 	
 	void draw(const Camera& camera) const override final;
+	void draw_laser(const Camera& camera) const;
 	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	
 	void update(const Timer& timer) override final;
@@ -47,6 +52,7 @@ private:
 	glm::mat4 m_ball_transformation;
 	
 	Laser m_laser;
+	Attackable* m_attacked;
 };
 
 #endif

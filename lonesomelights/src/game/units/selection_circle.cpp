@@ -12,6 +12,7 @@
 SelectionCircle::SelectionCircle(const glm::mat4& transformation, const Map& map)
 	: Drawable(RenderPrograms::get_render_program("selection_circle")),
 	Transformable(transformation, map),
+	m_color(),
 	m_selected_circle_vbo({ glm::vec2(-0.5F, -0.5F), glm::vec2(-0.5F, 0.5F), glm::vec2(0.5F, 0.5F), glm::vec2(0.5F, -0.5F) }, GL_ARRAY_BUFFER),
 	m_selected_circle_vao() {
 	
@@ -23,6 +24,10 @@ SelectionCircle::SelectionCircle(const glm::mat4& transformation, const Map& map
 	VertexBufferObjects::unbind_any();
 }
 
+void SelectionCircle::set_color(const glm::vec3& color) {
+	m_color = color;
+}
+
 void SelectionCircle::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 	
@@ -32,6 +37,7 @@ void SelectionCircle::draw(const Camera& camera) const {
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
 	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
 	Drawable::m_render_program.set_uniform("u_texture", 0);
+	Drawable::m_render_program.set_uniform("u_color", m_color);
 	
 	Drawable::m_render_program.bind();
 	m_selected_circle_vao.bind();

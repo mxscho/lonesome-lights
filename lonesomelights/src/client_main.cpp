@@ -39,7 +39,7 @@
 #include "game/player.h"
 #include "rendering/opengl/frame_buffer_object.h"
 
-static sf::VideoMode video_mode = sf::VideoMode(800, 600);//sf::VideoMode::getDesktopMode();
+static sf::VideoMode video_mode = sf::VideoMode(1024, 768);//sf::VideoMode::getDesktopMode();
 
 static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
 	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
 	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
 	laser_unit.set_network_handler(unit_client_handler);*/
-	laser_unit->start_shooting(glm::vec2(5.0F, 2.0F));
+	//laser_unit->start_shooting(glm::vec2(5.0F, 2.0F));
 	
 	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 
@@ -207,6 +207,14 @@ int main(int argc, char** argv) {
 	VertexBufferObjects::unbind_any();
 	
 	while (window.isOpen()) {
+		sf::Vector2i mouse_coordinates = sf::Mouse::getPosition(window);
+		std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, mouse_coordinates.x, mouse_coordinates.y);
+		glm::vec2 mouse_position((float) mouse_coordinates.x / video_mode.width * 2.0F - 1.0F, (1.0F - (float) mouse_coordinates.y / video_mode.height) * 2.0F - 1.0F);		
+		
+		if (world_position.first) {
+			player_handler.on_mouse_hover(timer, world_position.second);
+		}
+		
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
@@ -214,7 +222,6 @@ int main(int argc, char** argv) {
 			} else if (event.type == sf::Event::MouseWheelMoved) {
 				map_camera.change_zoom(event.mouseWheel.delta);
 			} else if (event.type == sf::Event::MouseButtonPressed) {
-				std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, event.mouseButton.x, event.mouseButton.y);
 				if (world_position.first) {
 					if (event.mouseButton.button == sf::Mouse::Left) {
 						player_handler.on_mouse_select(timer, world_position.second, true, false);
@@ -228,8 +235,7 @@ int main(int argc, char** argv) {
 				}
 			}
 		}
-		sf::Vector2i mouse_coordinates = sf::Mouse::getPosition(window);
-		glm::vec2 mouse_position((float) mouse_coordinates.x / video_mode.width * 2.0F - 1.0F, (1.0F - (float) mouse_coordinates.y / video_mode.height) * 2.0F - 1.0F);
+
 		if (std::abs(mouse_position.x) > 0.95F || std::abs(mouse_position.y) > 0.95F) {
 			mouse_position = glm::normalize(mouse_position);
 			map_camera.set_velocity(mouse_position * 10.0F);
