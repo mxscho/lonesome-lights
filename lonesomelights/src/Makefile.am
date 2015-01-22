@@ -19,6 +19,8 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			game/units/unit.cpp \
 			game/units/laser_unit.cpp \
 			game/units/selection_circle.cpp \
+			game/units/shockwave_unit.cpp \
+			game/units/worker_unit.cpp \
 			\
 		geometry/camera.cpp \
 		geometry/constant_accelerating_movement.cpp \

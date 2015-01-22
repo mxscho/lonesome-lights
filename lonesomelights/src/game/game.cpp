@@ -5,6 +5,9 @@
 
 #include "game/attackable.h"
 #include "game/units/laser_unit.h"
+#include "game/units/shockwave_unit.h"
+#include "game/units/worker_unit.h"
+
 
 Game::Game()
 	: Networkable(),
@@ -18,7 +21,21 @@ Game::Game()
 	// TEST
 	m_own_units.push_back(LaserUnit::create(glm::vec2(4.0F, 4.0F), m_map, m_own_player));
 	m_own_units.push_back(LaserUnit::create(glm::vec2(2.0F, 2.0F), m_map, m_own_player));
+	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(8.0F, 2.0F), m_map, m_own_player));
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(2.0F, 15.0F), m_map, m_own_player));
 	m_opponent_units.push_back(LaserUnit::create(glm::vec2(7.0F, 3.0F), m_map, m_opponent_player));
+	m_opponent_units.push_back(LaserUnit::create(glm::vec2(15.0F, 3.0F), m_map, m_opponent_player));
+	
+	// -- for test map' base ---
+	Tile& base_up = m_map.get_tile(2, 7);
+	Tile& base_down = m_map.get_tile(2, 5);
+	Tile& base_left = m_map.get_tile(1, 6);
+	Tile& base_right = m_map.get_tile(3, 6);
+	base_up.set_is_walkable(false);
+	base_down.set_is_walkable(false);
+	base_left.set_is_walkable(false);
+	base_right.set_is_walkable(false);
+	// --------------------
 }
 
 Map& Game::get_map() {
@@ -33,24 +50,41 @@ std::vector<std::unique_ptr<Unit>>& Game::get_opponent_units() {
 
 void Game::draw(const Camera& camera) const {
 	m_map.draw(camera);
+	
+	// Draw own weapon particles.
 	for (auto& i_own_unit : m_own_units) {
 		if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
 			own_laser_unit->draw_laser(camera);
 		}
 	}
+	// Draw opponent's weapon particles.
 	for (auto& i_opponent_unit : m_opponent_units) {
 		if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
 			opponent_laser_unit->draw_laser(camera);
 		}
 	}
+	// Draw own units.
 	for (auto& i_own_unit : m_own_units) {
 		if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
 			own_laser_unit->draw(camera);
 		}
+		if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
+			own_shockwave_unit->draw(camera);
+		}
+		if (WorkerUnit* own_worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
+			own_worker_unit->draw(camera);
+		}
 	}
+	// Draw opponent's units.
 	for (auto& i_opponent_unit : m_opponent_units) {
 		if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
 			opponent_laser_unit->draw(camera);
+		}
+		if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
+			opponent_shockwave_unit->draw(camera);
+		}
+		if (WorkerUnit* opponent_worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
+			opponent_worker_unit->draw(camera);
 		}
 	}
 }
