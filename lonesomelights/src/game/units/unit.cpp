@@ -8,13 +8,15 @@
 #include <glm/gtx/transform.hpp>
 
 Unit::Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration, float max_health)
-	: Attackable(glm::inverse(transformation) * glm::translate(glm::vec3(0.0F, 0.90F, 0.0F)), *this, max_health, 75.0F),
+	: Attackable(glm::inverse(transformation) * glm::translate(glm::vec3(0.0F, 0.90F, 0.0F)), *this, max_health, max_health),
 	Networkable(),
 	InertialMovable(glm::translate(glm::vec3(position.x, 0.0F, position.y)) * transformation, map, max_velocity, acceleration, decceleration),
 	m_player(player),
 	m_is_selected(false),
 	m_is_hovered(false),
-	m_selection_circle(glm::translate(glm::vec3(position.x, 0.01F, position.y)) * glm::scale(glm::vec3(0.5F, 1.0F, 0.5F)), map) {
+	m_selection_circle(glm::translate(glm::vec3(position.x, 0.02F, position.y)) * glm::scale(glm::vec3(0.5F, 1.0F, 0.5F)), map) {
+}
+Unit::~Unit() {
 }
 
 glm::vec2 Unit::get_position_vec2() const {

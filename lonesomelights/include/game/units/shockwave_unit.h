@@ -6,10 +6,10 @@
 #include "rendering/drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
-//#include "rendering/particles/particle_systems/laser.h"
+#include "game/units/shockwave.h"
 #include "rendering/particles/spheric_particle_emitter.h"
 
-#include <list>
+#include <set>
 #include <memory>
 #include <vector>
 #include <GL/glew.h>
@@ -22,14 +22,16 @@ public:
 	static std::unique_ptr<ShockwaveUnit> create(const glm::vec2& position, const Map& map, const Player& player);
 
 	float get_attack_range() const override final;
+	float get_attack_dps() const override final;
 	
-	//Attackable* get_shooting_target() const; // aoe unit has no specific target
-	void start_attacking();
-	void stop_attacking();
+	const std::set<Attackable*>& get_attacked() const;
+	void add_attack(Attackable* attackable);
+	void remove_attack(Attackable* attackable);
+	void clear_attacks();
 	
 	void draw(const Camera& camera) const override final;
 	void draw_shockwave(const Camera& camera) const;
-	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
+	//void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	
 	void update(const Timer& timer) override final;
 private:
@@ -51,8 +53,8 @@ private:
 	glm::mat4 m_vine_transformation;
 	glm::mat4 m_ball_transformation;
 	
-	//Laser m_laser;
-	//Attackable* m_attacked;// aoe unit has no specific target
+	Shockwave m_shockwave;
+	std::set<Attackable*> m_attacked;
 };
 
 #endif

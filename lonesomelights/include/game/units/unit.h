@@ -20,8 +20,10 @@ class Timer;
 class Unit : public Attackable, public Networkable, public InertialMovable {
 public:
 	Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration, float max_health);
-
+	virtual ~Unit();
+	
 	virtual float get_attack_range() const = 0;
+	virtual float get_attack_dps() const = 0;
 	
 	glm::vec2 get_position_vec2() const override final;
 	bool is_selected() const;

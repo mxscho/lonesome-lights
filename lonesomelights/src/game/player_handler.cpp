@@ -52,7 +52,7 @@ void PlayerHandler::on_mouse_hover(const Timer& timer, const glm::vec3& position
 		if (is_own) {
 			hovered_unit->hover(glm::vec3(0.8F, 0.8F, 0.8F));
 		} else if (m_selected_unit) {
-			hovered_unit->hover(glm::vec3(0.8F, 0.2F, 0.2F));
+			hovered_unit->hover(glm::vec3(0.8F, 0.4F, 0.4F));
 		}
 	}
 }
@@ -80,7 +80,7 @@ void PlayerHandler::on_mouse_select(const Timer& timer, const glm::vec3& positio
 				m_selected_unit->unselect();
 			}
 			if (selected_unit) {
-				selected_unit->select(glm::vec3(0.2F, 0.2F, 0.8F));
+				selected_unit->select(glm::vec3(1.0F, 1.0F, 1.0F));
 			}
 		}
 		m_selected_unit = selected_unit;

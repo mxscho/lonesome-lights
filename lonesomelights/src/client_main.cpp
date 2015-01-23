@@ -254,13 +254,13 @@ int main(int argc, char** argv) {
 		game.update(timer);
 		//laser_unit->update(timer);
 		
-		static float trigger_explosion_time_seconds;
+		/*static float trigger_explosion_time_seconds;
 		trigger_explosion_time_seconds += timer.get_delta_time_seconds();
 		if (trigger_explosion_time_seconds >= 1.0F && explosion.has_finished()) {
 			trigger_explosion_time_seconds = 0.0F;
 			explosion.trigger(timer.get_current_time_seconds());
 		}
-		explosion.update(timer);
+		explosion.update(timer);*/
 		
 		// Settings for rendering.
 		
@@ -297,7 +297,7 @@ int main(int argc, char** argv) {
 		//map.draw(map_camera);
 		game.draw(map_camera);
 		//laser_unit->draw(map_camera);
-		explosion.draw(map_camera);
+		//explosion.draw(map_camera);
 		
 		FrameBufferObject::unbind_any();
 		
@@ -333,7 +333,7 @@ int main(int argc, char** argv) {
 		
 		game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		//laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
-		explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+		//explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		
 		window.display();
 	}

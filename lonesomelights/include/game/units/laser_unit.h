@@ -22,6 +22,7 @@ public:
 	static std::unique_ptr<LaserUnit> create(const glm::vec2& position, const Map& map, const Player& player);
 
 	float get_attack_range() const override final;
+	float get_attack_dps() const override final;
 	
 	Attackable* get_shooting_target() const;
 	void start_shooting(Attackable* attackable);

@@ -4,7 +4,7 @@
 #include "timer.h"
 
 MapCamera::MapCamera(const Map& map, const glm::vec2& eye_position, float aspect)
-	: PerspectiveCamera(PerspectiveCamera::create_from_view_direction(glm::vec3(eye_position.x, 7.5F, eye_position.y), glm::normalize(glm::vec3(1.0F, -2.0F, 1.0F)), glm::normalize(glm::vec3(2.0F, 1.0F, 2.0F)), 70.0F, aspect, 0.1F, 1000.0F)),
+	: PerspectiveCamera(PerspectiveCamera::create_from_view_direction(glm::vec3(eye_position.x, 7.5F, eye_position.y), glm::normalize(glm::vec3(1.0F, -2.0F, 1.0F)), glm::normalize(glm::vec3(2.0F, 1.0F, 2.0F)), 70.0F, aspect, 0.1F, 100.0F)),
 	Updatable(),
 	m_velocity(0.0F) {
 }

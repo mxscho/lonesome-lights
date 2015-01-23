@@ -5,10 +5,11 @@
 #include "game/player.h"
 #include "game/units/unit.h"
 #include "networking/networkable.h"
+#include "rendering/particles/particle_systems/explosion.h"
 #include "updatable.h"
 
 #include <memory>
-#include <vector>
+#include <list>
 
 class Camera;
 class Texture;
@@ -19,8 +20,8 @@ public:
 	Game();
 	
 	Map& get_map();
-	std::vector<std::unique_ptr<Unit>>& get_own_units();
-	std::vector<std::unique_ptr<Unit>>& get_opponent_units();
+	std::list<std::unique_ptr<Unit>>& get_own_units();
+	std::list<std::unique_ptr<Unit>>& get_opponent_units();
 	
 	void draw(const Camera& camera) const;
 	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
@@ -30,8 +31,9 @@ private:
 	Map m_map;
 	Player m_own_player;
 	Player m_opponent_player;
-	std::vector<std::unique_ptr<Unit>> m_own_units;
-	std::vector<std::unique_ptr<Unit>> m_opponent_units;
+	std::list<std::unique_ptr<Unit>> m_own_units;
+	std::list<std::unique_ptr<Unit>> m_opponent_units;
+	std::list<Explosion> m_explosions;
 };
 
 #endif

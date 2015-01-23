@@ -35,6 +35,9 @@ std::unique_ptr<LaserUnit> LaserUnit::create(const glm::vec2& position, const Ma
 float LaserUnit::get_attack_range() const {
 	return 4.0F;
 }
+float LaserUnit::get_attack_dps() const {
+	return 10.0F;
+}
 
 Attackable* LaserUnit::get_shooting_target() const {
 	return m_attacked;

@@ -24,6 +24,7 @@ public:
 
 	// get exploit range
 	float get_attack_range() const override final;
+	float get_attack_dps() const override final;
 	
 	//Attackable* get_shooting_target() const; // aoe unit has no attackable target but a tile
 	RockTile* get_exploiting_target() const;

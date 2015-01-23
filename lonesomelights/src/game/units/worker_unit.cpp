@@ -33,7 +33,10 @@ std::unique_ptr<WorkerUnit> WorkerUnit::create(const glm::vec2& position, const 
 }
 
 float WorkerUnit::get_attack_range() const {
-	return 1.0F;
+	return 0.0F;
+}
+float WorkerUnit::get_attack_dps() const {
+	return 0.0F;
 }
 
 void WorkerUnit::start_exploiting() {
@@ -102,7 +105,7 @@ WorkerUnit::WorkerUnit(const glm::vec2& position, const Map& map, const Player& 
 	Unit(glm::translate(glm::vec3(0.0F, 0.3F, 0.0F)) * glm::scale(glm::vec3(0.0075F, 0.0075F, 0.0075F)), position, map, player,
 	1.1F, // Maximum velocity
 	0.5F, 0.5F, // Acceleration/Decceleration
-	40.0F // Maximum health
+	100.0F // Maximum health
 	), // TODO: find nice values for worker unit
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_vertex_counts(vertex_counts),
