@@ -285,11 +285,13 @@ std::list<glm::vec2> PathFinder::get_shortest_path(glm::vec2 start_point, glm::v
 				result_vector.erase(result_vector.begin() + result_vector.size() - 2);
 			}
 		}
+		bool start_node_flag = false;
 		if (result_vector.size() > 2) {
 			glm::vec2 start1 = result_vector[2] - result_vector[0];
 			glm::vec2 start2 = result_vector[1] - result_vector[0];
 			if (glm::length(start1) <= glm::length (start2)) {
 				result_vector.erase(result_vector.begin() + 1);
+				start_node_flag = true;
 			}
 		}
 		if (result_vector.size() > 2) {
@@ -328,7 +330,10 @@ std::list<glm::vec2> PathFinder::get_shortest_path(glm::vec2 start_point, glm::v
 			result_vector.clear();
 			result_vector.push_back(destiny);
 		} else {*/
+		result_vector.erase(result_vector.begin());
+		if (!start_node_flag) {
 			result_vector.erase(result_vector.begin());
+		}		
 		//}
 		
 		std::list<glm::vec2> optimized_result;
