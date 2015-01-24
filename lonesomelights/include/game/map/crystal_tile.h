@@ -28,15 +28,11 @@ private:
 		glm::vec3 normal;
 	};
 	
-	CrystalTile(const Map& map, unsigned int x, unsigned int y, const std::vector<Data>& vertices, const std::vector<unsigned int>& vertex_counts, const RockTile::CliffType& cliff_type);	
+	CrystalTile(const Map& map, unsigned int x, unsigned int y, const std::vector<Data>& vertices, const RockTile::CliffType& cliff_type);	
 	
 	VertexBufferObject<Data> m_vertices_vbo;
-	std::vector<unsigned int> m_vertex_counts;
 	VertexBufferObject<GLuint> m_crystals_elements_vbo;
-	VertexBufferObject<GLuint> m_landscape_elements_vbo;
 	VertexArrayObject m_crystals_vao;
-	VertexArrayObject m_landscape_vao;
-	FloorTile m_floor_tile;
 	RockTile m_rock_tile;
 	glm::mat4 m_crystal_tile_transformation;
 };

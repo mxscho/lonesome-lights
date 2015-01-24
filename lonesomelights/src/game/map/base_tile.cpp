@@ -9,22 +9,13 @@
 #include <glm/gtx/transform.hpp>
 
 BaseTile BaseTile::create(const Map& map, unsigned int x, unsigned int y) {
-	/*std::vector<GLfloat> base_positions = ObjLoader::get_obj_positions("base", 0);
+	
+	std::vector<GLfloat> base_positions = ObjLoader::get_obj_positions("base", 0);
 	std::vector<GLfloat> base_normals = ObjLoader::get_obj_normals("base", 0);
 	
 	std::vector<BaseTile::Data> vertices;
 	for (unsigned int i = 0; i < base_positions.size(); i += 3) {
-		vertices.push_back(BaseTile::Data(glm::vec3(0,0,0), glm::vec3(0,0,0)));
-	}
-	*/
-	
-	
-	std::vector<GLfloat> vine_positions = ObjLoader::get_obj_positions("base", 0);
-	std::vector<GLfloat> vine_normals = ObjLoader::get_obj_normals("base", 0);
-	
-	std::vector<BaseTile::Data> vertices;
-	for (unsigned int i = 0; i < vine_positions.size(); i += 3) {
-		vertices.push_back(BaseTile::Data(glm::vec3(vine_positions[i + 0], vine_positions[i + 1], vine_positions[i + 2]), glm::vec3(vine_normals[i + 0], vine_normals[i + 1], vine_normals[i + 2])));
+		vertices.push_back(BaseTile::Data(glm::vec3(base_positions[i + 0], base_positions[i + 1], base_positions[i + 2]), glm::vec3(base_normals[i + 0], base_normals[i + 1], base_normals[i + 2])));
 	}
 
 	return BaseTile(map, x, y, vertices);
@@ -35,6 +26,7 @@ void BaseTile::draw(const Camera& camera) const {
 	
 	Drawable::draw(camera);
 
+	bool culled = glIsEnabled(GL_CULL_FACE);
 	glDisable(GL_CULL_FACE);
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_base_transformation);
 	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
@@ -49,10 +41,11 @@ void BaseTile::draw(const Camera& camera) const {
 	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-	
+	if (culled) {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
+	}
 }
 
 BaseTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)

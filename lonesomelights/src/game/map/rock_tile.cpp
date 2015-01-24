@@ -149,6 +149,8 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 }
 
 void RockTile::draw(const Camera& camera) const {
+	m_floor_tile.draw(camera);
+
 	Drawable::draw(camera);
 
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
@@ -196,7 +198,8 @@ RockTile::RockTile(const Map& map, unsigned int x, unsigned int y, const CliffTy
 	m_cliff_vertices_vbo(cliff_vertices, GL_ARRAY_BUFFER),
 	m_cliff_vao(),
 	m_floor_vertices_vbo(floor_vertices, GL_ARRAY_BUFFER),
-	m_floor_vao() {
+	m_floor_vao(),
+	m_floor_tile(FloorTile(map, x, y)) {
 	
 	Tile::set_is_walkable(false);
 	
