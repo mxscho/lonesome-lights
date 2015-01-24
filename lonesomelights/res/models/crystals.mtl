@@ -1,15 +1,5 @@
-# Blender MTL File: 'crystal_cave_by_joonas_rautiola.blend'
-# Material Count: 2
-
-newmtl Material.001
-Ns 96.078431
-Ka 0.000000 0.000000 0.000000
-Kd 0.207833 0.207833 0.207833
-Ks 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 1
-map_Kd /home/cip/2012/yz63obav/textures/RockLayered0021_M.jpg
+# Blender MTL File: 'crystal_cave_by_joonas_rautiola1.blend'
+# Material Count: 1
 
 newmtl crystal
 Ns 659.448825
