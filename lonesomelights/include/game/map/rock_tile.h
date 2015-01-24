@@ -50,13 +50,12 @@ private:
 		glm::vec2 texel;
 	};
 	
-	RockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type, const std::vector<RockTile::Data>& cliff_vertices, const std::vector<RockTile::Data>& floor_vertices, const std::vector<GLushort>& floor_elements);
+	RockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type, const std::vector<RockTile::Data>& cliff_vertices, const std::vector<RockTile::Data>& floor_vertices);
 
 	CliffType m_cliff_type;
 	VertexBufferObject<Data> m_cliff_vertices_vbo;
 	VertexArrayObject m_cliff_vao;
 	VertexBufferObject<Data> m_floor_vertices_vbo;
-	VertexBufferObject<GLushort> m_floor_elements_vbo;
 	VertexArrayObject m_floor_vao;
 };
 

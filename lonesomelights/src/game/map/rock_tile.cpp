@@ -29,7 +29,11 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 					signs[i_x] * ((float) rand() / RAND_MAX) * 0.025F
 				);
 			}
-			points.push_back(glm::vec3(i_x * quad_size + displacements[i_x].x, i_y * quad_size + displacements[i_x].y, displacements[i_x].z));
+			if (i_y < quad_count) {
+				points.push_back(glm::vec3(i_x * quad_size + displacements[i_x].x, i_y * quad_size + displacements[i_x].y, displacements[i_x].z));
+			} else {
+				points.push_back(glm::vec3(i_x * quad_size, i_y * quad_size, 0.0F));
+			}
 		}
 	}
 
@@ -134,10 +138,14 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 		}
 	}
 	
-	std::vector<RockTile::Data> floor_vertices;
-	std::vector<GLushort> floor_elements;
+	std::vector<RockTile::Data> floor_vertices = {
+		RockTile::Data(glm::vec3(0.0F, 1.0F, 0.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 0.0F)),
+		RockTile::Data(glm::vec3(0.0F, 1.0F, 1.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)),
+		RockTile::Data(glm::vec3(1.0F, 1.0F, 1.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(1.0F, 1.0F)),
+		RockTile::Data(glm::vec3(1.0F, 1.0F, 0.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(1.0F, 0.0F))
+	};
 
-	return RockTile(map, x, y, cliff_type, cliff_vertices, floor_vertices, floor_elements);
+	return RockTile(map, x, y, cliff_type, cliff_vertices, floor_vertices);
 }
 
 void RockTile::draw(const Camera& camera) const {
@@ -148,13 +156,12 @@ void RockTile::draw(const Camera& camera) const {
 
 	Drawable::m_render_program.bind();
 	
-	// Draw cliffs.
-	
 	const Texture& texture = Textures::get_texture("rock_tile");
 	Drawable::m_render_program.set_uniform("u_texture", 0);
 	
-	m_cliff_vao.bind();
 	texture.bind(GL_TEXTURE0);
+
+	m_cliff_vao.bind();
 	unsigned int cliff_vertex_count = m_cliff_vertices_vbo.get_size() / 4;
 	if ((static_cast<unsigned int>(m_cliff_type) & static_cast<unsigned int>(RockTile::CliffType::PositiveX)) != 0) {
 		glDrawArrays(GL_TRIANGLES, 0 * cliff_vertex_count, cliff_vertex_count);
@@ -168,17 +175,13 @@ void RockTile::draw(const Camera& camera) const {
 	if ((static_cast<unsigned int>(m_cliff_type) & static_cast<unsigned int>(RockTile::CliffType::NegativeY)) != 0) {
 		glDrawArrays(GL_TRIANGLES, 3 * cliff_vertex_count, cliff_vertex_count);
 	}
-	
-	// Draw floor.
-	
 	m_floor_vao.bind();
-	// TODO
+	unsigned int floor_vertex_count = m_floor_vertices_vbo.get_size() / 4;
+	glDrawArrays(GL_QUADS, 0, 4 * floor_vertex_count);
 	
 	Texture::unbind_any(GL_TEXTURE0);
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
-	
-	// Draw floor.
 }
 
 RockTile::Data::Data(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texel)
@@ -187,13 +190,12 @@ RockTile::Data::Data(const glm::vec3& position, const glm::vec3& normal, const g
 	texel(texel) {
 }
 
-RockTile::RockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type, const std::vector<RockTile::Data>& cliff_vertices, const std::vector<RockTile::Data>& floor_vertices, const std::vector<GLushort>& floor_elements)
+RockTile::RockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type, const std::vector<RockTile::Data>& cliff_vertices, const std::vector<RockTile::Data>& floor_vertices)
 	: Tile(map, x, y, RenderPrograms::get_render_program("rock_tile")),
 	m_cliff_type(cliff_type),
 	m_cliff_vertices_vbo(cliff_vertices, GL_ARRAY_BUFFER),
 	m_cliff_vao(),
 	m_floor_vertices_vbo(floor_vertices, GL_ARRAY_BUFFER),
-	m_floor_elements_vbo(floor_elements, GL_ELEMENT_ARRAY_BUFFER),
 	m_floor_vao() {
 	
 	Tile::set_is_walkable(false);
@@ -215,7 +217,6 @@ RockTile::RockTile(const Map& map, unsigned int x, unsigned int y, const CliffTy
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(RockTile::Data), (void*) ((1 * 3 + 0 * 2) * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(RockTile::Data), (void*) ((2 * 3 + 0 * 2) * sizeof(GL_FLOAT)));
-	m_floor_elements_vbo.bind();
 	VertexArrayObject::unbind_any();
 	VertexBufferObjects::unbind_any();
 }
