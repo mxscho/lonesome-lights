@@ -7,6 +7,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 		\
 		game/attackable.cpp \
 		game/game.cpp \
+		game/hud.cpp \
 		game/player.cpp \
 		game/player_handler.cpp \
 			\

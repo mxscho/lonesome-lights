@@ -38,8 +38,9 @@
 #include "rendering/opengl/textures.h"
 #include "game/player.h"
 #include "rendering/opengl/frame_buffer_object.h"
+#include "game/hud.h"
 
-static sf::VideoMode video_mode = sf::VideoMode(1024, 768);//sf::VideoMode::getDesktopMode();
+static sf::VideoMode video_mode = sf::VideoMode(1365, 768);//sf::VideoMode::getDesktopMode();
 
 static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
@@ -156,6 +157,8 @@ int main(int argc, char** argv) {
 	timer.advance();
 	timer.advance();
 	
+	HUD hud;
+
 	Map map = Map::create_test_map(1.0F);
 	PathFinder path_finder(map, 12);
 	
@@ -334,6 +337,8 @@ int main(int argc, char** argv) {
 		game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		//laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		//explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+
+		hud.draw(map_camera);
 		
 		window.display();
 	}
