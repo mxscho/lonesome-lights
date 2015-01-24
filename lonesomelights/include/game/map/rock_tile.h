@@ -7,6 +7,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "game/map/floor_tile.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
 
@@ -57,6 +58,7 @@ private:
 	VertexArrayObject m_cliff_vao;
 	VertexBufferObject<Data> m_floor_vertices_vbo;
 	VertexArrayObject m_floor_vao;
+	FloorTile m_floor_tile;
 };
 
 #endif
