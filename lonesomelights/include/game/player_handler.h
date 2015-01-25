@@ -2,6 +2,8 @@
 #define __GAME__PLAYER_HANDLER_H__
 
 #include "game/game.h"
+#include "game/map/destructible_rock_tile.h"
+#include "game/map/crystal_tile.h"
 #include "game/units/unit.h"
 #include "geometry/path_finder.h"
 #include "updatable.h"
@@ -24,6 +26,8 @@ private:
 	Game& m_game;
 	PathFinder m_path_finder;
 	Unit* m_selected_unit;
+	std::vector<DestructibleRockTile*> m_selected_destructible_rock_tiles;
+	std::vector<CrystalTile*> m_selected_crystal_tiles;
 };
 
 #endif

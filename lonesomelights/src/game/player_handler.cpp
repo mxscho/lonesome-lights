@@ -1,6 +1,8 @@
 #include "game/player_handler.h"
 
+#include <cmath>
 #include <limits>
+#include <iostream>
 
 #include "game/units/laser_unit.h"
 
@@ -8,7 +10,9 @@ PlayerHandler::PlayerHandler(Game& game)
 	: Updatable(),
 	m_game(game),
 	m_path_finder(m_game.get_map(), 4),
-	m_selected_unit(nullptr) {
+	m_selected_unit(nullptr),
+	m_selected_destructible_rock_tiles(),
+	m_selected_crystal_tiles() {
 }
 
 void PlayerHandler::update(const Timer& timer) {
@@ -16,13 +20,59 @@ void PlayerHandler::update(const Timer& timer) {
 }
 
 void PlayerHandler::on_mouse_hover(const Timer& timer, const glm::vec3& position) {
+	// Unhover tiles.
+
+	for (unsigned int i_y = 0; i_y < m_game.get_map().get_tile_count_y(); ++i_y) {
+		for (unsigned int i_x = 0; i_x < m_game.get_map().get_tile_count_x(); ++i_x) {
+			Tile& tile = m_game.get_map().get_tile(i_x, i_y);
+			if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+				destructible_rock_tile->unhover();
+			} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+				crystal_tile->unhover();
+			}
+		}
+	}
+
+	// Unhover units.
+
 	check_selected_unit();
+	for (auto& i_own_unit : m_game.get_own_units()) {
+		i_own_unit->unhover();
+	}
+	for (auto& i_opponent_unit : m_game.get_opponent_units()) {
+		i_opponent_unit->unhover();
+	}
+
+	// Hover tiles.
+
+	for (unsigned int i_y = 0; i_y < m_game.get_map().get_tile_count_y(); ++i_y) {
+		for (unsigned int i_x = 0; i_x < m_game.get_map().get_tile_count_x(); ++i_x) {
+			Tile& tile = m_game.get_map().get_tile(i_x, i_y);
+			if (tile.get_x() == static_cast<unsigned int>(floor(position.x)) &&
+				tile.get_y() == static_cast<unsigned int>(floor(position.z))) {
+				if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+					if (destructible_rock_tile->is_selected()) {
+						destructible_rock_tile->hover(glm::vec3(0.8F, 0.4F, 0.4F));
+					} else {
+						destructible_rock_tile->hover(glm::vec3(0.8F, 0.8F, 0.8F));
+					}
+				} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+					if (crystal_tile->is_selected()) {
+						crystal_tile->hover(glm::vec3(0.8F, 0.4F, 0.4F));
+					} else {
+						crystal_tile->hover(glm::vec3(0.8F, 0.8F, 0.8F));
+					}
+				}
+			}
+		}
+	}
+
+	// Hover units.
 
 	Unit* hovered_unit = nullptr;
 	float hovered_unit_click_distance = std::numeric_limits<float>::max();
 	bool is_own;
 	for (auto& i_own_unit : m_game.get_own_units()) {
-		i_own_unit->unhover();
 		float click_distance = glm::length(i_own_unit->get_position() - position);
 		if (click_distance < 0.35F &&
 			(	
@@ -36,7 +86,6 @@ void PlayerHandler::on_mouse_hover(const Timer& timer, const glm::vec3& position
 		}
 	}
 	for (auto& i_opponent_unit : m_game.get_opponent_units()) {
-		i_opponent_unit->unhover();
 		float click_distance = glm::length(i_opponent_unit->get_position() - position);
 		if (click_distance < 0.35F &&
 			(	
@@ -62,6 +111,30 @@ void PlayerHandler::on_mouse_select(const Timer& timer, const glm::vec3& positio
 	check_selected_unit();
 
 	if (is_left) {
+		// Select tile.
+
+		for (unsigned int i_y = 0; i_y < m_game.get_map().get_tile_count_y(); ++i_y) {
+			for (unsigned int i_x = 0; i_x < m_game.get_map().get_tile_count_x(); ++i_x) {
+				Tile& tile = m_game.get_map().get_tile(i_x, i_y);
+				if (tile.get_x() == static_cast<unsigned int>(floor(position.x)) &&
+					tile.get_y() == static_cast<unsigned int>(floor(position.z))) {
+					if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+						if (destructible_rock_tile->is_selected()) {	
+							destructible_rock_tile->unselect();
+						} else {
+							destructible_rock_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
+						}
+					} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+						if (crystal_tile->is_selected()) {
+							crystal_tile->unselect();
+						} else {
+							crystal_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
+						}
+					}
+				}
+			}
+		}
+
 		// Select unit.
 		
 		Unit* selected_unit = nullptr;

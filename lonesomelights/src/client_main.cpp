@@ -40,7 +40,7 @@
 #include "rendering/opengl/frame_buffer_object.h"
 #include "game/hud.h"
 
-static sf::VideoMode video_mode = sf::VideoMode(1365, 768);//sf::VideoMode::getDesktopMode();
+static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
 
 static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	settings.antialiasingLevel = 4;
 	settings.majorVersion = 3;
 	settings.minorVersion = 3;
-	sf::Window window(video_mode, "Lonesome Lights", sf::Style::Default, settings);
+	sf::Window window(video_mode, "Lonesome Lights", sf::Style::Fullscreen, settings);
 	GLenum glew_error = glewInit();
 	if (glew_error != GLEW_OK) {
 		std::cerr << "Rendering: Glew initialization failed." << std::endl;
@@ -225,7 +225,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		sf::Event event;
 		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
+			if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				window.close();
 			} else if (event.type == sf::Event::MouseWheelMoved) {
 				map_camera.change_zoom(event.mouseWheel.delta);

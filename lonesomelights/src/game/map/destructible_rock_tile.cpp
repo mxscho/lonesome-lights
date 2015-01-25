@@ -57,9 +57,6 @@ void DestructibleRockTile::unhover() {
 }
 
 void DestructibleRockTile::hover(const glm::vec3& color) {
-	if (m_is_selected || m_is_hovered) {
-		return;
-	}
 	m_is_hovered = true;
 	m_hover_color = color;
 	set_color(m_hover_color);
