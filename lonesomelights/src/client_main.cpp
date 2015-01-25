@@ -76,6 +76,11 @@ static unsigned int get_args_port(int argc, char** argv) {
 }
 
 static std::pair<bool, glm::vec3> get_clicked_world_position(const Camera& camera, int mouse_x, int mouse_y) {
+	// Mouse is in HUD.
+	if ((float) mouse_y / video_mode.height < 0.064F || (float) mouse_y / video_mode.height > 0.84F) {
+		return std::make_pair(false, glm::vec3());
+	}
+
 	// Calculate world coordinates of z-buffer-top-most object which is drawn at the clicked screen coordinates.
 	// To get the depth of the clicked pixel, we read depths in a 15x15 pixel square around this pixel.
 	// If there's no valid depth and only background, we don't want this click to do anything.
@@ -129,7 +134,7 @@ static std::pair<bool, glm::vec3> get_clicked_world_position(const Camera& camer
 	return std::make_pair(true, glm::vec3(position.x, position.y, position.z));
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
 	// TEST
 	sf::ContextSettings settings;
 	settings.depthBits = 24;
@@ -234,6 +239,16 @@ int main(int argc, char** argv) {
 						} else {
 							player_handler.on_mouse_select(timer, world_position.second, false, false);
 						}
+					}
+				}
+				auto clicked_index = hud.get_clicked_index((float) mouse_coordinates.x / video_mode.width, (float) mouse_coordinates.y / video_mode.height);
+				if (clicked_index.first) {
+					if (clicked_index.second == 0) {
+						game.spawn_own_worker_unit();
+					} else if (clicked_index.second == 1) {
+						game.spawn_own_laser_unit();
+					} else if (clicked_index.second == 2) {
+						game.spawn_own_shockwave_unit();
 					}
 				}
 			}

@@ -8,7 +8,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-BaseTile BaseTile::create(const Map& map, unsigned int x, unsigned int y) {
+BaseTile BaseTile::create(const Map& map, unsigned int x, unsigned int y, const Player& player) {
 	
 	std::vector<GLfloat> base_positions = ObjLoader::get_obj_positions("base", 0);
 	std::vector<GLfloat> base_normals = ObjLoader::get_obj_normals("base", 0);
@@ -18,7 +18,7 @@ BaseTile BaseTile::create(const Map& map, unsigned int x, unsigned int y) {
 		vertices.push_back(BaseTile::Data(glm::vec3(base_positions[i + 0], base_positions[i + 1], base_positions[i + 2]), glm::vec3(base_normals[i + 0], base_normals[i + 1], base_normals[i + 2])));
 	}
 
-	return BaseTile(map, x, y, vertices);
+	return BaseTile(map, x, y, vertices, player);
 }
 
 void BaseTile::draw(const Camera& camera) const {
@@ -30,7 +30,7 @@ void BaseTile::draw(const Camera& camera) const {
 	glDisable(GL_CULL_FACE);
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_base_transformation);
 	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
-	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.5f, 0.1f, 0.2f));
+	Drawable::m_render_program.set_uniform("u_color", m_player.get_color());
 
 	Drawable::m_render_program.bind();
 	
@@ -53,13 +53,14 @@ BaseTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 	normal(normal) {
 }
 
-BaseTile::BaseTile(const Map& map, unsigned int x, unsigned int y, const std::vector<BaseTile::Data>& vertices)
+BaseTile::BaseTile(const Map& map, unsigned int x, unsigned int y, const std::vector<BaseTile::Data>& vertices, const Player& player)
 	: Tile(map, x, y, RenderPrograms::get_render_program("unit")),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_elements_vbo(ObjLoader::get_obj_elements("base", 0), GL_ELEMENT_ARRAY_BUFFER),
 	m_vertex_array_object(),
 	m_floor_tile(FloorTile(map, x, y)),
-	m_base_transformation(glm::mat4(glm::translate(glm::vec3(get_size() / 2.0f,0.0f, get_size() / 2.0f))) * glm::mat4(glm::scale(glm::vec3(0.38f, 0.38f, 0.38f)))) {
+	m_base_transformation(glm::mat4(glm::translate(glm::vec3(get_size() / 2.0f,0.0f, get_size() / 2.0f))) * glm::mat4(glm::scale(glm::vec3(0.38f, 0.38f, 0.38f)))),
+	m_player(player) {
 	
 	set_is_walkable(false);
 	

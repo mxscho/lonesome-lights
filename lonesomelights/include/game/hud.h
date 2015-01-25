@@ -12,6 +12,8 @@ class HUD : public Drawable {
 public:
 	HUD();
 	
+	std::pair<bool, unsigned int> get_clicked_index(float mouse_x, float mouse_y);
+
 	void draw(const Camera& camera) const override final;
 private:
 	VertexBufferObject<glm::vec2> m_vbo;

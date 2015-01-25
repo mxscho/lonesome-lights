@@ -14,7 +14,7 @@ Unit::Unit(const glm::mat4& transformation, const glm::vec2& position, const Map
 	m_player(player),
 	m_is_selected(false),
 	m_is_hovered(false),
-	m_selection_circle(glm::translate(glm::vec3(position.x, 0.02F, position.y)) * glm::scale(glm::vec3(0.5F, 1.0F, 0.5F)), map) {
+	m_selection_circle(glm::translate(glm::vec3(position.x, 0.05F, position.y)) * glm::scale(glm::vec3(0.5F, 1.0F, 0.5F)), map) {
 }
 Unit::~Unit() {
 }

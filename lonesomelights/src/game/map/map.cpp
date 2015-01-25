@@ -1,6 +1,5 @@
 #include "game/map/map.h"
 
-#include "game/map/base_tile.h"
 #include "game/map/crystal_tile.h"
 #include "game/map/floor_tile.h"
 #include "game/map/rock_tile.h"
@@ -37,7 +36,6 @@ Map Map::create_test_map(float tile_size) {
 	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 13, 11, RockTile::CliffType::NegativeXPositiveYNegativeY))));
 	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 14, 11, RockTile::CliffType::PositiveXPositiveYNegativeY))));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 1, 3, RockTile::CliffType::NegativeXNegativeY))));
-	map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(map, 2, 6))));
 	return map;
 }
 

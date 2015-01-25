@@ -59,12 +59,12 @@ void ShockwaveUnit::clear_attacks() {
 }
 
 void ShockwaveUnit::draw(const Camera& camera) const {
+	Drawable::draw(camera);
+	
 	if (m_attacked.size() > 0) {
 		m_shockwave.draw(camera);
 	}
 
-	Drawable::draw(camera);
-	
 	Unit::draw(camera);
 
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());

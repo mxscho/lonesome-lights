@@ -3,7 +3,7 @@
 
 #include "game/map/tile.h"
 #include "game/map/floor_tile.h"
-
+#include "game/player.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
 
@@ -17,7 +17,7 @@ class Player;
 class BaseTile : public Tile {
 public:
 
-	static BaseTile create(const Map& map, unsigned int x, unsigned int y);
+	static BaseTile create(const Map& map, unsigned int x, unsigned int y, const Player& player);
 	
 	void draw(const Camera& camera) const override final;
 private:
@@ -28,13 +28,15 @@ private:
 		glm::vec3 normal;
 	};
 	
-	BaseTile(const Map& map, unsigned int x, unsigned int y, const std::vector<Data>& vertices);
-	
+	BaseTile(const Map& map, unsigned int x, unsigned int y, const std::vector<Data>& vertices, const Player& player);
+
 	VertexBufferObject<Data> m_vertices_vbo;
 	VertexBufferObject<GLuint> m_elements_vbo;
 	VertexArrayObject m_vertex_array_object;
 	FloorTile m_floor_tile;
 	glm::mat4 m_base_transformation;
+
+	const Player& m_player;
 };
 
 #endif

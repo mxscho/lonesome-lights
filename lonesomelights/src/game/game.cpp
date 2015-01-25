@@ -7,10 +7,18 @@
 #include <glm/gtx/transform.hpp>
 
 #include "game/attackable.h"
+#include "game/map/base_tile.h"
 #include "game/units/laser_unit.h"
 #include "game/units/shockwave_unit.h"
 #include "game/units/worker_unit.h"
 #include "timer.h"
+
+float Game::c_worker_unit_plasma_cost = 0.0F;
+float Game::c_worker_unit_crystals_cost = 0.0F;
+float Game::c_laser_unit_plasma_cost = 0.0F;
+float Game::c_laser_unit_crystals_cost = 0.0F;
+float Game::c_shockwave_unit_plasma_cost = 0.0F;
+float Game::c_shockwave_unit_crystals_cost = 0.0F;
 
 Game::Game()
 	: Networkable(),
@@ -20,7 +28,15 @@ Game::Game()
 	m_opponent_player(glm::vec3(0.8F, 0.0F, 0.0F)),
 	m_own_units(),
 	m_opponent_units(),
+
+	m_own_plasma(100.0F), // TEST
+	m_own_crystals(100.0F),
+	//m_opponent_plasma(100.0F),
+	//m_opponent_crystals(100.0F),
+
 	m_explosions() {
+
+	m_map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(m_map, 2, 6, m_own_player))));
 	
 	// TEST
 	m_own_units.push_back(LaserUnit::create(glm::vec2(4.0F, 4.0F), m_map, m_own_player));
@@ -52,6 +68,25 @@ std::list<std::unique_ptr<Unit>>& Game::get_own_units() {
 }
 std::list<std::unique_ptr<Unit>>& Game::get_opponent_units() {
 	return m_opponent_units;
+}
+
+void Game::spawn_own_worker_unit() {
+	if (m_own_plasma < c_worker_unit_plasma_cost || m_own_crystals < c_worker_unit_crystals_cost) {
+		return;
+	}
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
+}
+void Game::spawn_own_laser_unit() {
+	if (m_own_plasma < c_laser_unit_plasma_cost || m_own_crystals < c_laser_unit_crystals_cost) {
+		return;
+	}
+	m_own_units.push_back(LaserUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
+}
+void Game::spawn_own_shockwave_unit() {
+	if (m_own_plasma < c_shockwave_unit_plasma_cost || m_own_crystals < c_shockwave_unit_crystals_cost) {
+		return;
+	}
+	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
 }
 
 void Game::draw(const Camera& camera) const {
@@ -236,9 +271,9 @@ void Game::update(const Timer& timer) {
 					opponent_shockwave_unit->remove_attack(i_own_unit->get());
 				}
 			}
-			glm::vec2 position = (*i_own_unit)->get_position_vec2();
-			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
-			m_explosions.back().trigger(timer.get_current_time_seconds());
+			//glm::vec2 position = (*i_own_unit)->get_position_vec2();
+			//m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
+			//m_explosions.back().trigger(timer.get_current_time_seconds());
 			i_own_unit = m_own_units.erase(i_own_unit);
 		} else {
 			++i_own_unit;
@@ -256,9 +291,9 @@ void Game::update(const Timer& timer) {
 					own_shockwave_unit->remove_attack(i_opponent_unit->get());
 				}
 			}
-			glm::vec2 position = (*i_opponent_unit)->get_position_vec2();
-			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
-			m_explosions.back().trigger(timer.get_current_time_seconds());
+			//glm::vec2 position = (*i_opponent_unit)->get_position_vec2();
+			//m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
+			//m_explosions.back().trigger(timer.get_current_time_seconds());
 			i_opponent_unit = m_opponent_units.erase(i_opponent_unit);
 		} else {
 			++i_opponent_unit;
