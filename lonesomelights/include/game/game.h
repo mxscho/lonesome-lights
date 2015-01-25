@@ -1,6 +1,8 @@
 #ifndef __GAME__GAME_H__
 #define __GAME__GAME_H__
 
+#include "game/map/destructible_rock_tile.h"
+#include "game/map/crystal_tile.h"
 #include "game/map/map.h"
 #include "game/player.h"
 #include "game/units/unit.h"
@@ -38,6 +40,11 @@ public:
 	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	
 	void update(const Timer& timer) override final;
+
+	std::vector<DestructibleRockTile*> m_own_selected_destructible_rock_tiles;
+	std::vector<CrystalTile*> m_own_selected_crystal_tiles;
+	std::vector<DestructibleRockTile*> m_opponent_selected_destructible_rock_tiles;
+	std::vector<CrystalTile*> m_opponent_selected_crystal_tiles;
 private:
 	Map m_map;
 	Player m_own_player;

@@ -10,9 +10,7 @@ PlayerHandler::PlayerHandler(Game& game)
 	: Updatable(),
 	m_game(game),
 	m_path_finder(m_game.get_map(), 4),
-	m_selected_unit(nullptr),
-	m_selected_destructible_rock_tiles(),
-	m_selected_crystal_tiles() {
+	m_selected_unit(nullptr) {
 }
 
 void PlayerHandler::update(const Timer& timer) {
@@ -121,15 +119,31 @@ void PlayerHandler::on_mouse_select(const Timer& timer, const glm::vec3& positio
 					if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
 						if (destructible_rock_tile->is_selected()) {	
 							destructible_rock_tile->unselect();
+							for (auto i_tile = m_game.m_own_selected_destructible_rock_tiles.begin(); i_tile != m_game.m_own_selected_destructible_rock_tiles.end(); ++i_tile) {
+								if (*i_tile == destructible_rock_tile) {
+									i_tile = m_game.m_own_selected_destructible_rock_tiles.erase(i_tile);
+									return;
+								}
+							}
 						} else {
 							destructible_rock_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
+							m_game.m_own_selected_destructible_rock_tiles.push_back(destructible_rock_tile);
 						}
+						return;
 					} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
 						if (crystal_tile->is_selected()) {
 							crystal_tile->unselect();
+							for (auto i_tile = m_game.m_own_selected_crystal_tiles.begin(); i_tile != m_game.m_own_selected_crystal_tiles.end(); ++i_tile) {
+								if (*i_tile == crystal_tile) {
+									m_game.m_own_selected_crystal_tiles.erase(i_tile);
+									break;
+								}
+							}
 						} else {
 							crystal_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
+							m_game.m_own_selected_crystal_tiles.push_back(crystal_tile);
 						}
+						return;
 					}
 				}
 			}

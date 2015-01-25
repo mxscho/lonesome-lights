@@ -33,17 +33,26 @@ std::unique_ptr<WorkerUnit> WorkerUnit::create(const glm::vec2& position, const 
 }
 
 float WorkerUnit::get_attack_range() const {
-	return 0.0F;
+	return 2.0F;
 }
 float WorkerUnit::get_attack_dps() const {
 	return 0.0F;
 }
 
-void WorkerUnit::start_exploiting() {
-	//m_laser.set_enabled(true);
+Tile* WorkerUnit::get_exploited() const {
+	return m_exploited;
+}
+void WorkerUnit::start_exploiting(CrystalTile* exploited) {
+	m_exploited = exploited;
+	m_laser.set_enabled(true);
+}
+void WorkerUnit::start_exploiting(DestructibleRockTile* exploited) {
+	m_exploited = exploited;
+	m_laser.set_enabled(true);
 }
 void WorkerUnit::stop_exploiting() {
-	//m_laser.set_enabled(false);
+	m_exploited = nullptr;
+	m_laser.set_enabled(false);
 }
 
 void WorkerUnit::draw(const Camera& camera) const {
@@ -68,23 +77,21 @@ void WorkerUnit::draw(const Camera& camera) const {
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
 }
-void WorkerUnit::draw_exploit_animation(const Camera& camera) const {
-	// TODO: draw exploit animation - maybe a laser?
+void WorkerUnit::draw_laser(const Camera& camera) const {
+	m_laser.draw(camera);
 }
 void WorkerUnit::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
-	// TODO: draw exploit animation deferred
+	m_laser.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 }
 
 void WorkerUnit::update(const Timer& timer) {
 	Unit::update(timer);
 	
-	// TODO: update exploit animation
-	/*m_laser.Transformable::set_position(Transformable::get_position());
-	if (m_attacked) {
-		glm::vec2 position = m_attacked->get_position_vec2();
-		m_laser.set_target(glm::vec3(position.x, Transformable::get_position().y, position.y));
+	m_laser.Transformable::set_position(Transformable::get_position());
+	if (m_exploited) {
+		m_laser.set_target(glm::vec3(m_exploited->get_x() + 0.5F, 0.5F, m_exploited->get_y() + 0.5F));
 	}
-	m_laser.update(timer);*/
+	m_laser.update(timer);
 	
 	float scale_factor = 0.6F + (sin(timer.get_current_time_seconds() * 2.0F) + 1.0F) / 2.0F * 0.4F;
 	m_ball_transformation = glm::scale(glm::vec3(scale_factor, scale_factor, scale_factor));
@@ -115,6 +122,8 @@ WorkerUnit::WorkerUnit(const glm::vec2& position, const Map& map, const Player& 
 	m_ball_vao(),
 	m_vine_transformation(),
 	m_ball_transformation(),
+
+	m_laser(glm::translate(Transformable::get_position()), map, glm::vec3(0.2F, 0.6F, 0.2F)),
 	m_exploited(nullptr) {
 	
 	m_vine_vao.bind();
