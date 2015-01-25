@@ -84,7 +84,9 @@ void WorkerUnit::draw(const Camera& camera) const {
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
 	
-	m_crystal.draw(camera);
+	if (m_crystal_count > 0.0f) {
+		m_crystal.draw(camera);
+	}
 }
 void WorkerUnit::draw_exploit_animation(const Camera& camera) const {
 	// TODO: draw exploit animation - maybe a laser?
