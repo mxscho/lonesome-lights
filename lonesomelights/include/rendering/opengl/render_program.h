@@ -28,6 +28,7 @@ public:
 	void set_uniform(const std::string& name, float value) const;
 	void set_uniform(const std::string& name, const glm::vec2& value) const;
 	void set_uniform(const std::string& name, const glm::vec3& value) const;
+	void set_uniform(const std::string& name, const glm::vec4& value) const;
 	void set_uniform(const std::string& name, const glm::mat4& value) const;
 	void set_uniforms(const std::string& view_transformation_uniform_name, const std::string& projection_transformation_uniform_name, const std::string& camera_eye_position_uniform_name, const std::string& camera_up_direction_uniform_name, const Camera& camera) const;
 	void destroy();

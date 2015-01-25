@@ -97,6 +97,13 @@ void RenderProgram::set_uniform(const std::string& name, const glm::vec3& value)
 	int uniform_location = glGetUniformLocation(m_id, name.c_str());
 	glUniform3f(uniform_location, value.x, value.y, value.z);
 }
+void RenderProgram::set_uniform(const std::string& name, const glm::vec4& value) const {
+	assert(m_is_generated);
+	bind();
+	
+	int uniform_location = glGetUniformLocation(m_id, name.c_str());
+	glUniform4f(uniform_location, value.x, value.y, value.z, value.w);
+}
 void RenderProgram::set_uniform(const std::string& name, const glm::mat4& value) const {
 	assert(m_is_generated);
 	bind();

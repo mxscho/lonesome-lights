@@ -159,6 +159,7 @@ void RockTile::draw(const Camera& camera) const {
 	Drawable::m_render_program.bind();
 	
 	const Texture& texture = Textures::get_texture("rock_tile");
+	Drawable::m_render_program.set_uniform("u_color", m_color);
 	Drawable::m_render_program.set_uniform("u_texture", 0);
 	
 	texture.bind(GL_TEXTURE0);
@@ -186,6 +187,10 @@ void RockTile::draw(const Camera& camera) const {
 	RenderProgram::unbind_any();
 }
 
+void RockTile::set_color(glm::vec3 new_color) {
+	m_color = glm::vec4(new_color.x, new_color.y, new_color.z, 1.0f);
+}
+
 RockTile::Data::Data(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texel)
 	: position(position),
 	normal(normal),
@@ -199,7 +204,8 @@ RockTile::RockTile(const Map& map, unsigned int x, unsigned int y, const CliffTy
 	m_cliff_vao(),
 	m_floor_vertices_vbo(floor_vertices, GL_ARRAY_BUFFER),
 	m_floor_vao(),
-	m_floor_tile(FloorTile(map, x, y)) {
+	m_floor_tile(FloorTile(map, x, y)),
+	m_color(glm::vec4(0.0, 0.0f, 0.0f, 0.0f)) {
 	
 	Tile::set_is_walkable(false);
 	

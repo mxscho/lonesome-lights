@@ -28,6 +28,7 @@ public:
 	void delete_tile(unsigned int x, unsigned int y);
 	
 	void draw(const Camera& camera) const;
+	void draw_extras(const Camera& camera) const;
 
 	void update(const Timer& timer) override final;
 private:

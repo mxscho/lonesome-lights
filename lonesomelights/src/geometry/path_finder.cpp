@@ -261,8 +261,13 @@ std::list<glm::vec2> PathFinder::get_shortest_path(glm::vec2 start_point, glm::v
 		// this reconstruction can be done by walking through the nodes
 		// by looking at their previous nodes
 		Node current_node = final_node;
+		bool first = true;
 		while (current_node.id != start_node.id) {
-			result.push_front(current_node.position);
+			if (first) {
+				first = false;
+			} else {
+				result.push_front(current_node.position);
+			}
 			current_node = closed_list[current_node.previous_node];
 		}
 		// don't forget the start node, the start point and end point
