@@ -19,6 +19,8 @@ public:
 	void on_mouse_hover(const Timer& timer, const glm::vec3& position);
 	void on_mouse_select(const Timer& timer, const glm::vec3& position, bool is_left, bool is_shift);
 private:
+	void check_selected_unit();
+
 	Game& m_game;
 	PathFinder m_path_finder;
 	Unit* m_selected_unit;

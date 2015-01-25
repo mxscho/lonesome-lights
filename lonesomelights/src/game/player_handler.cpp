@@ -16,6 +16,8 @@ void PlayerHandler::update(const Timer& timer) {
 }
 
 void PlayerHandler::on_mouse_hover(const Timer& timer, const glm::vec3& position) {
+	check_selected_unit();
+
 	Unit* hovered_unit = nullptr;
 	float hovered_unit_click_distance = std::numeric_limits<float>::max();
 	bool is_own;
@@ -57,6 +59,8 @@ void PlayerHandler::on_mouse_hover(const Timer& timer, const glm::vec3& position
 	}
 }
 void PlayerHandler::on_mouse_select(const Timer& timer, const glm::vec3& position, bool is_left, bool is_shift) {
+	check_selected_unit();
+
 	if (is_left) {
 		// Select unit.
 		
@@ -97,5 +101,17 @@ void PlayerHandler::on_mouse_select(const Timer& timer, const glm::vec3& positio
 				m_selected_unit->set_target_path(timer, path);
 			}
 		}
+	}
+}
+
+void PlayerHandler::check_selected_unit() {
+	bool existing = false;
+	for (auto& i_own_unit : m_game.get_own_units()) {
+		if (i_own_unit.get() == m_selected_unit) {
+			existing = true;
+		}
+	}
+	if (!existing) {
+		m_selected_unit = nullptr;
 	}
 }

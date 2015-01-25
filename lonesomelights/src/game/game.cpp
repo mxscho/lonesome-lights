@@ -273,9 +273,9 @@ void Game::update(const Timer& timer) {
 					opponent_shockwave_unit->remove_attack(i_own_unit->get());
 				}
 			}
-			//glm::vec2 position = (*i_own_unit)->get_position_vec2();
-			//m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
-			//m_explosions.back().trigger(timer.get_current_time_seconds());
+			glm::vec2 position = (*i_own_unit)->get_position_vec2();
+			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
+			m_explosions.back().trigger(timer.get_current_time_seconds());
 			i_own_unit = m_own_units.erase(i_own_unit);
 		} else {
 			++i_own_unit;
@@ -293,9 +293,9 @@ void Game::update(const Timer& timer) {
 					own_shockwave_unit->remove_attack(i_opponent_unit->get());
 				}
 			}
-			//glm::vec2 position = (*i_opponent_unit)->get_position_vec2();
-			//m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
-			//m_explosions.back().trigger(timer.get_current_time_seconds());
+			glm::vec2 position = (*i_opponent_unit)->get_position_vec2();
+			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
+			m_explosions.back().trigger(timer.get_current_time_seconds());
 			i_opponent_unit = m_opponent_units.erase(i_opponent_unit);
 		} else {
 			++i_opponent_unit;
