@@ -2,7 +2,7 @@
 #define __GAME__MAP__CRYSTAL_TILE_H__
 
 #include "game/map/floor_tile.h"
-#include "game/map/rock_tile.h"
+#include "game/map/destructable_rock_tile.h"
 #include "game/map/tile.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
@@ -20,6 +20,7 @@ public:
 	static CrystalTile create(const Map& map, unsigned int x, unsigned int y, const RockTile::CliffType& cliff_type);
 	
 	void draw(const Camera& camera) const override final;
+	void draw_crystals(const Camera& camera) const;
 private:
 	struct Data {
 		Data(const glm::vec3& position, const glm::vec3& normal);
@@ -33,7 +34,7 @@ private:
 	VertexBufferObject<Data> m_vertices_vbo;
 	VertexBufferObject<GLuint> m_crystals_elements_vbo;
 	VertexArrayObject m_crystals_vao;
-	RockTile m_rock_tile;
+	DestructableRockTile m_destructable_rock_tile;
 	glm::mat4 m_crystal_tile_transformation;
 };
 

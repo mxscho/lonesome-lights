@@ -2,8 +2,10 @@
 
 #include "game/map/base_tile.h"
 #include "game/map/crystal_tile.h"
+#include "game/map/destructable_rock_tile.h"
 #include "game/map/floor_tile.h"
 #include "game/map/rock_tile.h"
+#include "game/map/undestructable_rock_tile.h"
 
 #include <glm/glm.hpp>
 
@@ -24,19 +26,21 @@ Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, 
 
 Map Map::create_test_map(float tile_size) {
 	Map map = create_empty_map(20, 20, tile_size);
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 9, 9, RockTile::CliffType::NegativeXNegativeY))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 9, 10, RockTile::CliffType::NegativeX))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 9, 11, RockTile::CliffType::NegativeXPositiveY))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 10, 9, RockTile::CliffType::NegativeY))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 10, 10, RockTile::CliffType::None))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 10, 11, RockTile::CliffType::PositiveY))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 11, 9, RockTile::CliffType::PositiveXNegativeY))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 11, 10, RockTile::CliffType::PositiveX))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 11, 11, RockTile::CliffType::PositiveXPositiveY))));
+	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 9, RockTile::CliffType::NegativeXNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 10, RockTile::CliffType::NegativeX))));
+	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 11, RockTile::CliffType::NegativeXPositiveY))));
+	map.set_tile(std::unique_ptr<Tile>(new DestructableRockTile(map, 10, 9, RockTile::CliffType::NegativeY)));
+	map.set_tile(std::unique_ptr<Tile>(new UndestructableRockTile(map, 10, 10, RockTile::CliffType::None)));
+	map.set_tile(std::unique_ptr<Tile>(new UndestructableRockTile(map, 10, 11, RockTile::CliffType::PositiveY)));
+	map.set_tile(std::unique_ptr<Tile>(new DestructableRockTile(map, 11, 9, RockTile::CliffType::PositiveXNegativeY)));
+	map.set_tile(std::unique_ptr<Tile>(new DestructableRockTile(map, 11, 10, RockTile::CliffType::PositiveX)));
+	map.set_tile(std::unique_ptr<Tile>(new DestructableRockTile(map, 11, 11, RockTile::CliffType::PositiveXPositiveY)));
 	
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 13, 11, RockTile::CliffType::NegativeXPositiveYNegativeY))));
-	map.set_tile(std::unique_ptr<Tile>(new RockTile(RockTile::create(map, 14, 11, RockTile::CliffType::PositiveXPositiveYNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 13, 11, RockTile::CliffType::NegativeXPositiveYNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new DestructableRockTile(map, 14, 11, RockTile::CliffType::PositiveXPositiveYNegativeY)));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 1, 3, RockTile::CliffType::NegativeXNegativeY))));
+	map.set_tile(std::unique_ptr<Tile>(new DestructableRockTile(map, 1, 4, RockTile::CliffType::NegativeXNegativeY)));
+	map.set_tile(std::unique_ptr<Tile>(new UndestructableRockTile(map, 0, 4, RockTile::CliffType::NegativeXNegativeY)));
 	map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(map, 2, 6))));
 	return map;
 }
@@ -78,6 +82,16 @@ void Map::draw(const Camera& camera) const {
 	for (auto& i_tile : m_tiles) {
 		if (!!i_tile) {
 			i_tile->draw(camera);
+		}
+	}
+}
+
+void Map::draw_extras(const Camera& camera) const {
+	for (auto& i_tile : m_tiles) {
+		if (!!i_tile) {
+			if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(i_tile.get())) {
+				crystal_tile->draw_crystals(camera);
+			}
 		}
 	}
 }

@@ -22,18 +22,23 @@ CrystalTile CrystalTile::create(const Map& map, unsigned int x, unsigned int y, 
 }
 
 void CrystalTile::draw(const Camera& camera) const {
-	m_rock_tile.draw(camera);
+	m_destructable_rock_tile.draw(camera);
 	
 	Drawable::draw(camera);
+}
 
+void CrystalTile::draw_crystals(const Camera& camera) const {
 	bool culled = glIsEnabled(GL_CULL_FACE);
 	glDisable(GL_CULL_FACE);
+	bool depth_tested = glIsEnabled(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_crystal_tile_transformation);
 	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
-	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.32f, 0.9f, 0.4f));
+	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.16f, 0.45f, 0.2f));
 
 	Drawable::m_render_program.bind();
 	
@@ -48,6 +53,9 @@ void CrystalTile::draw(const Camera& camera) const {
 	if (culled) {
 		glEnable(GL_CULL_FACE);
 	}
+	if (depth_tested) {
+		glEnable(GL_DEPTH_TEST);
+	}
 }
 
 CrystalTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
@@ -60,7 +68,7 @@ CrystalTile::CrystalTile(const Map& map, unsigned int x, unsigned int y, const s
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_crystals_elements_vbo(ObjLoader::get_obj_elements("crystals", 0), GL_ELEMENT_ARRAY_BUFFER),
 	m_crystals_vao(),
-	m_rock_tile(RockTile::create(map, x, y, cliff_type)),
+	m_destructable_rock_tile(map, x, y, cliff_type),
 	m_crystal_tile_transformation(glm::mat4(glm::translate(glm::vec3(get_size() / 2.0f, 0.9f, get_size() / 2.0f))) * glm::mat4(glm::scale(glm::vec3(0.15f, 0.15f, 0.15f)))) {
 	
 	set_is_walkable(false);

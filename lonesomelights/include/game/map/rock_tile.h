@@ -41,7 +41,8 @@ public:
 
 	static RockTile create(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type);
 	
-	void draw(const Camera& camera) const override final;
+	void draw(const Camera& camera) const override;
+	void set_color(glm::vec3 new_color);
 private:
 	struct Data {
 		Data(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texel);
@@ -59,6 +60,7 @@ private:
 	VertexBufferObject<Data> m_floor_vertices_vbo;
 	VertexArrayObject m_floor_vao;
 	FloorTile m_floor_tile;
+	glm::vec4 m_color;
 };
 
 #endif

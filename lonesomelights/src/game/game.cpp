@@ -97,6 +97,8 @@ void Game::draw(const Camera& camera) const {
 			opponent_worker_unit->draw(camera);
 		}
 	}
+	
+	m_map.draw_extras(camera);
 }
 void Game::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
 	for (auto& i_explosion : m_explosions) {
