@@ -89,7 +89,7 @@ void Unit::update(const Timer& timer) {
 	InertialMovable::update(timer);
 	
 	glm::vec3 unit_position = InertialMovable::get_position();
-	m_selection_circle.set_position(glm::vec3(unit_position.x, 0.01F, unit_position.z));
+	m_selection_circle.set_position(glm::vec3(unit_position.x, 0.05F, unit_position.z));
 	
 	Attackable::update(timer);
 }

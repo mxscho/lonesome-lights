@@ -44,7 +44,6 @@ void CrystalTile::draw_crystals(const Camera& camera) const {
 	
 	m_crystals_vao.bind();
 	glDrawElements(GL_TRIANGLES, m_crystals_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
-	glDrawElements(GL_TRIANGLES, m_crystals_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
 
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
