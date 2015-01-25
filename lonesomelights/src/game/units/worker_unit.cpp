@@ -46,6 +46,18 @@ void WorkerUnit::stop_exploiting() {
 	//m_laser.set_enabled(false);
 }
 
+float WorkerUnit::get_crystal_count() const {
+	return m_crystal_count;
+}
+
+void WorkerUnit::set_crystal_count(float new_crystal_count) {
+		m_crystal_count = std::max(0.0f, new_crystal_count);
+}
+
+void WorkerUnit::change_crystal_count(float delta) {
+	m_crystal_count = std::max(0.0f, m_crystal_count + delta);
+}
+
 void WorkerUnit::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 	
@@ -65,8 +77,14 @@ void WorkerUnit::draw(const Camera& camera) const {
 	m_ball_vao.bind();
 	glDrawElementsBaseVertex(GL_TRIANGLES, m_ball_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr, m_vertex_counts[0]);
 	
+	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_ball_transformation);
+	m_ball_vao.bind();
+	glDrawElementsBaseVertex(GL_TRIANGLES, m_ball_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr, m_vertex_counts[0]);
+	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
+	
+	m_crystal.draw(camera);
 }
 void WorkerUnit::draw_exploit_animation(const Camera& camera) const {
 	// TODO: draw exploit animation - maybe a laser?
@@ -85,6 +103,9 @@ void WorkerUnit::update(const Timer& timer) {
 		m_laser.set_target(glm::vec3(position.x, Transformable::get_position().y, position.y));
 	}
 	m_laser.update(timer);*/
+	m_crystal.update(timer);
+	glm::vec3 unit_position = InertialMovable::get_position();
+	m_crystal.set_position(glm::vec3(unit_position.x, 0.6F, unit_position.z));
 	
 	float scale_factor = 0.6F + (sin(timer.get_current_time_seconds() * 2.0F) + 1.0F) / 2.0F * 0.4F;
 	m_ball_transformation = glm::scale(glm::vec3(scale_factor, scale_factor, scale_factor));
@@ -115,7 +136,8 @@ WorkerUnit::WorkerUnit(const glm::vec2& position, const Map& map, const Player& 
 	m_ball_vao(),
 	m_vine_transformation(),
 	m_ball_transformation(),
-	m_exploited(nullptr) {
+	m_crystal(Crystal::create(glm::translate(glm::vec3(position.x, 0.6F, position.y)) * glm::scale(glm::vec3(0.07f, 0.07f, 0.07f)), map)),
+	m_crystal_count(0.0f) {
 	
 	m_vine_vao.bind();
 	m_vertices_vbo.bind();

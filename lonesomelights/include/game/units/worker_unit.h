@@ -3,6 +3,7 @@
 
 #include "game/attackable.h"
 #include "game/map/rock_tile.h"
+#include "game/units/crystal.h"
 #include "game/units/unit.h"
 #include "rendering/drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
@@ -31,6 +32,10 @@ public:
 	void start_exploiting();
 	void stop_exploiting();
 	
+	float get_crystal_count() const;
+	void set_crystal_count(float new_crystal_count);
+	void change_crystal_count(float delta);
+	
 	void draw(const Camera& camera) const override final;
 	void draw_exploit_animation(const Camera& camera) const;
 	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
@@ -55,8 +60,10 @@ private:
 	glm::mat4 m_vine_transformation;
 	glm::mat4 m_ball_transformation;
 	
+	Crystal m_crystal;
+	
 	//Laser m_laser;
-	RockTile* m_exploited;
+	float m_crystal_count;
 };
 
 #endif

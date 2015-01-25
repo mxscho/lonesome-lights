@@ -21,6 +21,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			game/map/tile.cpp \
 			\
 			game/units/unit.cpp \
+			game/units/crystal.cpp \
 			game/units/laser_unit.cpp \
 			game/units/selection_circle.cpp \
 			game/units/shockwave.cpp \
