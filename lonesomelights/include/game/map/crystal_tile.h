@@ -21,6 +21,12 @@ public:
 	
 	void draw(const Camera& camera) const override final;
 	void draw_crystals(const Camera& camera) const;
+	bool is_selected() const;
+	void unselect();
+	void select(const glm::vec3& color);
+	void unhover();
+	void hover(const glm::vec3& color);
+
 private:
 	struct Data {
 		Data(const glm::vec3& position, const glm::vec3& normal);

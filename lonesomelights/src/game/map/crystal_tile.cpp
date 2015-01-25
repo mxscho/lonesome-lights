@@ -58,6 +58,26 @@ void CrystalTile::draw_crystals(const Camera& camera) const {
 	}
 }
 
+bool CrystalTile::is_selected() const {
+	return m_destructable_rock_tile.is_selected();
+}
+
+void CrystalTile::unselect() {
+	m_destructable_rock_tile.unselect();
+}
+
+void CrystalTile::select(const glm::vec3& color) {
+	m_destructable_rock_tile.select(color);
+}
+
+void CrystalTile::unhover() {
+	m_destructable_rock_tile.unhover();
+}
+
+void CrystalTile::hover(const glm::vec3& color) {
+	m_destructable_rock_tile.hover(color);
+}
+
 CrystalTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 	: position(position),
 	normal(normal) {
