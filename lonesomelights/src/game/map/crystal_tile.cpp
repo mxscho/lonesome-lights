@@ -22,7 +22,7 @@ CrystalTile CrystalTile::create(const Map& map, unsigned int x, unsigned int y, 
 }
 
 void CrystalTile::draw(const Camera& camera) const {
-	m_destructable_rock_tile.draw(camera);
+	m_destructible_rock_tile.draw(camera);
 	
 	Drawable::draw(camera);
 }
@@ -59,23 +59,23 @@ void CrystalTile::draw_crystals(const Camera& camera) const {
 }
 
 bool CrystalTile::is_selected() const {
-	return m_destructable_rock_tile.is_selected();
+	return m_destructible_rock_tile.is_selected();
 }
 
 void CrystalTile::unselect() {
-	m_destructable_rock_tile.unselect();
+	m_destructible_rock_tile.unselect();
 }
 
 void CrystalTile::select(const glm::vec3& color) {
-	m_destructable_rock_tile.select(color);
+	m_destructible_rock_tile.select(color);
 }
 
 void CrystalTile::unhover() {
-	m_destructable_rock_tile.unhover();
+	m_destructible_rock_tile.unhover();
 }
 
 void CrystalTile::hover(const glm::vec3& color) {
-	m_destructable_rock_tile.hover(color);
+	m_destructible_rock_tile.hover(color);
 }
 
 CrystalTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
@@ -88,7 +88,7 @@ CrystalTile::CrystalTile(const Map& map, unsigned int x, unsigned int y, const s
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_crystals_elements_vbo(ObjLoader::get_obj_elements("crystals", 0), GL_ELEMENT_ARRAY_BUFFER),
 	m_crystals_vao(),
-	m_destructable_rock_tile(map, x, y, cliff_type),
+	m_destructible_rock_tile(map, x, y, cliff_type),
 	m_crystal_tile_transformation(glm::mat4(glm::translate(glm::vec3(get_size() / 2.0f, 0.9f, get_size() / 2.0f))) * glm::mat4(glm::scale(glm::vec3(0.15f, 0.15f, 0.15f)))) {
 	
 	set_is_walkable(false);

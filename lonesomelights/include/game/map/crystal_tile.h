@@ -2,7 +2,7 @@
 #define __GAME__MAP__CRYSTAL_TILE_H__
 
 #include "game/map/floor_tile.h"
-#include "game/map/destructable_rock_tile.h"
+#include "game/map/destructible_rock_tile.h"
 #include "game/map/tile.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
@@ -40,7 +40,7 @@ private:
 	VertexBufferObject<Data> m_vertices_vbo;
 	VertexBufferObject<GLuint> m_crystals_elements_vbo;
 	VertexArrayObject m_crystals_vao;
-	DestructableRockTile m_destructable_rock_tile;
+	DestructibleRockTile m_destructible_rock_tile;
 	glm::mat4 m_crystal_tile_transformation;
 };
 

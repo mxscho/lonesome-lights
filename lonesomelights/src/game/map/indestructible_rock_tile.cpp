@@ -1,4 +1,4 @@
-#include "game/map/undestructable_rock_tile.h"
+#include "game/map/indestructible_rock_tile.h"
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
@@ -9,14 +9,14 @@
 #include "rendering/opengl/textures.h"
 
 
-UndestructableRockTile::UndestructableRockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type)
+IndestructibleRockTile::IndestructibleRockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type)
 	: RockTile(RockTile::create(map, x, y, cliff_type)),
 	m_standard_color(0.2f, 0.2f, 0.2f) {
 	
 	RockTile::set_color(m_standard_color);
 }
 
-void UndestructableRockTile::draw(const Camera& camera) const {
+void IndestructibleRockTile::draw(const Camera& camera) const {
 	RockTile::draw(camera);
 }
 

@@ -1,5 +1,5 @@
-#ifndef __GAME__MAP__UNDESTRUCTABLE_ROCK_TILE_H__
-#define __GAME__MAP__UNDESTRUCTABLE_ROCK_TILE_H__
+#ifndef __GAME__MAP__INDESTRUCTIBLE_ROCK_TILE_H__
+#define __GAME__MAP__INDESTRUCTIBLE_ROCK_TILE_H__
 
 #include <vector>
 #include <GL/glew.h>
@@ -13,9 +13,9 @@
 class Map;
 class Timer;
 
-class UndestructableRockTile : public RockTile {
+class IndestructibleRockTile : public RockTile {
 public:
-	UndestructableRockTile(const Map& map, unsigned int x, unsigned int y, const RockTile::CliffType& cliff_type);
+	IndestructibleRockTile(const Map& map, unsigned int x, unsigned int y, const RockTile::CliffType& cliff_type);
 	void draw(const Camera& camera) const override;
 	
 private:

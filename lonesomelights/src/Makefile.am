@@ -14,11 +14,11 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 			game/map/map.cpp \
 			game/map/base_tile.cpp \
 			game/map/crystal_tile.cpp \
-			game/map/destructable_rock_tile.cpp \
+			game/map/destructible_rock_tile.cpp \
 			game/map/floor_tile.cpp \
+			game/map/indestructible_rock_tile.cpp \
 			game/map/rock_tile.cpp \
 			game/map/tile.cpp \
-			game/map/undestructable_rock_tile.cpp \
 			\
 			game/units/unit.cpp \
 			game/units/laser_unit.cpp \

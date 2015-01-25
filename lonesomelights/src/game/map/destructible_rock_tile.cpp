@@ -1,4 +1,4 @@
-#include "game/map/destructable_rock_tile.h"
+#include "game/map/destructible_rock_tile.h"
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
@@ -9,7 +9,7 @@
 #include "rendering/opengl/textures.h"
 
 
-DestructableRockTile::DestructableRockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type)
+DestructibleRockTile::DestructibleRockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type)
 	: RockTile(RockTile::create(map, x, y, cliff_type)),
 	m_is_selected(false),
 	m_is_hovered(false),
@@ -20,15 +20,15 @@ DestructableRockTile::DestructableRockTile(const Map& map, unsigned int x, unsig
 	RockTile::set_color(m_standard_color);
 }
 
-void DestructableRockTile::draw(const Camera& camera) const {
+void DestructibleRockTile::draw(const Camera& camera) const {
 	RockTile::draw(camera);
 }
 
-bool DestructableRockTile::is_selected() const {
+bool DestructibleRockTile::is_selected() const {
 	return m_is_selected;
 }
 
-void DestructableRockTile::unselect() {
+void DestructibleRockTile::unselect() {
 	m_is_selected = false;
 	if (m_is_hovered) {
 		set_color(m_hover_color);
@@ -37,7 +37,7 @@ void DestructableRockTile::unselect() {
 	}
 }
 
-void DestructableRockTile::select(const glm::vec3& color) {
+void DestructibleRockTile::select(const glm::vec3& color) {
 	m_is_selected = true;
 	m_selection_color = color;
 	if (m_is_hovered) {
@@ -47,7 +47,7 @@ void DestructableRockTile::select(const glm::vec3& color) {
 	}
 }
 
-void DestructableRockTile::unhover() {
+void DestructibleRockTile::unhover() {
 	if (m_is_selected) {
 		set_color(m_selection_color);
 	} else {
@@ -56,7 +56,7 @@ void DestructableRockTile::unhover() {
 	m_is_hovered = false;
 }
 
-void DestructableRockTile::hover(const glm::vec3& color) {
+void DestructibleRockTile::hover(const glm::vec3& color) {
 	if (m_is_selected || m_is_hovered) {
 		return;
 	}
