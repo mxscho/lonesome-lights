@@ -29,6 +29,7 @@ public:
 	void select(const glm::vec3& color);
 	void unhover();
 	void hover(const glm::vec3& color);
+	
 private:
 	bool m_is_selected;
 	bool m_is_hovered;
