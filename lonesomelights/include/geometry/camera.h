@@ -10,6 +10,7 @@ class Camera {
 public:
 	const glm::vec3& get_eye_position() const;
 	const glm::vec3& get_up_direction() const;
+	const glm::vec3 get_look_direction() const;
 	const glm::mat4& get_view_transformation() const;
 	const glm::mat4& get_projection_transformation() const;
 protected:

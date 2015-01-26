@@ -11,6 +11,8 @@
 
 //test
 #include <iostream>
+#include <fstream>
+#include <string>
 
 Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size) {
 	Map map(tile_count_x, tile_count_y, tile_size);
@@ -24,8 +26,31 @@ Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, 
 }
 
 Map Map::create_test_map(float tile_size) {
-	Map map = create_empty_map(30, 30, tile_size);
-	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 9, RockTile::CliffType::NegativeXNegativeY))));
+	unsigned int map_size = 30;
+	Map map = create_empty_map(map_size, map_size, tile_size);
+	
+	std::string line;
+	std::ifstream map_file ("res/maps/default_map.txt");
+	unsigned int y = 29;
+	if (map_file.is_open()) {
+		while (getline(map_file, line)) {
+			for (unsigned int x = 0; x < map_size; ++x) {
+				//std::cout << line[x];
+				if (line[x] == 'X') {
+					map.set_tile(std::unique_ptr<Tile>(new IndestructibleRockTile(map, y, x, RockTile::CliffType::PositiveXNegativeXPositiveYNegativeY)));
+				} else if (line[x] == 'D') {
+					map.set_tile(std::unique_ptr<Tile>(new DestructibleRockTile(map, y, x, RockTile::CliffType::PositiveXNegativeXPositiveYNegativeY)));
+				} else if (line[x] == 'C') {
+					map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, y, x, RockTile::CliffType::PositiveXNegativeXPositiveYNegativeY))));
+				}
+			}
+			//std::cout<< std::endl;
+			y--;
+		}
+		map_file.close();
+	}
+	
+	/*map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 9, RockTile::CliffType::NegativeXNegativeY))));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 10, RockTile::CliffType::NegativeX))));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 11, RockTile::CliffType::NegativeXPositiveY))));
 	map.set_tile(std::unique_ptr<Tile>(new DestructibleRockTile(map, 10, 9, RockTile::CliffType::NegativeY)));
@@ -38,8 +63,9 @@ Map Map::create_test_map(float tile_size) {
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 13, 11, RockTile::CliffType::NegativeXPositiveYNegativeY))));
 	map.set_tile(std::unique_ptr<Tile>(new DestructibleRockTile(map, 14, 11, RockTile::CliffType::PositiveXPositiveYNegativeY)));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 1, 3, RockTile::CliffType::NegativeXNegativeY))));
-	map.set_tile(std::unique_ptr<Tile>(new DestructibleRockTile(map, 1, 4, RockTile::CliffType::NegativeXNegativeY)));
-	map.set_tile(std::unique_ptr<Tile>(new IndestructibleRockTile(map, 0, 4, RockTile::CliffType::NegativeXNegativeY)));
+	map.set_tile(std::unique_ptr<Tile>(new DestructibleRockTile(map, 1, 4, RockTile::CliffType::NegativeXNegativeY)));*/
+	//map.set_tile(std::unique_ptr<Tile>(new IndestructibleRockTile(map, 0, 4, RockTile::CliffType::NegativeXNegativeY)));
+	
 	return map;
 }
 

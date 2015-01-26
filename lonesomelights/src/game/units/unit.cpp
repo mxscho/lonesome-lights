@@ -79,7 +79,9 @@ void Unit::add_target_path_to_path(const Timer& timer, const std::list<glm::vec2
 
 void Unit::draw(const Camera& camera) const {
 	Attackable::draw(camera);
+}
 
+void Unit::draw_selection_circle(const Camera& camera) const {
 	if (m_is_selected || m_is_hovered) {
 		m_selection_circle.draw(camera);
 	}

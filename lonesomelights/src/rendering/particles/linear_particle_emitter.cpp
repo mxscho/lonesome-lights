@@ -10,7 +10,7 @@
 
 LinearParticleEmitter::LinearParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const glm::vec2& billboard_size,
 	const Texture& texture, const glm::vec3& start_color, const glm::vec3& end_color, float particle_velocity, unsigned int max_particle_count, float frequency)
-	: ParticleEmitter(transformation, parent_transformable, "linear_particle_emitter", billboard_size, true, max_particle_count),
+	: ParticleEmitter(transformation, parent_transformable, "linear_particle_emitter", billboard_size, true, false, max_particle_count),
 	m_texture(texture),
 	m_start_color(start_color),
 	m_end_color(end_color),

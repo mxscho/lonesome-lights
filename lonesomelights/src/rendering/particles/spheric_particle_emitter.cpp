@@ -10,7 +10,7 @@
 
 SphericParticleEmitter::SphericParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const glm::vec2& billboard_size,
 	const Texture& texture, const glm::vec3& start_color, const glm::vec3& end_color, float radius, float particle_start_velocity, float gravity, float min_particle_lifetime_seconds, float max_particle_lifetime_seconds, float frequency)
-	: ParticleEmitter(transformation, parent_transformable, "spheric_particle_emitter", billboard_size, true,
+	: ParticleEmitter(transformation, parent_transformable, "spheric_particle_emitter", billboard_size, true, false,
 		static_cast<unsigned int>(ceil(frequency * max_particle_lifetime_seconds * 1.1F)) + 10
 	),
 	m_texture(texture),

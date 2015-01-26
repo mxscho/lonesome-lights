@@ -7,7 +7,7 @@
 
 #include <cassert>
 
-ParticleEmitter::ParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const std::string& fragment_shader_name, const glm::vec2& billboard_size, bool orientate_towards_velocity, unsigned int max_particle_count)
+ParticleEmitter::ParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, const std::string& fragment_shader_name, const glm::vec2& billboard_size, bool orientate_towards_velocity, bool camera_plane_aligned, unsigned int max_particle_count)
 	: DeferredDrawable(RenderPrograms::get_render_program("particle_emitter", fragment_shader_name), RenderPrograms::get_render_program("deferred_particle_emitter")),
 	Updatable(),
 	Transformable(transformation, parent_transformable),
@@ -18,6 +18,7 @@ ParticleEmitter::ParticleEmitter(const glm::mat4& transformation, const Transfor
 	m_frequency(),
 	m_is_emitting(true),
 	m_orientate_towards_velocity(orientate_towards_velocity),
+	m_camera_plane_aligned(camera_plane_aligned),
 	m_current_time_seconds(),
 	m_max_particle_count(max_particle_count),
 	m_base_vertex_buffer_object({ glm::vec2(-billboard_size.x / 2.0F, -billboard_size.y / 2.0F), glm::vec2(billboard_size.x / 2.0F, -billboard_size.y / 2.0F), glm::vec2(billboard_size.x / 2.0F, billboard_size.y / 2.0F), glm::vec2(-billboard_size.x / 2.0F, billboard_size.y / 2.0F) }, GL_ARRAY_BUFFER),
@@ -52,8 +53,9 @@ void ParticleEmitter::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
-	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
+	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", "u_camera_look_direction", camera);
 	Drawable::m_render_program.set_uniform("u_orientate_towards_velocity", m_orientate_towards_velocity);
+	Drawable::m_render_program.set_uniform("u_camera_plane_aligned", m_camera_plane_aligned);
 	Drawable::m_render_program.set_uniform("u_current_time_seconds", m_current_time_seconds);
 	
 	Drawable::m_render_program.bind();

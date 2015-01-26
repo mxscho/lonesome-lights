@@ -82,13 +82,14 @@ void WorkerUnit::draw(const Camera& camera) const {
 	m_vine_vao.bind();
 	glDrawElements(GL_TRIANGLES, m_vine_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
 	
-	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_ball_transformation);
-	m_ball_vao.bind();
-	glDrawElementsBaseVertex(GL_TRIANGLES, m_ball_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr, m_vertex_counts[0]);
+	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.16f, 0.45f, 0.2f));
 	
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_ball_transformation);
 	m_ball_vao.bind();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
 	glDrawElementsBaseVertex(GL_TRIANGLES, m_ball_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr, m_vertex_counts[0]);
+	glDisable(GL_BLEND);
 	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
@@ -133,7 +134,7 @@ WorkerUnit::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 
 WorkerUnit::WorkerUnit(const glm::vec2& position, const Map& map, const Player& player, const std::vector<WorkerUnit::Data>& vertices, const std::vector<unsigned int>& vertex_counts)
 	: Drawable(RenderPrograms::get_render_program("unit")),
-	Unit(glm::translate(glm::vec3(0.0F, 0.3F, 0.0F)) * glm::scale(glm::vec3(0.0075F, 0.0075F, 0.0075F)), position, map, player,
+	Unit(glm::translate(glm::vec3(0.0F, 0.3F, 0.0F)) * glm::scale(glm::vec3(0.0065F, 0.0065F, 0.0065F)), position, map, player,
 	1.1F, // Maximum velocity
 	0.5F, 0.5F, // Acceleration/Decceleration
 	100.0F // Maximum health

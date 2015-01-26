@@ -39,6 +39,7 @@ public:
 	void add_target_path_to_path(const Timer& timer, const std::list<glm::vec2>& target_path);
 	
 	void draw(const Camera& camera) const;
+	void draw_selection_circle(const Camera& camera) const;
 	
 	void update(const Timer& timer) override;
 protected:
