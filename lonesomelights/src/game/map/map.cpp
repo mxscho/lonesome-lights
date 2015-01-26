@@ -24,7 +24,7 @@ Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, 
 }
 
 Map Map::create_test_map(float tile_size) {
-	Map map = create_empty_map(20, 20, tile_size);
+	Map map = create_empty_map(30, 30, tile_size);
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 9, RockTile::CliffType::NegativeXNegativeY))));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 10, RockTile::CliffType::NegativeX))));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 11, RockTile::CliffType::NegativeXPositiveY))));

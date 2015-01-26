@@ -19,6 +19,8 @@ public:
 
 	static BaseTile create(const Map& map, unsigned int x, unsigned int y, const Player& player);
 	
+	const Player& get_player() const;
+
 	void draw(const Camera& camera) const override final;
 private:
 	struct Data {

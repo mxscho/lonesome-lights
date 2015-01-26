@@ -15,12 +15,17 @@
 
 #include <iostream>
 
-float Game::c_worker_unit_plasma_cost = 0.0F;
-float Game::c_worker_unit_crystals_cost = 0.0F;
-float Game::c_laser_unit_plasma_cost = 0.0F;
-float Game::c_laser_unit_crystals_cost = 0.0F;
-float Game::c_shockwave_unit_plasma_cost = 0.0F;
-float Game::c_shockwave_unit_crystals_cost = 0.0F;
+float Game::c_worker_unit_plasma_cost = 100.0F;
+float Game::c_worker_unit_crystals_cost = 20.0F;
+float Game::c_laser_unit_plasma_cost = 100.0F;
+float Game::c_laser_unit_crystals_cost = 20.0F;
+float Game::c_shockwave_unit_plasma_cost = 100.0F;
+float Game::c_shockwave_unit_crystals_cost = 20.0F;
+
+unsigned int Game::c_own_base_x = 28;
+unsigned int Game::c_own_base_y = 1;
+unsigned int Game::c_opponent_base_x = 1;
+unsigned int Game::c_opponent_base_y = 28;
 
 Game::Game()
 	: Networkable(),
@@ -36,15 +41,16 @@ Game::Game()
 	m_own_units(),
 	m_opponent_units(),
 
-	m_own_plasma_count(100.0F), // TEST
+	m_own_plasma_count(1000.0F), // TEST
 	m_own_crystal_count(100.0F),
-	//m_opponent_plasma_count(100.0F),
-	//m_opponent_crystal_count(100.0F),
+	//m_opponent_plasma_count(1000.0F),
+	m_opponent_crystal_count(100.0F),
 
 	m_explosions() {
 
-	m_map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(m_map, 2, 6, m_own_player))));
-	
+	m_map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(m_map, c_own_base_x, c_own_base_y, m_own_player))));
+	m_map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(m_map, c_opponent_base_x, c_opponent_base_y, m_opponent_player))));
+
 	// TEST
 	m_own_units.push_back(LaserUnit::create(glm::vec2(4.0F, 4.0F), m_map, m_own_player));
 	m_own_units.push_back(LaserUnit::create(glm::vec2(2.0F, 2.0F), m_map, m_own_player));
@@ -89,19 +95,25 @@ void Game::spawn_own_worker_unit() {
 	if (m_own_plasma_count < c_worker_unit_plasma_cost || m_own_crystal_count < c_worker_unit_crystals_cost) {
 		return;
 	}
-	m_own_units.push_back(WorkerUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
+	m_own_plasma_count -= c_worker_unit_plasma_cost;
+	m_own_crystal_count -= c_worker_unit_crystals_cost;
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(c_own_base_x, c_own_base_y), m_map, m_own_player));
 }
 void Game::spawn_own_laser_unit() {
 	if (m_own_plasma_count < c_laser_unit_plasma_cost || m_own_crystal_count < c_laser_unit_crystals_cost) {
 		return;
 	}
-	m_own_units.push_back(LaserUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
+	m_own_plasma_count -= c_laser_unit_plasma_cost;
+	m_own_crystal_count -= c_laser_unit_crystals_cost;
+	m_own_units.push_back(LaserUnit::create(glm::vec2(c_own_base_x, c_own_base_y), m_map, m_own_player));
 }
 void Game::spawn_own_shockwave_unit() {
 	if (m_own_plasma_count < c_shockwave_unit_plasma_cost || m_own_crystal_count < c_shockwave_unit_crystals_cost) {
 		return;
 	}
-	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
+	m_own_plasma_count -= c_shockwave_unit_plasma_cost;
+	m_own_crystal_count -= c_shockwave_unit_crystals_cost;
+	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(c_own_base_x, c_own_base_y), m_map, m_own_player));
 }
 
 void Game::draw(const Camera& camera) const {
@@ -271,6 +283,7 @@ void Game::update(const Timer& timer) {
 			if (exploited) {
 				if (CrystalTile* tile = dynamic_cast<CrystalTile*>(exploited)) {
 					tile->change_health(delta_time_seconds * -own_worker_unit->get_attack_dps());
+					own_worker_unit->change_crystal_count(delta_time_seconds * own_worker_unit->get_attack_dps());
 				} else if (DestructibleRockTile* tile = dynamic_cast<DestructibleRockTile*>(exploited)) {
 					tile->change_health(delta_time_seconds * -own_worker_unit->get_attack_dps());
 				}
@@ -374,6 +387,7 @@ void Game::update(const Timer& timer) {
 			if (exploited) {
 				if (CrystalTile* tile = dynamic_cast<CrystalTile*>(exploited)) {
 					tile->change_health(delta_time_seconds * -opponent_worker_unit->get_attack_dps());
+					opponent_worker_unit->change_crystal_count(delta_time_seconds * opponent_worker_unit->get_attack_dps());
 				} else if (DestructibleRockTile* tile = dynamic_cast<DestructibleRockTile*>(exploited)) {
 					tile->change_health(delta_time_seconds * -opponent_worker_unit->get_attack_dps());
 				}
@@ -477,6 +491,38 @@ void Game::update(const Timer& timer) {
 				}
 
 				m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
+			}
+		}
+	}
+	
+	// Update ressource to base.
+
+	BaseTile* own_base_tile;
+	BaseTile* opponent_base_tile;
+	for (unsigned int i_y = 0; i_y < m_map.get_tile_count_y(); ++i_y) {
+		for (unsigned int i_x = 0; i_x < m_map.get_tile_count_x(); ++i_x) {
+			if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&m_map.get_tile(i_x, i_y))) {
+				if (&base_tile->get_player() == &m_own_player) {
+					own_base_tile = base_tile;
+				} else if (&base_tile->get_player() == &m_opponent_player) {
+					opponent_base_tile = base_tile;
+				}
+			}
+		}
+	}
+	for (auto& i_own_unit : m_own_units) {
+		if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
+			if (glm::distance(worker_unit->get_position(), own_base_tile->get_position()) <= 3.0F) {
+				m_own_crystal_count += worker_unit->get_crystal_count();
+				worker_unit->set_crystal_count(0.0F);
+			}
+		}
+	}
+	for (auto& i_opponent_unit : m_opponent_units) {
+		if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
+			if (glm::distance(worker_unit->get_position(), opponent_base_tile->get_position()) <= 3.0F) {
+				m_opponent_crystal_count += worker_unit->get_crystal_count();
+				worker_unit->set_crystal_count(0.0F);
 			}
 		}
 	}

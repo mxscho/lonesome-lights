@@ -26,6 +26,11 @@ public:
 	static float c_shockwave_unit_plasma_cost;
 	static float c_shockwave_unit_crystals_cost;
 
+	static unsigned int c_own_base_x;
+	static unsigned int c_own_base_y;
+	static unsigned int c_opponent_base_x;
+	static unsigned int c_opponent_base_y;
+
 	Game();
 
 	float get_own_plasma_count() const;
@@ -57,7 +62,7 @@ private:
 	float m_own_plasma_count;
 	float m_own_crystal_count;
 	//float m_opponent_plasma_count;
-	//float m_opponent_crystals_count;
+	float m_opponent_crystal_count;
 
 	std::list<Explosion> m_explosions;
 };

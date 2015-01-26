@@ -21,6 +21,10 @@ BaseTile BaseTile::create(const Map& map, unsigned int x, unsigned int y, const 
 	return BaseTile(map, x, y, vertices, player);
 }
 
+const Player& BaseTile::get_player() const {
+	return m_player;
+}
+
 void BaseTile::draw(const Camera& camera) const {
 	m_floor_tile.draw(camera);
 	
@@ -34,10 +38,8 @@ void BaseTile::draw(const Camera& camera) const {
 
 	Drawable::m_render_program.bind();
 	
-	//Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation());
 	m_vertex_array_object.bind();
 	glDrawElements(GL_TRIANGLES, m_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
-	
 	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
@@ -68,16 +70,9 @@ BaseTile::BaseTile(const Map& map, unsigned int x, unsigned int y, const std::ve
 	m_vertices_vbo.bind();
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BaseTile::Data), (void*) ((0 * 3) * sizeof(GL_FLOAT)));
-	VertexArrayObject::unbind_any();
-	VertexBufferObjects::unbind_any();
-	
-	
-	
-	m_vertex_array_object.bind();
-	m_vertices_vbo.bind();
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BaseTile::Data), (void*) ((0 * 3) * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(BaseTile::Data), (void*) ((1 * 3) * sizeof(GL_FLOAT)));
 	m_elements_vbo.bind();
+	VertexArrayObject::unbind_any();
+	VertexBufferObjects::unbind_any();
 }

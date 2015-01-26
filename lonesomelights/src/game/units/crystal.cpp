@@ -34,7 +34,7 @@ void Crystal::draw(const Camera& camera) const {
 	bool depth_test = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
 	
-	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * glm::rotate(m_current_time_seconds, glm::vec3(0.0F, 1.0F, 0.0F)));
+	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * glm::rotate(-m_current_time_seconds, glm::vec3(0.0F, 1.0F, 0.0F)));
 	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
 	Drawable::m_render_program.set_uniform("u_color", m_color);
 	
