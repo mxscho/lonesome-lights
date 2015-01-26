@@ -5,8 +5,10 @@ uniform mat4 u_view_transformation;
 uniform mat4 u_projection_transformation;
 uniform vec3 u_camera_eye_position;
 uniform vec3 u_camera_up_direction;
+uniform vec3 u_camera_look_direction;
 
 uniform bool u_orientate_towards_velocity;
+uniform bool u_camera_plane_aligned;
 uniform float u_current_time_seconds;
 
 layout(location = 0) in vec2 in_base_position;
@@ -33,8 +35,13 @@ void main() {
 	} else {
 		vec3 instance_position_world = (u_model_transformation * vec4(instance_position, 1.0)).xyz;
 		
+		vec3 negative_camera_direction_world;
+		if (u_camera_plane_aligned) {
+			negative_camera_direction_world = normalize(u_camera_look_direction);
+		} else {
 		vec3 camera_position_world = u_camera_eye_position;
-		vec3 negative_camera_direction_world = normalize(camera_position_world - instance_position_world);
+		negative_camera_direction_world = normalize(camera_position_world - instance_position_world);
+		}
 		
 		vec3 billboard_look_world;
 		vec3 billboard_right_world;

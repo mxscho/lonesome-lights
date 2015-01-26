@@ -11,6 +11,10 @@ const glm::vec3& Camera::get_eye_position() const {
 const glm::vec3& Camera::get_up_direction() const {
 	return m_up_direction;
 }
+
+const glm::vec3 Camera::get_look_direction() const {
+	return glm::normalize(m_eye_position - m_center_position);
+}
 const glm::mat4& Camera::get_view_transformation() const {
 	return m_view_transformation;
 }

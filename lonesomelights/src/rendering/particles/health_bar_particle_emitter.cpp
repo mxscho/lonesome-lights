@@ -10,7 +10,7 @@
 #include "rendering/opengl/textures.h"
 
 HealthBarParticleEmitter::HealthBarParticleEmitter(const glm::mat4& transformation, const Transformable& parent_transformable, float max_health, float health)
-	: ParticleEmitter(transformation, parent_transformable, "health_bar_particle_emitter", glm::vec2(0.5F, 0.075F), false,
+	: ParticleEmitter(transformation, parent_transformable, "health_bar_particle_emitter", glm::vec2(0.5F, 0.075F), false, true,
 		2
 	),
 	m_max_health(max_health),
