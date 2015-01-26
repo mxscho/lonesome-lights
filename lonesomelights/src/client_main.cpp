@@ -39,6 +39,7 @@
 #include "game/player.h"
 #include "rendering/opengl/frame_buffer_object.h"
 #include "game/hud.h"
+#include "game/loading_screen.h"
 #include "game/skybox.h"
 
 //static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
@@ -138,19 +139,11 @@ static std::pair<bool, glm::vec3> get_clicked_world_position(const Camera& camer
 	return std::make_pair(true, glm::vec3(position.x, position.y, position.z));
 }
 
-static void draw_network_loading_screen(sf::RenderWindow& window) {
+
+static void draw_loading_screen(sf::RenderWindow& window, LoadingScreen& loading_screen, std::string text) {
 	window.clear();
-
-	// TODO: Draw network loading screen.
-
-	window.display();
-}
-
-static void draw_game_loading_screen(sf::RenderWindow& window) {
-	window.clear();
-
-	// TODO: Draw game loading screen.
-
+	loading_screen.set_text(text);
+	loading_screen.draw();
 	window.display();
 }
 
@@ -169,7 +162,9 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		return EXIT_FAILURE;
 	}
 
-	draw_network_loading_screen(window);
+	LoadingScreen loading_screen(window, video_mode);
+	
+	draw_loading_screen(window, loading_screen, "Waiting for opponent...");
 
 	std::string host = get_args_host(argc, argv);
 	unsigned int port = get_args_port(argc, argv);
@@ -179,7 +174,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		return EXIT_FAILURE;
 	}
 
-	draw_game_loading_screen(window);
+	draw_loading_screen(window, loading_screen, "Loading...");
 
 	// TEST
 	Timer timer;
@@ -195,6 +190,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	PlayerHandler player_handler(game);
 	Skybox skybox(glm::translate(glm::vec3(15.0F, 0.0F, 15.0F)) * glm::scale(glm::vec3(60.0F, 60.0F, 60.0F)), game.get_map());
 	HUD hud(game, window, video_mode);
+	//LoadingScreen loading_screen(game, window, video_mode);
 	
 	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
 	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
