@@ -93,7 +93,7 @@ CrystalTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 }
 
 CrystalTile::CrystalTile(const Map& map, unsigned int x, unsigned int y, const std::vector<CrystalTile::Data>& vertices, const RockTile::CliffType& cliff_type)
-	: Attackable(glm::translate(0.5F, 1.0F, 0.5F), *this, 100.0F, 100.0F),
+	: Attackable(glm::translate(glm::vec3(0.5F, 1.0F, 0.5F)), *this, 100.0F, 100.0F),
 	Tile(map, x, y, RenderPrograms::get_render_program("unit")),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_crystals_elements_vbo(ObjLoader::get_obj_elements("crystals", 0), GL_ELEMENT_ARRAY_BUFFER),
