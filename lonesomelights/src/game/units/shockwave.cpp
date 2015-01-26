@@ -38,6 +38,8 @@ void Shockwave::draw(const Camera& camera) const {
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
+	bool depth_test = glIsEnabled(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 	
 	Drawable::m_render_program.set_uniforms("u_view_transformation", "u_projection_transformation", "u_camera_eye_position", "u_camera_up_direction", camera);
 	Drawable::m_render_program.set_uniform("u_texture", 0);
@@ -59,6 +61,9 @@ void Shockwave::draw(const Camera& camera) const {
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
 	
+	if (depth_test) {
+		glEnable(GL_DEPTH_TEST);
+	}
 	glDisable(GL_BLEND);
 }
 
