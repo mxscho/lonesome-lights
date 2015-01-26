@@ -1,5 +1,5 @@
-#ifndef __GAME__UNITS__CRYSTAL_CIRCLE_H__
-#define __GAME__UNITS__CRYSTAL_CIRCLE_H__
+#ifndef __GAME__UNITS__CRYSTAL_H__
+#define __GAME__UNITS__CRYSTAL_H__
 
 #include "geometry/transformable.h"
 #include "rendering/drawable.h"

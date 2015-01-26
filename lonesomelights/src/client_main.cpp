@@ -39,6 +39,7 @@
 #include "game/player.h"
 #include "rendering/opengl/frame_buffer_object.h"
 #include "game/hud.h"
+#include "game/skybox.h"
 
 static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
 
@@ -171,6 +172,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	
 	Game game;
 	PlayerHandler player_handler(game);
+	Skybox skybox(glm::translate(glm::vec3(10.0F, 0.0F, 10.0F)) * glm::scale(glm::vec3(40.0F, 40.0F, 40.0F)), game.get_map());
 	
 	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
 	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
@@ -349,6 +351,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		// Deferred rendering to screen.
 		
+		skybox.draw(map_camera);
 		game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		//laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 		//explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);

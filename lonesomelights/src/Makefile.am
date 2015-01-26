@@ -10,6 +10,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 		game/hud.cpp \
 		game/player.cpp \
 		game/player_handler.cpp \
+		game/skybox.cpp \
 			\
 			game/map/map.cpp \
 			game/map/base_tile.cpp \
