@@ -33,6 +33,9 @@ public:
 
 	Game();
 
+	bool has_started() const;
+	void start();
+
 	float get_own_plasma_count() const;
 	float get_own_crystal_count() const;
 	
@@ -54,6 +57,7 @@ public:
 	std::vector<DestructibleRockTile*> m_opponent_selected_destructible_rock_tiles;
 	std::vector<CrystalTile*> m_opponent_selected_crystal_tiles;
 private:
+	bool m_is_started;
 	Map m_map;
 	Player m_own_player;
 	Player m_opponent_player;

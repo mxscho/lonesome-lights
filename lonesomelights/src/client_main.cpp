@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <utility>
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #define GLM_FORCE_RADIANS
@@ -15,31 +16,34 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-#include "networking/client.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
-// TEST
 #include "timer.h"
+
 #include "game/player_handler.h"
 #include "game/game.h"
 #include "game/units/laser_unit.h"
-#include "networking/network_handlers/client_handlers/unit_client_handler.h"
-#include <SFML/Window.hpp>
+#include "game/map/map.h"
+#include "geometry/transformable.h"
+#include "geometry/map_camera.h"
+#include "geometry/path_finder.h"
+#include "game/player.h"
+#include "game/hud.h"
+#include "game/skybox.h"
+
+#include "rendering/opengl/frame_buffer_object.h"
+#include "rendering/obj_loader/obj_loader.h"
+#include "rendering/opengl/textures.h"
+#include "rendering/particles/particle_systems/explosion.h"
+#include "rendering/particles/particle_systems/laser.h"
 #include "rendering/opengl/vertex_shader.h"
 #include "rendering/opengl/fragment_shader.h"
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
-#include "game/map/map.h"
-#include "rendering/particles/particle_systems/explosion.h"
-#include "rendering/particles/particle_systems/laser.h"
-#include "geometry/transformable.h"
-#include "geometry/map_camera.h"
-#include "geometry/path_finder.h"
-#include "rendering/obj_loader/obj_loader.h"
-#include "rendering/opengl/textures.h"
-#include "game/player.h"
-#include "rendering/opengl/frame_buffer_object.h"
-#include "game/hud.h"
-#include "game/skybox.h"
+
+#include "networking/client.h"
+#include "networking/network_handlers/client_handlers/game_client_handler.h"
 
 //static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
 //static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
@@ -155,7 +159,6 @@ static void draw_game_loading_screen(sf::RenderWindow& window) {
 }
 
 int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
-	// TEST
 	sf::ContextSettings settings;
 	settings.depthBits = 24;
 	settings.stencilBits = 8;
@@ -181,28 +184,17 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 
 	draw_game_loading_screen(window);
 
-	// TEST
 	Timer timer;
 	timer.advance();
-	timer.advance();
-	
-	Map map = Map::create_test_map(1.0F);
-	PathFinder path_finder(map, 12);
-	
-	Explosion explosion(glm::translate(glm::vec3(8.0F, 0.2F, 8.0F)), map, 1.0F);
 	
 	Game game;
-	PlayerHandler player_handler(game);
+	GameClientHandler game_client_handler(client.create_base_network_id(), client);
+	game.set_network_handler(game_client_handler);
+
 	Skybox skybox(glm::translate(glm::vec3(15.0F, 0.0F, 15.0F)) * glm::scale(glm::vec3(60.0F, 60.0F, 60.0F)), game.get_map());
+	PlayerHandler player_handler(game);
+	MapCamera map_camera(game.get_map(), glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 	HUD hud(game, window, video_mode);
-	
-	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
-	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
-	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
-	laser_unit.set_network_handler(unit_client_handler);*/
-	//laser_unit->start_shooting(glm::vec2(5.0F, 2.0F));
-	
-	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 
 	FrameBufferObject frame_buffer_object;
 	Texture color_texture;
@@ -288,23 +280,18 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		// Update scene.
 		
 		timer.advance();
-		
-		map_camera.update(timer);
+
 		client.update();
 		
-		map.update(timer);
 		game.update(timer);
-		hud.update(timer);
-		//laser_unit->update(timer);
-		
-		/*static float trigger_explosion_time_seconds;
-		trigger_explosion_time_seconds += timer.get_delta_time_seconds();
-		if (trigger_explosion_time_seconds >= 1.0F && explosion.has_finished()) {
-			trigger_explosion_time_seconds = 0.0F;
-			explosion.trigger(timer.get_current_time_seconds());
+
+		if (!game.has_started()) {
+			continue;
 		}
-		explosion.update(timer);*/
-		
+
+		map_camera.update(timer);
+		hud.update(timer);
+
 		// Settings for rendering.
 		
 		glEnable(GL_CULL_FACE);
@@ -337,10 +324,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		//map.draw(map_camera);
 		game.draw(map_camera);
-		//laser_unit->draw(map_camera);
-		//explosion.draw(map_camera);
 		
 		FrameBufferObject::unbind_any();
 		
@@ -378,8 +362,6 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		skybox.draw(map_camera);
 		game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
-		//laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
-		//explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 
 		hud.draw(map_camera);
 
