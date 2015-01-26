@@ -32,6 +32,9 @@ public:
 	void select(const glm::vec3& color);
 	void unhover();
 	void hover(const glm::vec3& color);
+	
+	void set_cliff_type(RockTile::CliffType cliff_type);
+	RockTile::CliffType get_cliff_type() const;
 
 private:
 	struct Data {

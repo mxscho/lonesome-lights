@@ -191,6 +191,14 @@ void RockTile::set_color(glm::vec3 new_color) {
 	m_color = glm::vec4(new_color.x, new_color.y, new_color.z, 1.0f);
 }
 
+void RockTile::set_cliff_type(RockTile::CliffType cliff_type) {
+	m_cliff_type = cliff_type;
+}
+
+RockTile::CliffType RockTile::get_cliff_type() const {
+	return m_cliff_type;
+}
+
 RockTile::Data::Data(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texel)
 	: position(position),
 	normal(normal),
