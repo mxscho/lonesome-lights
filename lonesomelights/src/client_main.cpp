@@ -138,6 +138,22 @@ static std::pair<bool, glm::vec3> get_clicked_world_position(const Camera& camer
 	return std::make_pair(true, glm::vec3(position.x, position.y, position.z));
 }
 
+static void draw_network_loading_screen(sf::RenderWindow& window) {
+	window.clear();
+
+	// TODO: Draw network loading screen.
+
+	window.display();
+}
+
+static void draw_game_loading_screen(sf::RenderWindow& window) {
+	window.clear();
+
+	// TODO: Draw game loading screen.
+
+	window.display();
+}
+
 int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
 	// TEST
 	sf::ContextSettings settings;
@@ -153,6 +169,8 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		return EXIT_FAILURE;
 	}
 
+	draw_network_loading_screen(window);
+
 	std::string host = get_args_host(argc, argv);
 	unsigned int port = get_args_port(argc, argv);
 	Client client;
@@ -160,7 +178,9 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	if (!client.connect(host, port)) {
 		return EXIT_FAILURE;
 	}
-	
+
+	draw_game_loading_screen(window);
+
 	// TEST
 	Timer timer;
 	timer.advance();
@@ -173,7 +193,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	
 	Game game;
 	PlayerHandler player_handler(game);
-	Skybox skybox(glm::translate(glm::vec3(10.0F, 0.0F, 10.0F)) * glm::scale(glm::vec3(40.0F, 40.0F, 40.0F)), game.get_map());
+	Skybox skybox(glm::translate(glm::vec3(15.0F, 0.0F, 15.0F)) * glm::scale(glm::vec3(60.0F, 60.0F, 60.0F)), game.get_map());
 	HUD hud(game, window, video_mode);
 	
 	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
@@ -326,6 +346,8 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		// Render scene texture to screen.
 		
+		window.clear();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		const RenderProgram& render_program = RenderPrograms::get_render_program("deferred");
