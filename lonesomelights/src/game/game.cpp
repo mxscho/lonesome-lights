@@ -13,6 +13,8 @@
 #include "game/units/worker_unit.h"
 #include "timer.h"
 
+#include <iostream>
+
 float Game::c_worker_unit_plasma_cost = 0.0F;
 float Game::c_worker_unit_crystals_cost = 0.0F;
 float Game::c_laser_unit_plasma_cost = 0.0F;
@@ -34,10 +36,10 @@ Game::Game()
 	m_own_units(),
 	m_opponent_units(),
 
-	m_own_plasma(100.0F), // TEST
-	m_own_crystals(100.0F),
-	//m_opponent_plasma(100.0F),
-	//m_opponent_crystals(100.0F),
+	m_own_plasma_count(100.0F), // TEST
+	m_own_crystal_count(100.0F),
+	//m_opponent_plasma_count(100.0F),
+	//m_opponent_crystal_count(100.0F),
 
 	m_explosions() {
 
@@ -66,6 +68,13 @@ Game::Game()
 	// --------------------
 }
 
+float Game::get_own_plasma_count() const {
+	return m_own_plasma_count;
+}
+float Game::get_own_crystal_count() const {
+	return m_own_crystal_count;
+}
+
 Map& Game::get_map() {
 	return m_map;
 }
@@ -77,19 +86,19 @@ std::list<std::unique_ptr<Unit>>& Game::get_opponent_units() {
 }
 
 void Game::spawn_own_worker_unit() {
-	if (m_own_plasma < c_worker_unit_plasma_cost || m_own_crystals < c_worker_unit_crystals_cost) {
+	if (m_own_plasma_count < c_worker_unit_plasma_cost || m_own_crystal_count < c_worker_unit_crystals_cost) {
 		return;
 	}
 	m_own_units.push_back(WorkerUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
 }
 void Game::spawn_own_laser_unit() {
-	if (m_own_plasma < c_laser_unit_plasma_cost || m_own_crystals < c_laser_unit_crystals_cost) {
+	if (m_own_plasma_count < c_laser_unit_plasma_cost || m_own_crystal_count < c_laser_unit_crystals_cost) {
 		return;
 	}
 	m_own_units.push_back(LaserUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
 }
 void Game::spawn_own_shockwave_unit() {
-	if (m_own_plasma < c_shockwave_unit_plasma_cost || m_own_crystals < c_shockwave_unit_crystals_cost) {
+	if (m_own_plasma_count < c_shockwave_unit_plasma_cost || m_own_crystal_count < c_shockwave_unit_crystals_cost) {
 		return;
 	}
 	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(3.5F, 6.5F), m_map, m_own_player));
@@ -164,6 +173,8 @@ void Game::draw_deferred(const Camera& camera, const Texture& color_texture, con
 void Game::update(const Timer& timer) {
 	float delta_time_seconds = timer.get_delta_time_seconds();
 
+	m_map.update(timer);
+
 	for (auto& i_own_unit : m_own_units) {
 		if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
 			// Update attack relationships.
@@ -219,7 +230,7 @@ void Game::update(const Timer& timer) {
 			float exploit_range = own_worker_unit->get_attack_range();
 			Tile* currently_exploited = own_worker_unit->get_exploited();
 			if (currently_exploited) {
-				if (glm::distance(own_worker_unit->get_position_vec2(), glm::vec2(currently_exploited->get_x() + 0.5F, currently_exploited->get_y() + 0.5F)) > exploit_range ||
+				if (glm::distance(own_worker_unit->get_position_vec2(), glm::vec2((currently_exploited->get_x() + 0.5F) * currently_exploited->get_size(), (currently_exploited->get_y() + 0.5F) * currently_exploited->get_size())) > exploit_range ||
 					(std::find(m_own_selected_crystal_tiles.begin(), m_own_selected_crystal_tiles.end(), currently_exploited) == m_own_selected_crystal_tiles.end() &&
 					std::find(m_own_selected_destructible_rock_tiles.begin(), m_own_selected_destructible_rock_tiles.end(), currently_exploited) == m_own_selected_destructible_rock_tiles.end())) {
 					own_worker_unit->stop_exploiting();
@@ -232,25 +243,36 @@ void Game::update(const Timer& timer) {
 				float min_exploit_range = std::numeric_limits<float>::max();
 				
 				for (auto& i_tile : m_own_selected_crystal_tiles) {
-					if (glm::distance(own_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < exploit_range &&
-						glm::distance(own_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < min_exploit_range) {
+					if (glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
+						glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
 						exploited_crystal = i_tile;
-						min_exploit_range = glm::distance(own_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F));
+						min_exploit_range = glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
 					}
 				}
 				if (exploited_crystal) {
 					own_worker_unit->start_exploiting(exploited_crystal);
 				} else {
 					for (auto& i_tile : m_own_selected_destructible_rock_tiles) {
-						if (glm::distance(own_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < exploit_range &&
-							glm::distance(own_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < min_exploit_range) {
+						if (glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
+							glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
 							exploited_dr = i_tile;
-							min_exploit_range = glm::distance(own_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F));
+							min_exploit_range = glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
 						}
 					}
 					if (exploited_dr) {
 						own_worker_unit->start_exploiting(exploited_dr);
 					}
+				}
+			}
+
+			// Update health.
+
+			Tile* exploited = own_worker_unit->get_exploited();
+			if (exploited) {
+				if (CrystalTile* tile = dynamic_cast<CrystalTile*>(exploited)) {
+					tile->change_health(delta_time_seconds * -own_worker_unit->get_attack_dps());
+				} else if (DestructibleRockTile* tile = dynamic_cast<DestructibleRockTile*>(exploited)) {
+					tile->change_health(delta_time_seconds * -own_worker_unit->get_attack_dps());
 				}
 			}
 		}
@@ -311,7 +333,7 @@ void Game::update(const Timer& timer) {
 			float exploit_range = opponent_worker_unit->get_attack_range();
 			Tile* currently_exploited = opponent_worker_unit->get_exploited();
 			if (currently_exploited) {
-				if (glm::distance(opponent_worker_unit->get_position_vec2(), glm::vec2(currently_exploited->get_x() + 0.5F, currently_exploited->get_y() + 0.5F)) > exploit_range ||
+				if (glm::distance(opponent_worker_unit->get_position_vec2(), glm::vec2((currently_exploited->get_x() + 0.5F) * currently_exploited->get_size(), (currently_exploited->get_y() + 0.5F) * currently_exploited->get_size())) > exploit_range ||
 					(std::find(m_opponent_selected_crystal_tiles.begin(), m_opponent_selected_crystal_tiles.end(), currently_exploited) == m_opponent_selected_crystal_tiles.end() &&
 					std::find(m_opponent_selected_destructible_rock_tiles.begin(), m_opponent_selected_destructible_rock_tiles.end(), currently_exploited) == m_opponent_selected_destructible_rock_tiles.end())) {
 					opponent_worker_unit->stop_exploiting();
@@ -324,25 +346,36 @@ void Game::update(const Timer& timer) {
 				float min_exploit_range = std::numeric_limits<float>::max();
 				
 				for (auto& i_tile : m_opponent_selected_crystal_tiles) {
-					if (glm::distance(opponent_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < exploit_range &&
-						glm::distance(opponent_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < min_exploit_range) {
+					if (glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
+						glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
 						exploited_crystal = i_tile;
-						min_exploit_range = glm::distance(opponent_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F));
+						min_exploit_range = glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
 					}
 				}
 				if (exploited_crystal) {
 					opponent_worker_unit->start_exploiting(exploited_crystal);
 				} else {
 					for (auto& i_tile : m_opponent_selected_destructible_rock_tiles) {
-						if (glm::distance(opponent_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < exploit_range &&
-							glm::distance(opponent_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F)) < min_exploit_range) {
+						if (glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
+							glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
 							exploited_dr = i_tile;
-							min_exploit_range = glm::distance(opponent_worker_unit->get_position(), glm::vec3(i_tile->get_x() + 0.5F, 0.5F, i_tile->get_y() + 0.5F));
+							min_exploit_range = glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
 						}
 					}
 					if (exploited_dr) {
 						opponent_worker_unit->start_exploiting(exploited_dr);
 					}
+				}
+			}
+
+			// Update health.
+		
+			Tile* exploited = opponent_worker_unit->get_exploited();
+			if (exploited) {
+				if (CrystalTile* tile = dynamic_cast<CrystalTile*>(exploited)) {
+					tile->change_health(delta_time_seconds * -opponent_worker_unit->get_attack_dps());
+				} else if (DestructibleRockTile* tile = dynamic_cast<DestructibleRockTile*>(exploited)) {
+					tile->change_health(delta_time_seconds * -opponent_worker_unit->get_attack_dps());
 				}
 			}
 		}
@@ -363,7 +396,7 @@ void Game::update(const Timer& timer) {
 				}
 			}
 			glm::vec2 position = (*i_own_unit)->get_position_vec2();
-			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
+			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F);
 			m_explosions.back().trigger(timer.get_current_time_seconds());
 			i_own_unit = m_own_units.erase(i_own_unit);
 		} else {
@@ -383,11 +416,68 @@ void Game::update(const Timer& timer) {
 				}
 			}
 			glm::vec2 position = (*i_opponent_unit)->get_position_vec2();
-			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F); // TODO: Fix move issues.
+			m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F);
 			m_explosions.back().trigger(timer.get_current_time_seconds());
 			i_opponent_unit = m_opponent_units.erase(i_opponent_unit);
 		} else {
 			++i_opponent_unit;
+		}
+	}
+	for (unsigned int i_y = 0; i_y < m_map.get_tile_count_y(); ++i_y) {
+		for (unsigned int i_x = 0; i_x < m_map.get_tile_count_x(); ++i_x) {
+			Tile& tile = m_map.get_tile(i_x, i_y);
+			Tile* dead_tile = nullptr;
+			if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+				if (destructible_rock_tile->is_dead()) {
+					dead_tile = destructible_rock_tile;
+					for (auto i_tile = m_own_selected_destructible_rock_tiles.begin(); i_tile != m_own_selected_destructible_rock_tiles.end(); ++i_tile) {
+						if (*i_tile == dead_tile) {
+							m_own_selected_destructible_rock_tiles.erase(i_tile);
+							break;
+						}
+					}
+					for (auto i_tile = m_opponent_selected_destructible_rock_tiles.begin(); i_tile != m_opponent_selected_destructible_rock_tiles.end(); ++i_tile) {
+						if (*i_tile == dead_tile) {
+							m_opponent_selected_destructible_rock_tiles.erase(i_tile);
+							break;
+						}
+					}
+				}
+			} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+				if (crystal_tile->is_dead()) {
+					dead_tile = crystal_tile;
+					for (auto i_tile = m_own_selected_crystal_tiles.begin(); i_tile != m_own_selected_crystal_tiles.end(); ++i_tile) {
+						if (*i_tile == dead_tile) {
+							m_own_selected_crystal_tiles.erase(i_tile);
+							break;
+						}
+					}
+					for (auto i_tile = m_opponent_selected_crystal_tiles.begin(); i_tile != m_opponent_selected_crystal_tiles.end(); ++i_tile) {
+						if (*i_tile == dead_tile) {
+							m_opponent_selected_crystal_tiles.erase(i_tile);
+							break;
+						}
+					}
+				}
+			}
+			if (dead_tile) {
+				for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
+					if (WorkerUnit* own_worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit->get())) {
+						if (own_worker_unit->get_exploited() == dead_tile) {
+							own_worker_unit->stop_exploiting();
+						}
+					}
+				}
+				for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
+					if (WorkerUnit* opponent_worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit->get())) {
+						if (opponent_worker_unit->get_exploited() == dead_tile) {
+							opponent_worker_unit->stop_exploiting();
+						}
+					}
+				}
+
+				m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
+			}
 		}
 	}
 	

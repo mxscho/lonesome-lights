@@ -43,22 +43,24 @@ void PlayerHandler::on_mouse_hover(const Timer& timer, const glm::vec3& position
 
 	// Hover tiles.
 
-	for (unsigned int i_y = 0; i_y < m_game.get_map().get_tile_count_y(); ++i_y) {
-		for (unsigned int i_x = 0; i_x < m_game.get_map().get_tile_count_x(); ++i_x) {
-			Tile& tile = m_game.get_map().get_tile(i_x, i_y);
-			if (tile.get_x() == static_cast<unsigned int>(floor(position.x)) &&
-				tile.get_y() == static_cast<unsigned int>(floor(position.z))) {
-				if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
-					if (destructible_rock_tile->is_selected()) {
-						destructible_rock_tile->hover(glm::vec3(0.8F, 0.4F, 0.4F));
-					} else {
-						destructible_rock_tile->hover(glm::vec3(0.8F, 0.8F, 0.8F));
-					}
-				} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
-					if (crystal_tile->is_selected()) {
-						crystal_tile->hover(glm::vec3(0.8F, 0.4F, 0.4F));
-					} else {
-						crystal_tile->hover(glm::vec3(0.8F, 0.8F, 0.8F));
+	if (position.y >= 0.9F) {
+		for (unsigned int i_y = 0; i_y < m_game.get_map().get_tile_count_y(); ++i_y) {
+			for (unsigned int i_x = 0; i_x < m_game.get_map().get_tile_count_x(); ++i_x) {
+				Tile& tile = m_game.get_map().get_tile(i_x, i_y);
+				if (tile.get_x() == static_cast<unsigned int>(floor(position.x)) &&
+					tile.get_y() == static_cast<unsigned int>(floor(position.z))) {
+					if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+						if (destructible_rock_tile->is_selected()) {
+							destructible_rock_tile->hover(glm::vec3(0.8F, 0.4F, 0.4F));
+						} else {
+							destructible_rock_tile->hover(glm::vec3(0.8F, 0.8F, 0.8F));
+						}
+					} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+						if (crystal_tile->is_selected()) {
+							crystal_tile->hover(glm::vec3(0.8F, 0.4F, 0.4F));
+						} else {
+							crystal_tile->hover(glm::vec3(0.8F, 0.8F, 0.8F));
+						}
 					}
 				}
 			}
@@ -111,39 +113,41 @@ void PlayerHandler::on_mouse_select(const Timer& timer, const glm::vec3& positio
 	if (is_left) {
 		// Select tile.
 
-		for (unsigned int i_y = 0; i_y < m_game.get_map().get_tile_count_y(); ++i_y) {
-			for (unsigned int i_x = 0; i_x < m_game.get_map().get_tile_count_x(); ++i_x) {
-				Tile& tile = m_game.get_map().get_tile(i_x, i_y);
-				if (tile.get_x() == static_cast<unsigned int>(floor(position.x)) &&
-					tile.get_y() == static_cast<unsigned int>(floor(position.z))) {
-					if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
-						if (destructible_rock_tile->is_selected()) {	
-							destructible_rock_tile->unselect();
-							for (auto i_tile = m_game.m_own_selected_destructible_rock_tiles.begin(); i_tile != m_game.m_own_selected_destructible_rock_tiles.end(); ++i_tile) {
-								if (*i_tile == destructible_rock_tile) {
-									i_tile = m_game.m_own_selected_destructible_rock_tiles.erase(i_tile);
-									return;
+		if (position.y >= 0.9F) {
+			for (unsigned int i_y = 0; i_y < m_game.get_map().get_tile_count_y(); ++i_y) {
+				for (unsigned int i_x = 0; i_x < m_game.get_map().get_tile_count_x(); ++i_x) {
+					Tile& tile = m_game.get_map().get_tile(i_x, i_y);
+					if (tile.get_x() == static_cast<unsigned int>(floor(position.x)) &&
+						tile.get_y() == static_cast<unsigned int>(floor(position.z))) {
+						if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+							if (destructible_rock_tile->is_selected()) {	
+								destructible_rock_tile->unselect();
+								for (auto i_tile = m_game.m_own_selected_destructible_rock_tiles.begin(); i_tile != m_game.m_own_selected_destructible_rock_tiles.end(); ++i_tile) {
+									if (*i_tile == destructible_rock_tile) {
+										i_tile = m_game.m_own_selected_destructible_rock_tiles.erase(i_tile);
+										return;
+									}
 								}
+							} else {
+								destructible_rock_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
+								m_game.m_own_selected_destructible_rock_tiles.push_back(destructible_rock_tile);
 							}
-						} else {
-							destructible_rock_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
-							m_game.m_own_selected_destructible_rock_tiles.push_back(destructible_rock_tile);
-						}
-						return;
-					} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
-						if (crystal_tile->is_selected()) {
-							crystal_tile->unselect();
-							for (auto i_tile = m_game.m_own_selected_crystal_tiles.begin(); i_tile != m_game.m_own_selected_crystal_tiles.end(); ++i_tile) {
-								if (*i_tile == crystal_tile) {
-									m_game.m_own_selected_crystal_tiles.erase(i_tile);
-									break;
+							return;
+						} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+							if (crystal_tile->is_selected()) {
+								crystal_tile->unselect();
+								for (auto i_tile = m_game.m_own_selected_crystal_tiles.begin(); i_tile != m_game.m_own_selected_crystal_tiles.end(); ++i_tile) {
+									if (*i_tile == crystal_tile) {
+										m_game.m_own_selected_crystal_tiles.erase(i_tile);
+										break;
+									}
 								}
+							} else {
+								crystal_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
+								m_game.m_own_selected_crystal_tiles.push_back(crystal_tile);
 							}
-						} else {
-							crystal_tile->select(glm::vec3(1.0F, 1.0F, 1.0F));
-							m_game.m_own_selected_crystal_tiles.push_back(crystal_tile);
+							return;
 						}
-						return;
 					}
 				}
 			}

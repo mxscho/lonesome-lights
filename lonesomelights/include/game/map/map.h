@@ -10,6 +10,7 @@
 #include <vector>
 
 class Camera;
+class Player;
 class RenderProgram;
 class Timer;
 
@@ -24,13 +25,18 @@ public:
 	unsigned int get_tile_count_y() const;
 	float get_tile_size() const;
 	Tile& get_tile(unsigned int x, unsigned int y);
-	void set_tile(std::unique_ptr<Tile>&& tile);
 	void delete_tile(unsigned int x, unsigned int y);
-	
+	void set_floor_tile(unsigned int x, unsigned int y);
+	void set_indestructible_rock_tile(unsigned int x, unsigned int y);
+	void set_destructible_rock_tile(unsigned int x, unsigned int y);
+	void set_crystal_tile(unsigned int x, unsigned int y);
+	void set_base_tile(unsigned int x, unsigned int y, Player& player);
 	void draw(const Camera& camera) const;
 	void draw_extras(const Camera& camera) const;
 
 	void update(const Timer& timer) override final;
+	
+	void set_tile(std::unique_ptr<Tile>&& tile); // TODO
 private:
 	unsigned int m_tile_count_x;
 	unsigned int m_tile_count_y;

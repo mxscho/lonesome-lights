@@ -1,6 +1,7 @@
 #ifndef __GAME__MAP__CRYSTAL_TILE_H__
 #define __GAME__MAP__CRYSTAL_TILE_H__
 
+#include "game/attackable.h"
 #include "game/map/floor_tile.h"
 #include "game/map/destructible_rock_tile.h"
 #include "game/map/tile.h"
@@ -14,13 +15,18 @@ class Map;
 class Timer;
 class Player;
 
-class CrystalTile : public Tile {
+class CrystalTile : public Attackable, public Tile {
 public:
 
 	static CrystalTile create(const Map& map, unsigned int x, unsigned int y, const RockTile::CliffType& cliff_type);
 	
+	glm::vec2 get_position_vec2() const override final;
+
 	void draw(const Camera& camera) const override final;
 	void draw_crystals(const Camera& camera) const;
+
+	void update(const Timer& timer) override final;
+
 	bool is_selected() const;
 	void unselect();
 	void select(const glm::vec3& color);
