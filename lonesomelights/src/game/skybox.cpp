@@ -13,30 +13,31 @@
 Skybox::Skybox(const glm::mat4& transformation, const Map& map)
 	: Drawable(RenderPrograms::get_render_program("skybox")),
 	Transformable(transformation, map),
-	m_up_vbo({ Skybox::Data(glm::vec3(-0.5F, 0.5F, -0.5F), glm::vec2(0.0F, 0.0F)),
-			Skybox::Data(glm::vec3(-0.5F, 0.5F,  0.5F), glm::vec2(0.0F, 1.0F)),
-			Skybox::Data(glm::vec3(0.5F, 0.5F,  0.5F), glm::vec2(1.0F, 1.0F)),
-			Skybox::Data(glm::vec3(0.5F, 0.5F,  -0.5F), glm::vec2(1.0F, 0.0F)) }, GL_ARRAY_BUFFER),
+			
+	m_up_vbo({ Skybox::Data(glm::vec3(0.5F, 0.5F,  -0.5F), glm::vec2(0.0F, 1.0F)),
+			Skybox::Data(glm::vec3(0.5F, 0.5F,  0.5F), glm::vec2(0.0F, 0.0F)),
+			Skybox::Data(glm::vec3(-0.5F, 0.5F,  0.5F), glm::vec2(1.0F, 0.0F)),
+			Skybox::Data(glm::vec3(-0.5F, 0.5F, -0.5F), glm::vec2(1.0F, 1.0F)) }, GL_ARRAY_BUFFER),
 	m_up_vao(),
-	m_bottom_vbo({ Skybox::Data(glm::vec3(-0.5F, -0.5F, -0.5F), glm::vec2(0.0F, 0.0F)),
-			Skybox::Data(glm::vec3(-0.5F, -0.5F,  0.5F), glm::vec2(0.0F, 1.0F)),
-			Skybox::Data(glm::vec3(0.5F, -0.5F,  0.5F), glm::vec2(1.0F, 1.0F)),
-			Skybox::Data(glm::vec3(0.5F, -0.5F,  -0.5F), glm::vec2(1.0F, 0.0F)) }, GL_ARRAY_BUFFER),
+	m_bottom_vbo({ Skybox::Data(glm::vec3(-0.5F, -0.5F, -0.5F), glm::vec2(0.0F, 1.0F)),
+			Skybox::Data(glm::vec3(-0.5F, -0.5F,  0.5F), glm::vec2(1.0F, 1.0F)),
+			Skybox::Data(glm::vec3(0.5F, -0.5F,  0.5F), glm::vec2(1.0F, 0.0F)),
+			Skybox::Data(glm::vec3(0.5F, -0.5F,  -0.5F), glm::vec2(0.0F, 0.0F)) }, GL_ARRAY_BUFFER),
 	m_bottom_vao(),
-	m_left_vbo({ Skybox::Data(glm::vec3(-0.5F, -0.5F, -0.5F), glm::vec2(0.0F, 0.0F)),
-			Skybox::Data(glm::vec3(-0.5F, -0.5F,  0.5F), glm::vec2(0.0F, 1.0F)),
+	m_left_vbo({ Skybox::Data(glm::vec3(-0.5F, 0.5F,  -0.5F), glm::vec2(1.0F, 0.0F)),
 			Skybox::Data(glm::vec3(-0.5F, 0.5F,  0.5F), glm::vec2(1.0F, 1.0F)),
-			Skybox::Data(glm::vec3(-0.5F, 0.5F,  -0.5F), glm::vec2(1.0F, 0.0F)) }, GL_ARRAY_BUFFER),
+			Skybox::Data(glm::vec3(-0.5F, -0.5F,  0.5F), glm::vec2(0.0F, 1.0F)),
+			Skybox::Data(glm::vec3(-0.5F, -0.5F, -0.5F), glm::vec2(0.0F, 0.0F)) }, GL_ARRAY_BUFFER),
 	m_left_vao(),
 	m_right_vbo({ Skybox::Data(glm::vec3(0.5F, -0.5F, -0.5F), glm::vec2(0.0F, 0.0F)),
 			Skybox::Data(glm::vec3(0.5F, -0.5F,  0.5F), glm::vec2(0.0F, 1.0F)),
 			Skybox::Data(glm::vec3(0.5F, 0.5F,  0.5F), glm::vec2(1.0F, 1.0F)),
 			Skybox::Data(glm::vec3(0.5F, 0.5F,  -0.5F), glm::vec2(1.0F, 0.0F)) }, GL_ARRAY_BUFFER),
 	m_right_vao(),
-	m_front_vbo({ Skybox::Data(glm::vec3(-0.5F, -0.5F, -0.5F), glm::vec2(0.0F, 0.0F)),
-			Skybox::Data(glm::vec3(-0.5F, 0.5F,  -0.5F), glm::vec2(0.0F, 1.0F)),
-			Skybox::Data(glm::vec3(0.5F, 0.5F,  -0.5F), glm::vec2(1.0F, 1.0F)),
-			Skybox::Data(glm::vec3(0.5F, -0.5F,  -0.5F), glm::vec2(1.0F, 0.0F)) }, GL_ARRAY_BUFFER),
+	m_front_vbo({ Skybox::Data(glm::vec3(0.5F, -0.5F,  -0.5F), glm::vec2(1.0F, 1.0F)),
+			Skybox::Data(glm::vec3(0.5F, 0.5F,  -0.5F), glm::vec2(0.0F, 1.0F)),
+			Skybox::Data(glm::vec3(-0.5F, 0.5F,  -0.5F), glm::vec2(0.0F, 0.0F)),
+			Skybox::Data(glm::vec3(-0.5F, -0.5F, -0.5F), glm::vec2(1.0F, 0.0F)) }, GL_ARRAY_BUFFER),
 	m_front_vao(),
 	m_back_vbo({ Skybox::Data(glm::vec3(-0.5F, -0.5F, 0.5F), glm::vec2(0.0F, 0.0F)),
 			Skybox::Data(glm::vec3(-0.5F, 0.5F,  0.5F), glm::vec2(0.0F, 1.0F)),
@@ -100,34 +101,33 @@ void Skybox::draw(const Camera& camera) const {
 	
 	Drawable::m_render_program.bind();
 	
-	glDisable(GL_CULL_FACE);
 	m_up_vao.bind();
-	const Texture& texture_up = Textures::get_texture("skybox/6");
+	const Texture& texture_up = Textures::get_texture("skybox/2");
 	texture_up.bind(GL_TEXTURE0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	
 	m_bottom_vao.bind();
-	const Texture& texture_bottom = Textures::get_texture("skybox/5");
+	const Texture& texture_bottom = Textures::get_texture("skybox/4");
 	texture_bottom.bind(GL_TEXTURE0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	
 	m_left_vao.bind();
-	const Texture& texture_left = Textures::get_texture("skybox/4");
+	const Texture& texture_left = Textures::get_texture("skybox/3");
 	texture_left.bind(GL_TEXTURE0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	
 	m_right_vao.bind();
-	const Texture& texture_right = Textures::get_texture("skybox/3");
+	const Texture& texture_right = Textures::get_texture("skybox/1");
 	texture_right.bind(GL_TEXTURE0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	
 	m_front_vao.bind();
-	const Texture& texture_front = Textures::get_texture("skybox/2");
+	const Texture& texture_front = Textures::get_texture("skybox/6");
 	texture_front.bind(GL_TEXTURE0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	
 	m_back_vao.bind();
-	const Texture& texture_back = Textures::get_texture("skybox/1");
+	const Texture& texture_back = Textures::get_texture("skybox/5");
 	texture_back.bind(GL_TEXTURE0);
 	glDrawArrays(GL_QUADS, 0, 4);
 	
