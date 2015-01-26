@@ -61,20 +61,34 @@ int main(int argc, char** argv) {
 	Game game;
 	GameServerHandler game_server_handler(server.create_base_network_id(), server);
 	game.set_network_handler(game_server_handler);
+	timer.reset(0.0F);
 	while (window.isOpen()) {
 		sf::Event event;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			window.close();
+			break;
+		}
 		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			if (event.type == sf::Event::Closed) {
 				window.close();
+				break;
 			}
 		}
 
-		timer.advance();
-
 		server.update();
-		if (server.get_participants().size() < 1) {
-			continue;
+
+		static bool started = false;
+		if (server.get_participants().size() < 2) {
+			if (!started) {
+				timer.reset(0.0F);
+				continue;
+			} else {
+				return EXIT_SUCCESS;
+			}
 		}
+		started = true;
+
+		timer.advance();
 
 		game.update(timer);
 	}

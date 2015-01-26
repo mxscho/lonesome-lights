@@ -46,7 +46,7 @@ Game::Game()
 
 	m_own_plasma_count(1000.0F), // TEST
 	m_own_crystal_count(100.0F),
-	//m_opponent_plasma_count(1000.0F),
+	m_opponent_plasma_count(1000.0F),
 	m_opponent_crystal_count(100.0F),
 
 	m_explosions() {
@@ -537,7 +537,7 @@ void Game::update(const Timer& timer) {
 				}
 			}
 		}
-	
+
 		// Update units.
 	
 		for (auto& i_own_unit : m_own_units) {
@@ -557,7 +557,13 @@ void Game::update(const Timer& timer) {
 				++i_explosion;
 			}
 		}
-	}
 
-	Networkable::on_update();
+		static float update_time = 0.0F;
+		if (update_time < timer.get_current_time_seconds()) {
+			Networkable::on_update();
+			update_time = timer.get_current_time_seconds() + 0.05F;
+		}
+	} else {
+		Networkable::on_update();
+	}
 }

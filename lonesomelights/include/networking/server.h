@@ -1,7 +1,6 @@
 #ifndef __NETWORKING__SERVER_H__
 #define __NETWORKING__SERVER_H__
 
-#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -12,7 +11,7 @@
 
 class Server {
 public:
-	const std::vector<std::reference_wrapper<Participant>>& get_participants();
+	std::vector<Participant>& get_participants();
 	bool start(unsigned int port);
 	void stop();
 	void update();

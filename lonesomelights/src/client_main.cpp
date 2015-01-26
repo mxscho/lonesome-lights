@@ -30,6 +30,7 @@
 #include "geometry/path_finder.h"
 #include "game/player.h"
 #include "game/hud.h"
+#include "game/loading_screen.h"
 #include "game/skybox.h"
 
 #include "rendering/opengl/frame_buffer_object.h"
@@ -142,20 +143,10 @@ static std::pair<bool, glm::vec3> get_clicked_world_position(const Camera& camer
 	return std::make_pair(true, glm::vec3(position.x, position.y, position.z));
 }
 
-static void draw_network_loading_screen(sf::RenderWindow& window) {
-	window.clear();
 
-	// TODO: Draw network loading screen.
-
-	window.display();
-}
-
-static void draw_game_loading_screen(sf::RenderWindow& window) {
-	window.clear();
-
-	// TODO: Draw game loading screen.
-
-	window.display();
+static void draw_loading_screen(sf::RenderWindow& window, LoadingScreen& loading_screen, std::string text) {
+	loading_screen.set_text(text);
+	loading_screen.draw();
 }
 
 int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
@@ -172,7 +163,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		return EXIT_FAILURE;
 	}
 
-	draw_network_loading_screen(window);
+	LoadingScreen loading_screen(window, video_mode);
 
 	std::string host = get_args_host(argc, argv);
 	unsigned int port = get_args_port(argc, argv);
@@ -182,7 +173,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		return EXIT_FAILURE;
 	}
 
-	draw_game_loading_screen(window);
+	//draw_loading_screen(window, loading_screen, "Loading...");
 
 	Timer timer;
 	timer.advance();
@@ -230,6 +221,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	VertexArrayObject::unbind_any();
 	VertexBufferObjects::unbind_any();
 	
+	timer.reset(0.0F);
 	while (window.isOpen()) {
 		sf::Vector2i mouse_coordinates = sf::Mouse::getPosition(window);
 		std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, mouse_coordinates.x, mouse_coordinates.y);
@@ -239,10 +231,15 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 			player_handler.on_mouse_hover(timer, world_position.second);
 		}
 		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			window.close();
+			return EXIT_SUCCESS;
+		}
 		sf::Event event;
 		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			if (event.type == sf::Event::Closed) {
 				window.close();
+				return EXIT_SUCCESS;
 			} else if (event.type == sf::Event::MouseWheelMoved) {
 				map_camera.change_zoom(event.mouseWheel.delta);
 			} else if (event.type == sf::Event::MouseButtonPressed) {
@@ -282,88 +279,90 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		timer.advance();
 
 		client.update();
-		
 		game.update(timer);
 
 		if (!game.has_started()) {
-			continue;
-		}
-
-		map_camera.update(timer);
-		hud.update(timer);
-
-		// Settings for rendering.
-		
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW);
-		glEnable(GL_DEPTH_TEST);
-		
-		static bool is_wireframe_mode = false;
-		static bool is_wireframe_key_down = false;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			if (!is_wireframe_key_down) {
-				is_wireframe_mode = !is_wireframe_mode;
-			}
-			is_wireframe_key_down = true;
-		}
-		else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			is_wireframe_key_down = false;
-		}
-		if (is_wireframe_mode) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			timer.reset(0.0F);
 		} else {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			map_camera.update(timer);
+			hud.update(timer);
+
+			// Settings for rendering.
+		
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+			glFrontFace(GL_CCW);
+			glEnable(GL_DEPTH_TEST);
+		
+			static bool is_wireframe_mode = false;
+			static bool is_wireframe_key_down = false;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				if (!is_wireframe_key_down) {
+					is_wireframe_mode = !is_wireframe_mode;
+				}
+				is_wireframe_key_down = true;
+			}
+			else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				is_wireframe_key_down = false;
+			}
+			if (is_wireframe_mode) {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			} else {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			}
+		
+			glClearColor(0.0F, 0.0F, 0.2F, 0.0F);
+		
+			// Render scene to scene texture.
+		
+			frame_buffer_object.bind();
+		
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+			game.draw(map_camera);
+		
+			FrameBufferObject::unbind_any();
 		}
-		
-		glClearColor(0.0F, 0.0F, 0.2F, 0.0F);
-		
-		// Render scene to scene texture.
-		
-		frame_buffer_object.bind();
-		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		game.draw(map_camera);
-		
-		FrameBufferObject::unbind_any();
-		
-		// Render scene texture to screen.
 		
 		window.clear();
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		if (!game.has_started()) {
+			draw_loading_screen(window, loading_screen, "Waiting for opponent...");
+		} else {
+			// Render scene texture to screen.
+
+			const RenderProgram& render_program = RenderPrograms::get_render_program("deferred");
+			render_program.set_uniform("u_color_texture", 0);
+			render_program.set_uniform("u_position_texture", 1);
+			render_program.set_uniform("u_normal_texture", 2);
+			render_program.set_uniform("u_depth_texture", 3);
+
+			render_program.bind();
+			fbo_vao.bind();
+
+			color_texture.bind(GL_TEXTURE0);
+			position_texture.bind(GL_TEXTURE1);
+			normal_texture.bind(GL_TEXTURE2);
+			depth_texture.bind(GL_TEXTURE3);
 		
-		const RenderProgram& render_program = RenderPrograms::get_render_program("deferred");
-		render_program.set_uniform("u_color_texture", 0);
-		render_program.set_uniform("u_position_texture", 1);
-		render_program.set_uniform("u_normal_texture", 2);
-		render_program.set_uniform("u_depth_texture", 3);
+			glDrawArrays(GL_QUADS, 0, 4);
 
-		render_program.bind();
-		fbo_vao.bind();
+			Texture::unbind_any(GL_TEXTURE0);
+			Texture::unbind_any(GL_TEXTURE1);
+			Texture::unbind_any(GL_TEXTURE2);
+			Texture::unbind_any(GL_TEXTURE3);
 
-		color_texture.bind(GL_TEXTURE0);
-		position_texture.bind(GL_TEXTURE1);
-		normal_texture.bind(GL_TEXTURE2);
-		depth_texture.bind(GL_TEXTURE3);
+			VertexArrayObject::unbind_any();
+			RenderProgram::unbind_any();
 		
-		glDrawArrays(GL_QUADS, 0, 4);
-
-		Texture::unbind_any(GL_TEXTURE0);
-		Texture::unbind_any(GL_TEXTURE1);
-		Texture::unbind_any(GL_TEXTURE2);
-		Texture::unbind_any(GL_TEXTURE3);
-
-		VertexArrayObject::unbind_any();
-		RenderProgram::unbind_any();
+			// Deferred rendering to screen.
 		
-		// Deferred rendering to screen.
-		
-		skybox.draw(map_camera);
-		game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+			skybox.draw(map_camera);
+			game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 
-		hud.draw(map_camera);
+			hud.draw(map_camera);
+		}
 
 		window.display();
 	}

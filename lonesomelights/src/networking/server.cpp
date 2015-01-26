@@ -6,8 +6,8 @@
 
 #include "networking/network_packet.h"
 
-const std::vector<std::reference_wrapper<Participant>>& Server::get_participants() {
-	return m_participant_references;
+std::vector<Participant>& Server::get_participants() {
+	return m_participants;
 }
 
 bool Server::start(unsigned int port) {
@@ -31,7 +31,6 @@ void Server::stop() {
 	}
 	m_client_sockets.clear();
 	m_participants.clear();
-	m_participant_references.clear();
 	m_is_listening = false;
 }
 void Server::update() {
@@ -56,14 +55,12 @@ void Server::update() {
 		client_socket->setBlocking(false);
 		m_client_sockets.push_back(std::move(client_socket));
 		m_participants.push_back(participant);
-		m_participant_references.push_back(std::ref(m_participants.back()));
 		std::cerr << "Server: Accepted new connection." << std::endl;
 	}
 	
 	auto i_client_socket = m_client_sockets.begin();
 	auto i_participant = m_participants.begin();
-	auto i_participant_reference = m_participant_references.begin();
-	while(i_client_socket != m_client_sockets.end() && i_participant != m_participants.end() && i_participant_reference != m_participant_references.end()) {
+	while(i_client_socket != m_client_sockets.end() && i_participant != m_participants.end()) {
 		// Send network packets to clients.
 		
 		sf::Socket::Status send_status = sf::Socket::Status::Done;
@@ -90,7 +87,6 @@ void Server::update() {
 			(*i_client_socket)->disconnect();
 			i_client_socket = m_client_sockets.erase(i_client_socket);
 			i_participant = m_participants.erase(i_participant);
-			i_participant_reference = m_participant_references.erase(i_participant_reference);
 		} else {
 			if (send_status == sf::Socket::Status::Error) {
 				std::cerr << "Server: An unexpected error occured while sending a network packet." << std::endl;
