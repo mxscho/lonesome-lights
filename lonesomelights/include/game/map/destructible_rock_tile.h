@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "game/attackable.h"
 #include "game/map/tile.h"
 #include "game/map/rock_tile.h"
 #include "rendering/opengl/vertex_array_object.h"
@@ -13,10 +14,15 @@
 class Map;
 class Timer;
 
-class DestructibleRockTile : public RockTile {
+class DestructibleRockTile : public Attackable, public RockTile {
 public:
 	DestructibleRockTile(const Map& map, unsigned int x, unsigned int y, const RockTile::CliffType& cliff_type);
+
+	glm::vec2 get_position_vec2() const override final;
+
 	void draw(const Camera& camera) const override;
+
+	void update(const Timer& timer) override final;
 	
 	bool is_selected() const;
 	void unselect();

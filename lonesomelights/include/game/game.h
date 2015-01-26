@@ -27,6 +27,9 @@ public:
 	static float c_shockwave_unit_crystals_cost;
 
 	Game();
+
+	float get_own_plasma_count() const;
+	float get_own_crystal_count() const;
 	
 	Map& get_map();
 	std::list<std::unique_ptr<Unit>>& get_own_units();
@@ -51,10 +54,10 @@ private:
 	Player m_opponent_player;
 	std::list<std::unique_ptr<Unit>> m_own_units;
 	std::list<std::unique_ptr<Unit>> m_opponent_units;
-	float m_own_plasma;
-	float m_own_crystals;
-	//float m_opponent_plasma;
-	//float m_opponent_crystals;
+	float m_own_plasma_count;
+	float m_own_crystal_count;
+	//float m_opponent_plasma_count;
+	//float m_opponent_crystals_count;
 
 	std::list<Explosion> m_explosions;
 };

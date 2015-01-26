@@ -16,6 +16,8 @@ Tile::Tile(const Map& map, unsigned int x, unsigned int y, const RenderProgram& 
 	m_y(y),
 	m_walkable(true) {
 }
+Tile::~Tile() {
+}
 
 unsigned int Tile::get_x() const {
 	return m_x;
@@ -32,4 +34,7 @@ bool Tile::is_walkable() const {
 
 void Tile::set_is_walkable(bool walkable) {
 	m_walkable = walkable;
+}
+
+void Tile::update(const Timer& timer) {
 }

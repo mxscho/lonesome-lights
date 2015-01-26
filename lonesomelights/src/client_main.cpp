@@ -41,7 +41,10 @@
 #include "game/hud.h"
 #include "game/skybox.h"
 
-static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
+//static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
+//static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
+static sf::VideoMode video_mode = sf::VideoMode(1280, 800);
+static unsigned int style = sf::Style::Titlebar | sf::Style::Close;
 
 static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
@@ -143,7 +146,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	settings.antialiasingLevel = 4;
 	settings.majorVersion = 3;
 	settings.minorVersion = 3;
-	sf::Window window(video_mode, "Lonesome Lights", sf::Style::Fullscreen, settings);
+	sf::RenderWindow window(video_mode, "Lonesome Lights", style, settings);
 	GLenum glew_error = glewInit();
 	if (glew_error != GLEW_OK) {
 		std::cerr << "Rendering: Glew initialization failed." << std::endl;
@@ -163,8 +166,6 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	timer.advance();
 	timer.advance();
 	
-	HUD hud;
-
 	Map map = Map::create_test_map(1.0F);
 	PathFinder path_finder(map, 12);
 	
@@ -173,6 +174,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	Game game;
 	PlayerHandler player_handler(game);
 	Skybox skybox(glm::translate(glm::vec3(10.0F, 0.0F, 10.0F)) * glm::scale(glm::vec3(40.0F, 40.0F, 40.0F)), game.get_map());
+	HUD hud(game, window, video_mode);
 	
 	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
 	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
@@ -272,6 +274,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		map.update(timer);
 		game.update(timer);
+		hud.update(timer);
 		//laser_unit->update(timer);
 		
 		/*static float trigger_explosion_time_seconds;
@@ -357,7 +360,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		//explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 
 		hud.draw(map_camera);
-		
+
 		window.display();
 	}
 	

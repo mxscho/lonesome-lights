@@ -8,6 +8,8 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
+#include <iostream>
+
 CrystalTile CrystalTile::create(const Map& map, unsigned int x, unsigned int y, const RockTile::CliffType& cliff_type) {
 	std::vector<GLfloat> crystals_positions = ObjLoader::get_obj_positions("crystals", 0);
 	std::vector<GLfloat> crystals_normals = ObjLoader::get_obj_normals("crystals", 0);
@@ -19,6 +21,14 @@ CrystalTile CrystalTile::create(const Map& map, unsigned int x, unsigned int y, 
 
 
 	return CrystalTile(map, x, y, vertices, cliff_type);
+}
+
+glm::vec2 CrystalTile::get_position_vec2() const {
+	return glm::vec2(get_x() + 0.5F * get_size(), get_y() + 0.5F * get_size());
+}
+
+void CrystalTile::update(const Timer& timer) {
+	Attackable::update(timer);
 }
 
 void CrystalTile::draw(const Camera& camera) const {
@@ -83,7 +93,8 @@ CrystalTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 }
 
 CrystalTile::CrystalTile(const Map& map, unsigned int x, unsigned int y, const std::vector<CrystalTile::Data>& vertices, const RockTile::CliffType& cliff_type)
-	: Tile(map, x, y, RenderPrograms::get_render_program("unit")),
+	: Attackable(glm::translate(0.5F, 1.0F, 0.5F), *this, 100.0F, 100.0F),
+	Tile(map, x, y, RenderPrograms::get_render_program("unit")),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_crystals_elements_vbo(ObjLoader::get_obj_elements("crystals", 0), GL_ELEMENT_ARRAY_BUFFER),
 	m_crystals_vao(),

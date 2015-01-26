@@ -66,13 +66,20 @@ Tile& Map::get_tile(unsigned int x, unsigned int y) {
 	assert(!!m_tiles[y * m_tile_count_x + x]);
 	return *m_tiles[y * m_tile_count_x + x];
 }
-void Map::set_tile(std::unique_ptr<Tile>&& tile) {
-	unsigned int x = tile->get_x();
-	unsigned int y = tile->get_y();
-	delete_tile(x, y);
-	m_tiles[y * m_tile_count_x + x] = std::move(tile);
+
+void Map::set_floor_tile(unsigned int x, unsigned int y) {
 }
+void Map::set_indestructible_rock_tile(unsigned int x, unsigned int y) {
+}
+void Map::set_destructible_rock_tile(unsigned int x, unsigned int y) {
+}
+void Map::set_crystal_tile(unsigned int x, unsigned int y) {
+}
+void Map::set_base_tile(unsigned int x, unsigned int y, Player& player) {
+}
+
 void Map::delete_tile(unsigned int x, unsigned int y) {
+
 	m_tiles[y * m_tile_count_x + x].reset();
 }
 
@@ -80,6 +87,11 @@ void Map::draw(const Camera& camera) const {
 	for (auto& i_tile : m_tiles) {
 		if (!!i_tile) {
 			i_tile->draw(camera);
+		}
+	}
+	for (auto& i_tile : m_tiles) {
+		if (Attackable* attackable = dynamic_cast<Attackable*>(i_tile.get())) {
+			attackable->draw(camera);
 		}
 	}
 }
@@ -97,8 +109,19 @@ void Map::draw_extras(const Camera& camera) const {
 void Map::update(const Timer& timer) {
 	Updatable::update(timer);
 	
-	// TODO: Update map.
+	for (auto& i_tile : m_tiles) {
+		if (!!i_tile) {
+			i_tile->update(timer);
+		}
+	}
 	
 	// TEST
 	Networkable::on_update();
+}
+
+void Map::set_tile(std::unique_ptr<Tile>&& tile) {
+	unsigned int x = tile->get_x();
+	unsigned int y = tile->get_y();
+	delete_tile(x, y);
+	m_tiles[y * m_tile_count_x + x] = std::move(tile);
 }

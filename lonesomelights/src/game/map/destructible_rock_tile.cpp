@@ -10,7 +10,8 @@
 
 
 DestructibleRockTile::DestructibleRockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type)
-	: RockTile(RockTile::create(map, x, y, cliff_type)),
+	: Attackable(glm::translate(0.5F, 1.0F, 0.5F), *this, 100.0F, 100.0F),
+	RockTile(RockTile::create(map, x, y, cliff_type)),
 	m_is_selected(false),
 	m_is_hovered(false),
 	m_standard_color(0.4f, 0.4f, 0.4f),
@@ -20,8 +21,16 @@ DestructibleRockTile::DestructibleRockTile(const Map& map, unsigned int x, unsig
 	RockTile::set_color(m_standard_color);
 }
 
+glm::vec2 DestructibleRockTile::get_position_vec2() const {
+	return glm::vec2(get_x() + 0.5F * get_size(), get_y() + 0.5F * get_size());
+}
+
 void DestructibleRockTile::draw(const Camera& camera) const {
 	RockTile::draw(camera);
+}
+
+void DestructibleRockTile::update(const Timer& timer) {
+	Attackable::update(timer);
 }
 
 bool DestructibleRockTile::is_selected() const {
