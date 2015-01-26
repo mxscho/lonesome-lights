@@ -139,6 +139,16 @@ void Game::draw(const Camera& camera) const {
 			opponent_laser_unit->draw_laser(camera);
 		}
 	}
+	
+	// Draw own units' selection circles.
+	for (auto& i_own_unit : m_own_units) {
+		i_own_unit->draw_selection_circle(camera);
+	}
+	// Draw opponent's units' selection circles.
+	for (auto& i_opponent_unit : m_opponent_units) {
+		i_opponent_unit->draw_selection_circle(camera);
+	}
+	
 	// Draw own units.
 	for (auto& i_own_unit : m_own_units) {
 		if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {

@@ -13,8 +13,8 @@
 #include <glm/gtx/transform.hpp>
 
 std::unique_ptr<ShockwaveUnit> ShockwaveUnit::create(const glm::vec2& position, const Map& map, const Player& player) {
-	std::vector<GLfloat> vine_positions = ObjLoader::get_obj_positions("unit_0", 0);
-	std::vector<GLfloat> vine_normals = ObjLoader::get_obj_normals("unit_0", 0);
+	std::vector<GLfloat> vine_positions = ObjLoader::get_obj_positions("MMdoodlesample1", 0);
+	std::vector<GLfloat> vine_normals = ObjLoader::get_obj_normals("MMdoodlesample1", 0);
 	std::vector<GLfloat> ball_positions = ObjLoader::get_obj_positions("unit_0", 1);
 	std::vector<GLfloat> ball_normals = ObjLoader::get_obj_normals("unit_0", 1);
 	
@@ -73,13 +73,18 @@ void ShockwaveUnit::draw(const Camera& camera) const {
 
 	Drawable::m_render_program.bind();
 	
-	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_vine_transformation);
+	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_vine_transformation * glm::scale(glm::vec3(20.0F, 20.0F, 20.0F)));
 	m_vine_vao.bind();
 	glDrawElements(GL_TRIANGLES, m_vine_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
 	
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_ball_transformation);
+	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.8F, 0.8F, 0.2F));
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
 	m_ball_vao.bind();
 	glDrawElementsBaseVertex(GL_TRIANGLES, m_ball_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr, m_vertex_counts[0]);
+	
+	glDisable(GL_BLEND);
 	
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
@@ -114,14 +119,14 @@ ShockwaveUnit::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 
 ShockwaveUnit::ShockwaveUnit(const glm::vec2& position, const Map& map, const Player& player, const std::vector<ShockwaveUnit::Data>& vertices, const std::vector<unsigned int>& vertex_counts)
 	: Drawable(RenderPrograms::get_render_program("unit")),
-	Unit(glm::translate(glm::vec3(0.0F, 0.3F, 0.0F)) * glm::scale(glm::vec3(0.0075F, 0.0075F, 0.0075F)), position, map, player,
+	Unit(glm::translate(glm::vec3(0.0F, 0.3F, 0.0F)) * glm::scale(glm::vec3(0.0065F, 0.0065F, 0.0065F)), position, map, player,
 	0.8F, // Maximum velocity
 	0.5F, 0.5F, // Acceleration/Decceleration
 	100.0F // Maximum health
 	), // TODO: find nice values for shockwave unit
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_vertex_counts(vertex_counts),
-	m_vine_elements_vbo(ObjLoader::get_obj_elements("unit_0", 0), GL_ELEMENT_ARRAY_BUFFER),
+	m_vine_elements_vbo(ObjLoader::get_obj_elements("MMdoodlesample1", 0), GL_ELEMENT_ARRAY_BUFFER),
 	m_ball_elements_vbo(ObjLoader::get_obj_elements("unit_0", 1), GL_ELEMENT_ARRAY_BUFFER),
 	m_vine_vao(),
 	m_ball_vao(),
