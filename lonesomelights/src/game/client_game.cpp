@@ -188,6 +188,8 @@ void ClientGame::draw_deferred(const Camera& camera, const Texture& color_textur
 			own_worker_unit->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 		} else if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
 			own_laser_unit->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+		} else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
+			own_shockwave_unit->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 		}
 	}
 	for (auto& i_opponent_unit : m_opponent_units) {
@@ -195,6 +197,8 @@ void ClientGame::draw_deferred(const Camera& camera, const Texture& color_textur
 			opponent_worker_unit->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 		} else  if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
 			opponent_laser_unit->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+		} else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
+			opponent_shockwave_unit->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 		}
 	}
 }

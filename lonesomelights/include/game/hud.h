@@ -31,6 +31,20 @@ private:
 	sf::Font m_font;
 	sf::Text m_plasma_count_text;
 	sf::Text m_crystal_count_text;
+	
+	sf::Text m_worker_unit_plasma_cost_text;
+	sf::Text m_worker_unit_crystals_cost_text;
+	sf::Text m_laser_unit_plasma_cost_text;
+	sf::Text m_laser_unit_crystals_cost_text;
+	sf::Text m_shockwave_unit_plasma_cost_text;
+	sf::Text m_shockwave_unit_crystals_cost_text;
+	
+	sf::Text m_upgrade1_plasma_cost_text;
+	sf::Text m_upgrade1_crystals_cost_text;
+	sf::Text m_upgrade2_plasma_cost_text;
+	sf::Text m_upgrade2_crystals_cost_text;
+	sf::Text m_upgrade3_plasma_cost_text;
+	sf::Text m_upgrade3_crystals_cost_text;
 };
 
 #endif

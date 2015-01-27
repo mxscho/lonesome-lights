@@ -82,7 +82,7 @@ void WorkerUnit::draw(const Camera& camera) const {
 	m_vine_vao.bind();
 	glDrawElements(GL_TRIANGLES, m_vine_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
 	
-	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.16f, 0.45f, 0.2f));
+	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.32f, 0.9f, 0.4f));
 	
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_ball_transformation);
 	m_ball_vao.bind();
@@ -99,14 +99,23 @@ void WorkerUnit::draw(const Camera& camera) const {
 	}
 }
 void WorkerUnit::draw_laser(const Camera& camera) const {
+	m_flash.draw(camera);
 	m_laser.draw(camera);
 }
 void WorkerUnit::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	m_flash.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 	m_laser.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 }
 
 void WorkerUnit::update(const Timer& timer) {
 	Unit::update(timer);
+	
+	float health_percent = Attackable::get_current_health() / Attackable::get_max_health();
+	if (health_percent < 1.0F) {
+		m_flash.set_start_color(glm::vec3(0.16f, 0.45f, 0.2f) * health_percent);
+		m_flash.set_end_color(glm::vec3(0.3F, 0.3F, 0.3F) *  health_percent);
+	}
+	m_flash.update(timer);
 	
 	m_laser.Transformable::set_position(Transformable::get_position());
 	if (m_exploited) {
@@ -151,7 +160,21 @@ WorkerUnit::WorkerUnit(const glm::vec2& position, const Map& map, const Player& 
 	m_laser(glm::translate(Transformable::get_position()), map, glm::vec3(0.2F, 0.6F, 0.2F)),
 	m_exploited(nullptr),
 	m_crystal(Crystal::create(glm::translate(glm::vec3(position.x, 0.6F, position.y)) * glm::scale(glm::vec3(0.07f, 0.07f, 0.07f)), map)),
-	m_crystal_count(0.0f) {
+	m_crystal_count(0.0f),
+	m_flash(
+		glm::mat4(), // Transformation
+		*this, // Parent transformable
+		glm::vec2(0.75 * 1.0F, 0.75F * 1.0F), // Billboard size
+		Textures::get_texture("particles/flash"), // Texture
+		glm::vec3(0.16f, 0.45f, 0.2f), // Start color
+		glm::vec3(0.3F, 0.3F, 0.3F), // End color
+		1.35F, // Radius
+		0.75F * 0.05F, // Particle start velocity
+		0.0F, // Gravity
+		0.15F, // Minimum particle lifetime (seconds)
+		0.65F, // Maximum particle lifetime (seconds)
+		0.75 * 10.0F  // Frequency
+	) {
 	
 	m_vine_vao.bind();
 	m_vertices_vbo.bind();
