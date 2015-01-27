@@ -8,10 +8,6 @@
 #include "rendering/opengl/render_programs.h"
 #include "rendering/opengl/textures.h"
 
-
-//test
-#include <iostream>
-
 RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type) {
 	float tile_size = map.get_tile_size();
 	
@@ -68,10 +64,10 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 	}
 	
 	std::vector<RockTile::Data> floor_vertices;
-	std::vector<RockTile::Data> side_pos_x; // side 1
-	std::vector<RockTile::Data> side_neg_y; // side 2
-	std::vector<RockTile::Data> side_neg_x; // side 3
-	std::vector<RockTile::Data> side_pos_y; //side 4
+	std::vector<RockTile::Data> side_pos_x;
+	std::vector<RockTile::Data> side_neg_y;
+	std::vector<RockTile::Data> side_neg_x;
+	std::vector<RockTile::Data> side_pos_y;
 
 	
 	std::vector<RockTile::Data> cliff_vertices;
@@ -150,35 +146,15 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 					if (static_cast<RockTile::CliffType>(i_cliff_type) == RockTile::CliffType::PositiveX) {
 						side_pos_x.push_back(RockTile::Data(position_d, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
 						side_pos_x.push_back(RockTile::Data(position_c, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
-						/*if (first) {
-							first_point = RockTile::Data(position_c, glm::vec3(0.0F, 1.0F, 0.0F), texel_c);
-							first = false;
-						}*/
 					} else if (static_cast<RockTile::CliffType>(i_cliff_type) == RockTile::CliffType::NegativeX) {
 						side_neg_x.push_back(RockTile::Data(position_a, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
 						side_neg_x.push_back(RockTile::Data(position_b, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
-						/*if (first) {
-							first_point = RockTile::Data(position_d, glm::vec3(0.0F, 1.0F, 0.0F), texel_c);
-							first = false;
-						}*/
 					} else if (static_cast<RockTile::CliffType>(i_cliff_type) == RockTile::CliffType::PositiveY) {
 						side_pos_y.push_back(RockTile::Data(position_a, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
 						side_pos_y.push_back(RockTile::Data(position_b, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
-						/*if (first) {
-							first_point = RockTile::Data(position_d, glm::vec3(0.0F, 1.0F, 0.0F), texel_c);
-							first = false;
-						}*/
-						/*if (first) {
-							first_point = RockTile::Data(position_d, glm::vec3(0.0F, 1.0F, 0.0F), texel_c);
-							first = false;
-						}*/
 					} else if (static_cast<RockTile::CliffType>(i_cliff_type) == RockTile::CliffType::NegativeY) {
 						side_neg_y.push_back(RockTile::Data(position_d, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
 						side_neg_y.push_back(RockTile::Data(position_c, glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)));
-						/*if (first) {
-							first_point = RockTile::Data(position_c, glm::vec3(0.0F, 1.0F, 0.0F), texel_c);
-							first = false;
-						}*/
 					}
 				}
 			}
