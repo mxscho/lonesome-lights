@@ -55,7 +55,7 @@ private:
 		glm::vec2 texel;
 	};
 	
-	RockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type, const std::vector<RockTile::Data>& cliff_vertices, const std::vector<RockTile::Data>& floor_vertices);
+	RockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type, const std::vector<RockTile::Data>& cliff_vertices, const std::vector<RockTile::Data>& floor_vertices, const std::vector<unsigned int>& top_element_count);
 
 	CliffType m_cliff_type;
 	VertexBufferObject<Data> m_cliff_vertices_vbo;
@@ -64,6 +64,7 @@ private:
 	VertexArrayObject m_floor_vao;
 	FloorTile m_floor_tile;
 	glm::vec4 m_color;
+	std::vector<unsigned int> m_top_element_count;
 };
 
 #endif
