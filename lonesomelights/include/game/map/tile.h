@@ -22,6 +22,8 @@ public:
 	float get_size() const;
 	bool is_walkable() const;
 	void set_is_walkable(bool walkable);
+	virtual bool is_rock() const = 0;
+	virtual void set_cliff_type(unsigned short cliff_type) = 0;
 
 	void update(const Timer& timer) override;
 private:

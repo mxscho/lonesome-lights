@@ -8,6 +8,10 @@
 #include "rendering/opengl/render_programs.h"
 #include "rendering/opengl/textures.h"
 
+
+//test
+#include <iostream>
+
 RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type) {
 	float tile_size = map.get_tile_size();
 	
@@ -191,12 +195,16 @@ void RockTile::set_color(glm::vec3 new_color) {
 	m_color = glm::vec4(new_color.x, new_color.y, new_color.z, 1.0f);
 }
 
-void RockTile::set_cliff_type(RockTile::CliffType cliff_type) {
-	m_cliff_type = cliff_type;
+void RockTile::set_cliff_type(unsigned short cliff_type) {
+	m_cliff_type = static_cast<RockTile::CliffType>(cliff_type);
 }
 
 RockTile::CliffType RockTile::get_cliff_type() const {
 	return m_cliff_type;
+}
+
+bool RockTile::is_rock() const {
+	return true;
 }
 
 RockTile::Data::Data(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texel)

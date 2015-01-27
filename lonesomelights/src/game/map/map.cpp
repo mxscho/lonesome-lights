@@ -35,21 +35,24 @@ Map Map::create_test_map(float tile_size) {
 	if (map_file.is_open()) {
 		while (getline(map_file, line)) {
 			for (unsigned int x = 0; x < map_size; ++x) {
-				//std::cout << line[x];
 				if (line[x] == 'X') {
-					map.set_tile(std::unique_ptr<Tile>(new IndestructibleRockTile(map, y, x, RockTile::CliffType::PositiveXNegativeXPositiveYNegativeY)));
+					map.set_tile(std::unique_ptr<Tile>(new IndestructibleRockTile(map, y, x, RockTile::CliffType::None)));
 				} else if (line[x] == 'D') {
-					map.set_tile(std::unique_ptr<Tile>(new DestructibleRockTile(map, y, x, RockTile::CliffType::PositiveXNegativeXPositiveYNegativeY)));
+					map.set_tile(std::unique_ptr<Tile>(new DestructibleRockTile(map, y, x, RockTile::CliffType::None)));
 				} else if (line[x] == 'C') {
-					map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, y, x, RockTile::CliffType::PositiveXNegativeXPositiveYNegativeY))));
+					map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, y, x, RockTile::CliffType::None))));
 				}
 			}
-			//std::cout<< std::endl;
 			y--;
 		}
 		map_file.close();
 	}
 	
+	for (unsigned int i_x = 0; i_x < map_size; ++i_x) {
+		for (unsigned int i_y = 0; i_y < map_size; ++i_y) {
+			map.update_tile(i_x, i_y);
+		}	
+	}
 	/*map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 9, RockTile::CliffType::NegativeXNegativeY))));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 10, RockTile::CliffType::NegativeX))));
 	map.set_tile(std::unique_ptr<Tile>(new CrystalTile(CrystalTile::create(map, 9, 11, RockTile::CliffType::NegativeXPositiveY))));
@@ -149,5 +152,59 @@ void Map::set_tile(std::unique_ptr<Tile>&& tile) {
 	unsigned int x = tile->get_x();
 	unsigned int y = tile->get_y();
 	delete_tile(x, y);
+
 	m_tiles[y * m_tile_count_x + x] = std::move(tile);
+}
+
+void Map::update_tile(unsigned int x, unsigned int y) {
+
+	unsigned short cliff_type = 0;
+	if (y + 1 < m_tile_count_y) {
+		if (!m_tiles[(y + 1) * m_tile_count_x + x]->is_rock()) {
+			cliff_type += 4;
+		}
+	}
+	if (y > 0) {
+		if (!m_tiles[(y - 1) * m_tile_count_x + x]->is_rock()) {
+			cliff_type += 8;
+		}
+	}
+	if (x + 1 < m_tile_count_x) {
+		if (!m_tiles[y * m_tile_count_x + x + 1]->is_rock()) {
+			cliff_type += 1;
+		}
+	}
+	if (x > 0) {
+		if (!m_tiles[y * m_tile_count_x + x - 1]->is_rock()) {
+			cliff_type += 2;
+		}
+	}
+	if (y == 0) {
+		cliff_type += 8;
+	}
+	if (y == m_tile_count_y - 1) {
+		cliff_type += 4;
+	}
+	if (x == 0) {
+		cliff_type += 2;
+	}
+	if (x == m_tile_count_x - 1) {
+		cliff_type += 1;
+	}
+	m_tiles[y * m_tile_count_x + x]->set_cliff_type(cliff_type);
+}
+
+void Map::update_neighbors_of_tile(unsigned int x, unsigned int y) {
+	if (y + 1 < m_tile_count_y) {
+		update_tile(x, y + 1);
+	}
+	if (y > 0) {
+		update_tile(x, y - 1);
+	}
+	if (x + 1 < m_tile_count_x) {
+		update_tile(x + 1, y);
+	}
+	if (x > 0) {
+		update_tile(x - 1, y);
+	}
 }

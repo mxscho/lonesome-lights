@@ -36,7 +36,9 @@ public:
 
 	void update(const Timer& timer) override final;
 	
-	void set_tile(std::unique_ptr<Tile>&& tile); // TODO
+	void set_tile(std::unique_ptr<Tile>&& tile);
+	void update_tile(unsigned int x, unsigned int y);
+	void update_neighbors_of_tile(unsigned int x, unsigned int y);
 private:
 	unsigned int m_tile_count_x;
 	unsigned int m_tile_count_y;
