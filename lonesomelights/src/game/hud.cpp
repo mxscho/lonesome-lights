@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string>
 
+#include "game/server_game.h"
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
 #include "rendering/opengl/textures.h"
@@ -28,15 +29,102 @@ HUD::HUD(ClientGame& game, sf::RenderWindow& render_window, sf::VideoMode& video
 
 	m_plasma_count_text.setFont(m_font);
 	m_plasma_count_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
-	m_plasma_count_text.setColor(sf::Color::White);
+	m_plasma_count_text.setColor(sf::Color(200, 200, 200));
 	m_plasma_count_text.setStyle(sf::Text::Bold);
 	m_plasma_count_text.setPosition(0.8640625F * video_mode.width, 0.0195F * video_mode.height);
 
 	m_crystal_count_text.setFont(m_font);
 	m_crystal_count_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
-	m_crystal_count_text.setColor(sf::Color::White);
+	m_crystal_count_text.setColor(sf::Color(200, 200, 200));
 	m_crystal_count_text.setStyle(sf::Text::Bold);
 	m_crystal_count_text.setPosition((0.8640625F + 0.1036458333F) * video_mode.width, 0.0195F * video_mode.height);
+	
+	
+	// unit costs
+	m_worker_unit_plasma_cost_text.setFont(m_font);
+	m_worker_unit_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_worker_unit_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	m_worker_unit_plasma_cost_text.setStyle(sf::Text::Bold);
+	m_worker_unit_plasma_cost_text.setPosition((0.225F) * video_mode.width, 0.9F * video_mode.height);
+	m_worker_unit_plasma_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_worker_unit_plasma_cost))));
+	
+	m_worker_unit_crystals_cost_text.setFont(m_font);
+	m_worker_unit_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_worker_unit_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	m_worker_unit_crystals_cost_text.setStyle(sf::Text::Bold);
+	m_worker_unit_crystals_cost_text.setPosition((0.225F) * video_mode.width, 0.932F * video_mode.height);
+	m_worker_unit_crystals_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_worker_unit_crystals_cost))));
+	
+	m_laser_unit_plasma_cost_text.setFont(m_font);
+	m_laser_unit_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_laser_unit_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	m_laser_unit_plasma_cost_text.setStyle(sf::Text::Bold);
+	m_laser_unit_plasma_cost_text.setPosition((0.34F) * video_mode.width, 0.9F * video_mode.height);
+	m_laser_unit_plasma_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_laser_unit_plasma_cost))));
+	
+	m_laser_unit_crystals_cost_text.setFont(m_font);
+	m_laser_unit_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_laser_unit_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	m_laser_unit_crystals_cost_text.setStyle(sf::Text::Bold);
+	m_laser_unit_crystals_cost_text.setPosition((0.34F) * video_mode.width, 0.932F * video_mode.height);
+	m_laser_unit_crystals_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_laser_unit_crystals_cost))));
+	
+	m_shockwave_unit_plasma_cost_text.setFont(m_font);
+	m_shockwave_unit_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_shockwave_unit_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	m_shockwave_unit_plasma_cost_text.setStyle(sf::Text::Bold);
+	m_shockwave_unit_plasma_cost_text.setPosition((0.455F) * video_mode.width, 0.9F * video_mode.height);
+	m_shockwave_unit_plasma_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_shockwave_unit_plasma_cost))));
+	
+	m_shockwave_unit_crystals_cost_text.setFont(m_font);
+	m_shockwave_unit_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_shockwave_unit_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	m_shockwave_unit_crystals_cost_text.setStyle(sf::Text::Bold);
+	m_shockwave_unit_crystals_cost_text.setPosition((0.455F) * video_mode.width, 0.932F * video_mode.height);
+	m_shockwave_unit_crystals_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_shockwave_unit_crystals_cost))));
+	
+	// upgrade costs
+	m_upgrade1_plasma_cost_text.setFont(m_font);
+	m_upgrade1_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_upgrade1_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	m_upgrade1_plasma_cost_text.setStyle(sf::Text::Bold);
+	m_upgrade1_plasma_cost_text.setPosition((0.643F) * video_mode.width, 0.9F * video_mode.height);
+	m_upgrade1_plasma_cost_text.setString("todo");
+	
+	m_upgrade1_crystals_cost_text.setFont(m_font);
+	m_upgrade1_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_upgrade1_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	m_upgrade1_crystals_cost_text.setStyle(sf::Text::Bold);
+	m_upgrade1_crystals_cost_text.setPosition((0.643F) * video_mode.width, 0.932F * video_mode.height);
+	m_upgrade1_crystals_cost_text.setString("todo");
+	
+	m_upgrade2_plasma_cost_text.setFont(m_font);
+	m_upgrade2_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_upgrade2_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	m_upgrade2_plasma_cost_text.setStyle(sf::Text::Bold);
+	m_upgrade2_plasma_cost_text.setPosition((0.758F) * video_mode.width, 0.9F * video_mode.height);
+	m_upgrade2_plasma_cost_text.setString("todo");
+	
+	m_upgrade2_crystals_cost_text.setFont(m_font);
+	m_upgrade2_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_upgrade2_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	m_upgrade2_crystals_cost_text.setStyle(sf::Text::Bold);
+	m_upgrade2_crystals_cost_text.setPosition((0.758F) * video_mode.width, 0.932F * video_mode.height);
+	m_upgrade2_crystals_cost_text.setString("todo");
+	
+	m_upgrade3_plasma_cost_text.setFont(m_font);
+	m_upgrade3_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_upgrade3_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	m_upgrade3_plasma_cost_text.setStyle(sf::Text::Bold);
+	m_upgrade3_plasma_cost_text.setPosition((0.873F) * video_mode.width, 0.9F * video_mode.height);
+	m_upgrade3_plasma_cost_text.setString("todo");
+	
+	m_upgrade3_crystals_cost_text.setFont(m_font);
+	m_upgrade3_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
+	m_upgrade3_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	m_upgrade3_crystals_cost_text.setStyle(sf::Text::Bold);
+	m_upgrade3_crystals_cost_text.setPosition((0.873F) * video_mode.width, 0.932F * video_mode.height);
+	m_upgrade3_crystals_cost_text.setString("todo");
 }
 
 std::pair<bool, unsigned int> HUD::get_clicked_index(float mouse_x, float mouse_y) {
@@ -69,6 +157,56 @@ void HUD::update(const Timer& timer) {
 	m_plasma_count_text.setOrigin(m_plasma_count_text.getLocalBounds().left + m_plasma_count_text.getLocalBounds().width, m_plasma_count_text.getLocalBounds().top);
 	m_crystal_count_text.setString(std::to_string(static_cast<unsigned int>(floor(m_game.get_own_crystal_count()))));
 	m_crystal_count_text.setOrigin(m_plasma_count_text.getLocalBounds().left + m_plasma_count_text.getLocalBounds().width, m_crystal_count_text.getLocalBounds().top);
+	
+	// unit costs text positions
+	m_worker_unit_plasma_cost_text.setOrigin(m_worker_unit_plasma_cost_text.getLocalBounds().left + m_worker_unit_plasma_cost_text.getLocalBounds().width, m_worker_unit_plasma_cost_text.getLocalBounds().top);
+	m_worker_unit_crystals_cost_text.setOrigin(m_worker_unit_crystals_cost_text.getLocalBounds().left + m_worker_unit_crystals_cost_text.getLocalBounds().width, m_worker_unit_crystals_cost_text.getLocalBounds().top);
+	m_laser_unit_plasma_cost_text.setOrigin(m_laser_unit_plasma_cost_text.getLocalBounds().left + m_laser_unit_plasma_cost_text.getLocalBounds().width, m_laser_unit_plasma_cost_text.getLocalBounds().top);
+	m_laser_unit_crystals_cost_text.setOrigin(m_laser_unit_crystals_cost_text.getLocalBounds().left + m_laser_unit_crystals_cost_text.getLocalBounds().width, m_worker_unit_crystals_cost_text.getLocalBounds().top);
+	m_shockwave_unit_plasma_cost_text.setOrigin(m_shockwave_unit_plasma_cost_text.getLocalBounds().left + m_shockwave_unit_plasma_cost_text.getLocalBounds().width, m_shockwave_unit_plasma_cost_text.getLocalBounds().top);
+	m_shockwave_unit_crystals_cost_text.setOrigin(m_shockwave_unit_crystals_cost_text.getLocalBounds().left + m_shockwave_unit_crystals_cost_text.getLocalBounds().width, m_shockwave_unit_crystals_cost_text.getLocalBounds().top);
+
+	// upgrade costs text positions
+	m_upgrade1_plasma_cost_text.setOrigin(m_upgrade1_plasma_cost_text.getLocalBounds().left + m_upgrade1_plasma_cost_text.getLocalBounds().width, m_upgrade1_plasma_cost_text.getLocalBounds().top);	
+	m_upgrade1_crystals_cost_text.setOrigin(m_upgrade1_crystals_cost_text.getLocalBounds().left + m_upgrade1_crystals_cost_text.getLocalBounds().width, m_upgrade1_crystals_cost_text.getLocalBounds().top);
+	m_upgrade2_plasma_cost_text.setOrigin(m_upgrade2_plasma_cost_text.getLocalBounds().left + m_upgrade2_plasma_cost_text.getLocalBounds().width, m_upgrade2_plasma_cost_text.getLocalBounds().top);	
+	m_upgrade2_crystals_cost_text.setOrigin(m_upgrade2_crystals_cost_text.getLocalBounds().left + m_upgrade2_crystals_cost_text.getLocalBounds().width, m_upgrade2_crystals_cost_text.getLocalBounds().top);
+	m_upgrade3_plasma_cost_text.setOrigin(m_upgrade3_plasma_cost_text.getLocalBounds().left + m_upgrade3_plasma_cost_text.getLocalBounds().width, m_upgrade3_plasma_cost_text.getLocalBounds().top);	
+	m_upgrade3_crystals_cost_text.setOrigin(m_upgrade3_crystals_cost_text.getLocalBounds().left + m_upgrade3_crystals_cost_text.getLocalBounds().width, m_upgrade3_crystals_cost_text.getLocalBounds().top);
+	
+	// unit costs text colors
+	if (m_game.get_own_plasma_count() >= ServerGame::c_worker_unit_plasma_cost) {
+		m_worker_unit_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_worker_unit_plasma_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_crystal_count() >= ServerGame::c_worker_unit_crystals_cost) {
+		m_worker_unit_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_worker_unit_crystals_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_plasma_count() >= ServerGame::c_laser_unit_plasma_cost) {
+		m_laser_unit_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_laser_unit_plasma_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_crystal_count() >= ServerGame::c_laser_unit_crystals_cost) {
+		m_laser_unit_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_laser_unit_crystals_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_plasma_count() >= ServerGame::c_shockwave_unit_plasma_cost) {
+		m_shockwave_unit_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_shockwave_unit_plasma_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_crystal_count() >= ServerGame::c_shockwave_unit_crystals_cost) {
+		m_shockwave_unit_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_shockwave_unit_crystals_cost_text.setColor(sf::Color::Red);
+	}
+	// upgrade costs text colors
+	//TODO
 }
 
 void HUD::draw(const Camera& camera) const {
@@ -99,6 +237,18 @@ void HUD::draw(const Camera& camera) const {
 
 	m_render_window.draw(m_plasma_count_text);
 	m_render_window.draw(m_crystal_count_text);
+	m_render_window.draw(m_worker_unit_plasma_cost_text);
+	m_render_window.draw(m_worker_unit_crystals_cost_text);
+	m_render_window.draw(m_laser_unit_plasma_cost_text);
+	m_render_window.draw(m_laser_unit_crystals_cost_text);
+	m_render_window.draw(m_shockwave_unit_plasma_cost_text);
+	m_render_window.draw(m_shockwave_unit_crystals_cost_text);
+	m_render_window.draw(m_upgrade1_plasma_cost_text);
+	m_render_window.draw(m_upgrade1_crystals_cost_text);
+	m_render_window.draw(m_upgrade2_plasma_cost_text);
+	m_render_window.draw(m_upgrade2_crystals_cost_text);
+	m_render_window.draw(m_upgrade3_plasma_cost_text);
+	m_render_window.draw(m_upgrade3_crystals_cost_text);
 
 	m_render_window.popGLStates();
 }
