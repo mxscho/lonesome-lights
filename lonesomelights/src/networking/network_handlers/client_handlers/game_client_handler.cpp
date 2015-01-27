@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "game/game.h"
+#include "game/client_game.h"
 
 #include "networking/client.h"
 #include "networking/network_packet.h"
@@ -17,7 +17,7 @@ void GameClientHandler::on_create(Networkable& networkable, const Networkable& n
 	// TODO: Do something with it.
 }
 void GameClientHandler::on_update(Networkable& networkable) {
-	Game& game = static_cast<Game&>(networkable);
+	ClientGame& game = static_cast<ClientGame&>(networkable);
 
 	std::vector<NetworkPacket> network_packets = ClientHandler::receive_incoming_update_network_packets();
 
@@ -28,9 +28,6 @@ void GameClientHandler::on_update(Networkable& networkable) {
 		if (text == "start") {
 			game.start();
 			i_network_packet >> game.m_player_id;
-		} else if (text == "ressources") {
-			i_network_packet >> game.m_own_plasma_count;
-			i_network_packet >> game.m_own_crystal_count;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "game/game.h"
+#include "game/server_game.h"
 
 #include "networking/network_packet.h"
 #include "networking/server.h"
@@ -19,7 +19,7 @@ void GameServerHandler::on_create(Networkable& networkable, const Networkable& n
 	}
 }
 void GameServerHandler::on_update(Networkable& networkable) {
-	Game& game = static_cast<Game&>(networkable);
+	ServerGame& game = static_cast<ServerGame&>(networkable);
 
 	if (!game.has_started()) {
 		game.start();
@@ -31,18 +31,6 @@ void GameServerHandler::on_update(Networkable& networkable) {
 		network_packet = NetworkPacket::create_outgoing(m_network_id, NetworkPacket::Type::Update);
 		network_packet << std::string("start");
 		network_packet << 1;
-		m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
-	} else {
-		NetworkPacket network_packet = NetworkPacket::create_outgoing(m_network_id, NetworkPacket::Type::Update);
-		network_packet << std::string("ressources");
-		network_packet << game.m_own_plasma_count;
-		network_packet << game.m_own_crystal_count;
-		m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
-
-		network_packet = NetworkPacket::create_outgoing(m_network_id, NetworkPacket::Type::Update);
-		network_packet << std::string("ressources");
-		network_packet << game.m_opponent_plasma_count;
-		network_packet << game.m_opponent_crystal_count;
 		m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 	}
 }

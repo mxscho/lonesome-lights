@@ -7,7 +7,7 @@
 #include "rendering/opengl/render_programs.h"
 #include "rendering/opengl/textures.h"
 
-HUD::HUD(Game& game, sf::RenderWindow& render_window, sf::VideoMode& video_mode)
+HUD::HUD(ClientGame& game, sf::RenderWindow& render_window, sf::VideoMode& video_mode)
 	: Drawable(RenderPrograms::get_render_program("hud")),
 	m_game(game),
 	m_render_window(render_window),

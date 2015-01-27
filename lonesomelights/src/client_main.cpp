@@ -22,7 +22,7 @@
 #include "timer.h"
 
 #include "game/player_handler.h"
-#include "game/game.h"
+#include "game/client_game.h"
 #include "game/units/laser_unit.h"
 #include "game/map/map.h"
 #include "geometry/transformable.h"
@@ -178,7 +178,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	Timer timer;
 	timer.advance();
 	
-	Game game;
+	ClientGame game(client);
 	GameClientHandler game_client_handler(client.create_base_network_id(), client);
 	game.set_network_handler(game_client_handler);
 

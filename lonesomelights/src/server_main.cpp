@@ -7,7 +7,7 @@
 
 #include "timer.h"
 
-#include "game/game.h"
+#include "game/server_game.h"
 
 #include "networking/server.h"
 #include "networking/network_handlers/server_handlers/game_server_handler.h"
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 	}
 
 	Timer timer;
-	Game game;
+	ServerGame game(server);
 	GameServerHandler game_server_handler(server.create_base_network_id(), server);
 	game.set_network_handler(game_server_handler);
 	timer.reset(0.0F);

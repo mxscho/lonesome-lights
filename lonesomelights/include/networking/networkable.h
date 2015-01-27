@@ -5,6 +5,7 @@ class NetworkHandler;
 
 class Networkable {
 public:
+	NetworkHandler* get_network_handler();
 	void set_network_handler(NetworkHandler& network_handler);
 	void unset_network_handler();
 	

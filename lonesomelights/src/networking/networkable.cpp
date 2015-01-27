@@ -2,6 +2,9 @@
 
 #include "networking/network_handler.h"
 
+NetworkHandler* Networkable::get_network_handler() {
+	return m_network_handler;
+}
 void Networkable::set_network_handler(NetworkHandler& network_handler) {
 	m_network_handler = &network_handler;
 }

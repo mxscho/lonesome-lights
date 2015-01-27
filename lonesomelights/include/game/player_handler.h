@@ -1,7 +1,7 @@
 #ifndef __GAME__PLAYER_HANDLER_H__
 #define __GAME__PLAYER_HANDLER_H__
 
-#include "game/game.h"
+#include "game/client_game.h"
 #include "game/map/destructible_rock_tile.h"
 #include "game/map/crystal_tile.h"
 #include "game/units/unit.h"
@@ -14,7 +14,7 @@ class Timer;
 
 class PlayerHandler : public Updatable {
 public:
-	PlayerHandler(Game& game);
+	PlayerHandler(ClientGame& game);
 	
 	void update(const Timer& timer) override final;
 	
@@ -23,7 +23,7 @@ public:
 private:
 	void check_selected_unit();
 
-	Game& m_game;
+	ClientGame& m_game;
 	PathFinder m_path_finder;
 	Unit* m_selected_unit;
 };

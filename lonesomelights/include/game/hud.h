@@ -5,7 +5,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "game/game.h"
+#include "game/client_game.h"
 #include "rendering/drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
@@ -15,7 +15,7 @@ class Timer;
 
 class HUD : public Drawable, public Updatable {
 public:
-	HUD(Game& game, sf::RenderWindow& render_window, sf::VideoMode& video_mode);
+	HUD(ClientGame& game, sf::RenderWindow& render_window, sf::VideoMode& video_mode);
 	
 	std::pair<bool, unsigned int> get_clicked_index(float mouse_x, float mouse_y);
 
@@ -23,7 +23,7 @@ public:
 
 	void draw(const Camera& camera) const override final;
 private:
-	Game& m_game;
+	ClientGame& m_game;
 	sf::RenderWindow& m_render_window;
 	VertexBufferObject<glm::vec2> m_vbo;
 	VertexArrayObject m_vao;

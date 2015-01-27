@@ -5,7 +5,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "game/game.h"
 #include "rendering/drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"

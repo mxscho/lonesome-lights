@@ -10,11 +10,11 @@ class NetworkPacket;
 class ClientHandler : public NetworkHandler {
 public:
 	ClientHandler(const NetworkID& network_id, Client& client);
-protected:
+
 	std::vector<NetworkPacket> receive_incoming_create_network_packets();
 	std::vector<NetworkPacket> receive_incoming_update_network_packets();
 	std::vector<NetworkPacket> receive_incoming_delete_network_packets();
-
+protected:
 	Client& m_client;
 };
 

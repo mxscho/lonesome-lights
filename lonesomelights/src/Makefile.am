@@ -6,11 +6,12 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 	updatable.cpp \
 		\
 		game/attackable.cpp \
-		game/game.cpp \
+		game/client_game.cpp \
 		game/hud.cpp \
 		game/loading_screen.cpp \
 		game/player.cpp \
 		game/player_handler.cpp \
+		game/server_game.cpp \
 		game/skybox.cpp \
 			\
 			game/map/map.cpp \
