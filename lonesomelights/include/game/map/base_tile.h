@@ -1,6 +1,7 @@
 #ifndef __GAME__MAP__BASE_TILE_H__
 #define __GAME__MAP__BASE_TILE_H__
 
+#include "game/attackable.h"
 #include "game/map/tile.h"
 #include "game/map/floor_tile.h"
 #include "game/player.h"
@@ -14,12 +15,15 @@ class Map;
 class Timer;
 class Player;
 
-class BaseTile : public Tile {
+class BaseTile : public Attackable, public Tile {
 public:
-
 	static BaseTile create(const Map& map, unsigned int x, unsigned int y, const Player& player);
 	
+	glm::vec2 get_position_vec2() const override final;
+
 	const Player& get_player() const;
+
+	void update(const Timer& timer) override final;
 
 	void draw(const Camera& camera) const override final;
 	bool is_rock() const override final;

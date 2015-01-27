@@ -309,7 +309,11 @@ void ServerGame::update(const Timer& timer) {
 							min_attack_range = glm::distance(own_laser_unit->get_position(), i_opponent_unit->get_position());
 						}
 					}
-					if (attacked) {
+					Tile& tile = m_map.get_tile(c_opponent_base_x, c_opponent_base_y);
+					BaseTile* base_tile = static_cast<BaseTile*>(&tile);
+					if (glm::distance(own_laser_unit->get_position_vec2(), base_tile->get_position_vec2()) < attack_range) {
+						own_laser_unit->start_shooting(base_tile);
+					} else if (attacked) {
 						own_laser_unit->start_shooting(attacked);
 					}
 				}
@@ -329,6 +333,11 @@ void ServerGame::update(const Timer& timer) {
 					if (glm::distance(own_shockwave_unit->get_position(), i_opponent_unit->get_position()) < attack_range) {
 						own_shockwave_unit->add_attack(i_opponent_unit.get());
 					}
+				}
+				Tile& tile = m_map.get_tile(c_opponent_base_x, c_opponent_base_y);
+				BaseTile* base_tile = static_cast<BaseTile*>(&tile);
+				if (glm::distance(own_shockwave_unit->get_position_vec2(), base_tile->get_position_vec2()) < attack_range) {
+					own_shockwave_unit->add_attack(base_tile);
 				}
 			
 				// Update health.
@@ -412,7 +421,11 @@ void ServerGame::update(const Timer& timer) {
 							min_attack_range = glm::distance(opponent_laser_unit->get_position(), i_own_unit->get_position());
 						}
 					}
-					if (attacked) {
+					Tile& tile = m_map.get_tile(c_own_base_x, c_own_base_y);
+					BaseTile* base_tile = static_cast<BaseTile*>(&tile);
+					if (glm::distance(opponent_laser_unit->get_position_vec2(), base_tile->get_position_vec2()) < attack_range) {
+						opponent_laser_unit->start_shooting(base_tile);
+					} else if (attacked) {
 						opponent_laser_unit->start_shooting(attacked);
 					}
 				}
@@ -433,6 +446,11 @@ void ServerGame::update(const Timer& timer) {
 					if (glm::distance(opponent_shockwave_unit->get_position(), i_own_unit->get_position()) < attack_range) {
 						opponent_shockwave_unit->add_attack(i_own_unit.get());
 					}
+				}
+				Tile& tile = m_map.get_tile(c_own_base_x, c_own_base_y);
+				BaseTile* base_tile = static_cast<BaseTile*>(&tile);
+				if (glm::distance(opponent_shockwave_unit->get_position_vec2(), base_tile->get_position_vec2()) < attack_range) {
+					opponent_shockwave_unit->add_attack(base_tile);
 				}
 			
 				// Update health.
@@ -718,7 +736,7 @@ void ServerGame::update(const Timer& timer) {
 		}
 
 		static float time = 0.0F;
-		if (time >= 0.01F) {
+		if (time >= 0.03F) {
 			time = 0.0F;
 
 			// SERVER SEND
@@ -787,6 +805,9 @@ void ServerGame::update(const Timer& timer) {
 					} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
 						network_packet << true;
 						network_packet << crystal_tile->get_health();
+					} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+						network_packet << true;
+						network_packet << base_tile->get_health();
 					} else {
 						network_packet << false;
 					}
@@ -804,7 +825,12 @@ void ServerGame::update(const Timer& timer) {
 					if (attackable) {
 						network_packet << true;
 						if (Unit* attacked = dynamic_cast<Unit*>(attackable)) {
+							network_packet << 0U;
 							network_packet << attacked->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(attackable)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
 						}
 					} else {
 						network_packet << false;
@@ -814,7 +840,12 @@ void ServerGame::update(const Timer& timer) {
 					network_packet << static_cast<unsigned int>(attacked.size());
 					for (auto& i_attacked : attacked) {
 						if (Unit* attacked_unit = dynamic_cast<Unit*>(i_attacked)) {
+							network_packet << 0U;
 							network_packet << attacked_unit->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(i_attacked)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
 						}
 					}		
 				} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
@@ -839,7 +870,12 @@ void ServerGame::update(const Timer& timer) {
 					if (attackable) {
 						network_packet << true;
 						if (Unit* attacked = dynamic_cast<Unit*>(attackable)) {
+							network_packet << 0U;
 							network_packet << attacked->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(attackable)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
 						}
 					} else {
 						network_packet << false;
@@ -849,7 +885,12 @@ void ServerGame::update(const Timer& timer) {
 					network_packet << static_cast<unsigned int>(attacked.size());
 					for (auto& i_attacked : attacked) {
 						if (Unit* attacked_unit = dynamic_cast<Unit*>(i_attacked)) {
+							network_packet << 0U;
 							network_packet << attacked_unit->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(i_attacked)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
 						}
 					}		
 				} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {

@@ -385,6 +385,8 @@ void ClientGame::update(const Timer& timer) {
 							destructible_rock_tile->set_health(health);
 						} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
 							crystal_tile->set_health(health);
+						} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+							base_tile->set_health(health);
 						}
 					}
 				}
@@ -398,11 +400,24 @@ void ClientGame::update(const Timer& timer) {
 							bool has_attackable;
 							i_network_packet >> has_attackable;
 							if (has_attackable) {
-								unsigned int attacked_id;
-								i_network_packet >> attacked_id;
-								for (auto& i_opponent_unit : m_opponent_units) {
-									if (attacked_id == i_opponent_unit->m_id) {
-										laser_unit->start_shooting(static_cast<Attackable*>(i_opponent_unit.get()));
+								unsigned int attacked_type;
+								i_network_packet >> attacked_type;
+								if (attacked_type == 0U) {
+									unsigned int attacked_id;
+									i_network_packet >> attacked_id;
+									for (auto& i_opponent_unit : m_opponent_units) {
+										if (attacked_id == i_opponent_unit->m_id) {
+											laser_unit->start_shooting(static_cast<Attackable*>(i_opponent_unit.get()));
+										}
+									}
+								} else if (attacked_type == 1U) {
+									unsigned int attacked_x;
+									i_network_packet >> attacked_x;
+									unsigned int attacked_y;
+									i_network_packet >> attacked_y;
+									Tile& tile = m_map.get_tile(attacked_x, attacked_y);
+									if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+										laser_unit->start_shooting(static_cast<Attackable*>(base_tile));
 									}
 								}
 							} else {
@@ -413,11 +428,24 @@ void ClientGame::update(const Timer& timer) {
 							i_network_packet >> size;
 							shockwave_unit->clear_attacks();
 							for (unsigned int i = 0; i < size; ++i) {
-								unsigned int attacked_id;
-								i_network_packet >> attacked_id;
-								for (auto& i_opponent_unit : m_opponent_units) {
-									if (attacked_id == i_opponent_unit->m_id) {
-										shockwave_unit->add_attack(static_cast<Attackable*>(i_opponent_unit.get()));
+								unsigned int attacked_type;
+								i_network_packet >> attacked_type;
+								if (attacked_type == 0U) {
+									unsigned int attacked_id;
+									i_network_packet >> attacked_id;
+									for (auto& i_opponent_unit : m_opponent_units) {
+										if (attacked_id == i_opponent_unit->m_id) {
+											shockwave_unit->add_attack(static_cast<Attackable*>(i_opponent_unit.get()));
+										}
+									}
+								} else if (attacked_type == 1U) {
+									unsigned int attacked_x;
+									i_network_packet >> attacked_x;
+									unsigned int attacked_y;
+									i_network_packet >> attacked_y;
+									Tile& tile = m_map.get_tile(attacked_x, attacked_y);
+									if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+										shockwave_unit->add_attack(static_cast<Attackable*>(base_tile));
 									}
 								}
 							}	
@@ -447,11 +475,24 @@ void ClientGame::update(const Timer& timer) {
 							bool has_attackable;
 							i_network_packet >> has_attackable;
 							if (has_attackable) {
-								unsigned int attacked_id;
-								i_network_packet >> attacked_id;
-								for (auto& i_own_unit : m_own_units) {
-									if (attacked_id == i_own_unit->m_id) {
-										laser_unit->start_shooting(static_cast<Attackable*>(i_own_unit.get()));
+								unsigned int attacked_type;
+								i_network_packet >> attacked_type;
+								if (attacked_type == 0U) {
+									unsigned int attacked_id;
+									i_network_packet >> attacked_id;
+									for (auto& i_own_unit : m_own_units) {
+										if (attacked_id == i_own_unit->m_id) {
+											laser_unit->start_shooting(static_cast<Attackable*>(i_own_unit.get()));
+										}
+									}
+								} else if (attacked_type == 1U) {
+									unsigned int attacked_x;
+									i_network_packet >> attacked_x;
+									unsigned int attacked_y;
+									i_network_packet >> attacked_y;
+									Tile& tile = m_map.get_tile(attacked_x, attacked_y);
+									if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+										laser_unit->start_shooting(static_cast<Attackable*>(base_tile));
 									}
 								}
 							} else {
@@ -462,11 +503,24 @@ void ClientGame::update(const Timer& timer) {
 							i_network_packet >> size;
 							shockwave_unit->clear_attacks();
 							for (unsigned int i = 0; i < size; ++i) {
-								unsigned int attacked_id;
-								i_network_packet >> attacked_id;
-								for (auto& i_own_unit : m_own_units) {
-									if (attacked_id == i_own_unit->m_id) {
-										shockwave_unit->add_attack(static_cast<Attackable*>(i_own_unit.get()));
+								unsigned int attacked_type;
+								i_network_packet >> attacked_type;
+								if (attacked_type == 0U) {
+									unsigned int attacked_id;
+									i_network_packet >> attacked_id;
+									for (auto& i_own_unit : m_own_units) {
+										if (attacked_id == i_own_unit->m_id) {
+											shockwave_unit->add_attack(static_cast<Attackable*>(i_own_unit.get()));
+										}
+									}
+								} else if (attacked_type == 1U) {
+									unsigned int attacked_x;
+									i_network_packet >> attacked_x;
+									unsigned int attacked_y;
+									i_network_packet >> attacked_y;
+									Tile& tile = m_map.get_tile(attacked_x, attacked_y);
+									if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+										shockwave_unit->add_attack(static_cast<Attackable*>(base_tile));
 									}
 								}
 							}	

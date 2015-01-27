@@ -21,8 +21,16 @@ BaseTile BaseTile::create(const Map& map, unsigned int x, unsigned int y, const 
 	return BaseTile(map, x, y, vertices, player);
 }
 
+glm::vec2 BaseTile::get_position_vec2() const {
+	return glm::vec2(get_x() + 0.5F * get_size(), get_y() + 0.5F * get_size());
+}
+
 const Player& BaseTile::get_player() const {
 	return m_player;
+}
+
+void BaseTile::update(const Timer& timer) {
+	Attackable::update(timer);
 }
 
 void BaseTile::draw(const Camera& camera) const {
@@ -63,7 +71,8 @@ BaseTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 }
 
 BaseTile::BaseTile(const Map& map, unsigned int x, unsigned int y, const std::vector<BaseTile::Data>& vertices, const Player& player)
-	: Tile(map, x, y, RenderPrograms::get_render_program("unit")),
+	: Attackable(glm::translate(glm::vec3(0.5F, 1.0F, 0.5F)), *this, 1000.0F, 1000.0F),
+	Tile(map, x, y, RenderPrograms::get_render_program("unit")),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_elements_vbo(ObjLoader::get_obj_elements("base", 0), GL_ELEMENT_ARRAY_BUFFER),
 	m_vertex_array_object(),
