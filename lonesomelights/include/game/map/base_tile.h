@@ -14,7 +14,7 @@ class Map;
 class Timer;
 class Player;
 
-class BaseTile : public Attackable, public Tile {
+class BaseTile : public Tile {
 public:
 
 	static BaseTile create(const Map& map, unsigned int x, unsigned int y, const Player& player);
