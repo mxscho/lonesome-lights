@@ -63,6 +63,8 @@ private:
 	Tile* m_exploited;
 	Crystal m_crystal;
 	float m_crystal_count;
+	
+	SphericParticleEmitter m_flash;
 };
 
 #endif

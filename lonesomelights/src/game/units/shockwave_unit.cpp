@@ -61,6 +61,8 @@ void ShockwaveUnit::clear_attacks() {
 void ShockwaveUnit::draw(const Camera& camera) const {
 	Drawable::draw(camera);
 	
+	m_flash.draw(camera);
+	
 	if (m_attacked.size() > 0) {
 		m_shockwave.draw(camera);
 	}
@@ -78,7 +80,7 @@ void ShockwaveUnit::draw(const Camera& camera) const {
 	glDrawElements(GL_TRIANGLES, m_vine_elements_vbo.get_size(), GL_UNSIGNED_INT, nullptr);
 	
 	Drawable::m_render_program.set_uniform("u_model_transformation", Transformable::get_global_transformation() * m_ball_transformation);
-	Drawable::m_render_program.set_uniform("u_color", glm::vec3(0.8F, 0.8F, 0.2F));
+	Drawable::m_render_program.set_uniform("u_color", glm::vec3(1.0F, 1.0F, 0.2F));
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	m_ball_vao.bind();
@@ -91,13 +93,19 @@ void ShockwaveUnit::draw(const Camera& camera) const {
 }
 void ShockwaveUnit::draw_shockwave(const Camera& camera) const {
 }
-/*void ShockwaveUnit::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
-	// TODO: draw shockwave deferred
-}*/
+void ShockwaveUnit::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	m_flash.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+}
 
 void ShockwaveUnit::update(const Timer& timer) {
 	Unit::update(timer);
 	
+	float health_percent = Attackable::get_current_health() / Attackable::get_max_health();
+	if (health_percent < 1.0F) {
+		m_flash.set_start_color(glm::vec3(0.5F, 0.5F, 0.0F) * health_percent);
+		m_flash.set_end_color(glm::vec3(0.3F, 0.3F, 0.3F) *  health_percent);
+	}
+	m_flash.update(timer);
 	
 	m_shockwave.Transformable::set_position(glm::vec3(Transformable::get_position().x, 0.001F, Transformable::get_position().z));
 	// TODO: Maybe set on/off if attackables available.
@@ -134,7 +142,21 @@ ShockwaveUnit::ShockwaveUnit(const glm::vec2& position, const Map& map, const Pl
 	m_ball_transformation(),
 
 	m_shockwave(glm::translate(glm::vec3(Transformable::get_position().x, 0.001F, Transformable::get_position().z)) * glm::scale(glm::vec3(2.0F * get_attack_range(), 1.0F, 2.0F * get_attack_range())), map, Unit::m_player.get_color()),
-	m_attacked() {
+	m_attacked(),
+	m_flash(
+		glm::mat4(), // Transformation
+		*this, // Parent transformable
+		glm::vec2(0.75 * 1.0F, 0.75F * 1.0F), // Billboard size
+		Textures::get_texture("particles/flash"), // Texture
+		glm::vec3(0.5F, 0.5F, 0.0F), // Start color
+		glm::vec3(0.3F, 0.3F, 0.3F), // End color
+		1.35F, // Radius
+		0.75F * 0.05F, // Particle start velocity
+		0.0F, // Gravity
+		0.15F, // Minimum particle lifetime (seconds)
+		0.65F, // Maximum particle lifetime (seconds)
+		0.75 * 10.0F  // Frequency
+	) {
 	
 	m_vine_vao.bind();
 	m_vertices_vbo.bind();

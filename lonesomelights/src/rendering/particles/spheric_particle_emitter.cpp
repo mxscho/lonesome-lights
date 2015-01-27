@@ -49,6 +49,14 @@ void SphericParticleEmitter::draw_deferred(const Camera& camera, const Texture& 
 	ParticleEmitter::draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 }
 
+void SphericParticleEmitter::set_start_color(glm::vec3 color) {
+	m_start_color = color;
+}
+
+void SphericParticleEmitter::set_end_color(glm::vec3 color) {
+	m_end_color = color;
+}
+
 void SphericParticleEmitter::recalculate_properties() {
 	glm::vec3 emission_direction = glm::normalize(glm::vec3(
 		2.0F * (float) rand() / RAND_MAX - 1.0F,

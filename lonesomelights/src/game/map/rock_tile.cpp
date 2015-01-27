@@ -143,10 +143,10 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 	}
 	
 	std::vector<RockTile::Data> floor_vertices = {
-		RockTile::Data(glm::vec3(0.0F, 1.0F, 0.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 0.0F)),
-		RockTile::Data(glm::vec3(0.0F, 1.0F, 1.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)),
-		RockTile::Data(glm::vec3(1.0F, 1.0F, 1.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(1.0F, 1.0F)),
-		RockTile::Data(glm::vec3(1.0F, 1.0F, 0.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(1.0F, 0.0F))
+		RockTile::Data(glm::vec3(0.0F, 1.0F, 0.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(1.0F, 0.0F)),
+		RockTile::Data(glm::vec3(0.0F, 1.0F, 1.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 0.0F)),
+		RockTile::Data(glm::vec3(1.0F, 1.0F, 1.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(0.0F, 1.0F)),
+		RockTile::Data(glm::vec3(1.0F, 1.0F, 0.0F), glm::vec3(0.0F, 1.0F, 0.0F), glm::vec2(1.0F, 1.0F))
 	};
 
 	return RockTile(map, x, y, cliff_type, cliff_vertices, floor_vertices);

@@ -31,7 +31,7 @@ public:
 	
 	void draw(const Camera& camera) const override final;
 	void draw_shockwave(const Camera& camera) const;
-	//void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	
 	void update(const Timer& timer) override final;
 private:
@@ -55,6 +55,8 @@ private:
 	
 	Shockwave m_shockwave;
 	std::set<Attackable*> m_attacked;
+	
+	SphericParticleEmitter m_flash;
 };
 
 #endif

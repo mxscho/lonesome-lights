@@ -54,6 +54,8 @@ private:
 	
 	Laser m_laser;
 	Attackable* m_attacked;
+	
+	SphericParticleEmitter m_flash;
 };
 
 #endif

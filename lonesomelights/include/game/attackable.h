@@ -18,12 +18,15 @@ public:
 	void change_health(float delta_health);
 	bool is_dead() const;
 	bool is_full() const;
+	float get_max_health() const;
+	float get_current_health() const;
 	
 	void draw(const Camera& camera) const;
 	
 	void update(const Timer& timer);
 private:
 	float m_max_health;
+	float m_current_health;
 	HealthBarParticleEmitter m_health_bar;
 };
 

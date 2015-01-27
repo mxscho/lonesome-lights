@@ -4,12 +4,14 @@
 
 Attackable::Attackable(const glm::mat4& transformation, const Transformable& parent_transformable, float max_health, float health)
 	: m_max_health(max_health),
+	m_current_health(health),
 	m_health_bar(transformation, parent_transformable, max_health, health) {
 }
 
 void Attackable::change_health(float delta_health) {
 	float health = std::max(0.0F, m_health_bar.get_health() + delta_health);
 	m_health_bar.set_health(health);
+	m_current_health = health;
 }
 bool Attackable::is_dead() const {
 	return m_health_bar.get_health() == 0;
@@ -24,6 +26,14 @@ void Attackable::draw(const Camera& camera) const {
 	}
 
 	m_health_bar.draw(camera);
+}
+
+float Attackable::get_max_health() const {
+	return m_max_health;
+}
+
+float Attackable::get_current_health() const {
+	return m_current_health;
 }
 
 void Attackable::update(const Timer& timer) {
