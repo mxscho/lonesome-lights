@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <utility>
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #define GLM_FORCE_RADIANS
@@ -15,32 +16,35 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-#include "networking/client.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
-// TEST
 #include "timer.h"
+
 #include "game/player_handler.h"
 #include "game/game.h"
 #include "game/units/laser_unit.h"
-#include "networking/network_handlers/client_handlers/unit_client_handler.h"
-#include <SFML/Window.hpp>
+#include "game/map/map.h"
+#include "geometry/transformable.h"
+#include "geometry/map_camera.h"
+#include "geometry/path_finder.h"
+#include "game/player.h"
+#include "game/hud.h"
+#include "game/loading_screen.h"
+#include "game/skybox.h"
+
+#include "rendering/opengl/frame_buffer_object.h"
+#include "rendering/obj_loader/obj_loader.h"
+#include "rendering/opengl/textures.h"
+#include "rendering/particles/particle_systems/explosion.h"
+#include "rendering/particles/particle_systems/laser.h"
 #include "rendering/opengl/vertex_shader.h"
 #include "rendering/opengl/fragment_shader.h"
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
-#include "game/map/map.h"
-#include "rendering/particles/particle_systems/explosion.h"
-#include "rendering/particles/particle_systems/laser.h"
-#include "geometry/transformable.h"
-#include "geometry/map_camera.h"
-#include "geometry/path_finder.h"
-#include "rendering/obj_loader/obj_loader.h"
-#include "rendering/opengl/textures.h"
-#include "game/player.h"
-#include "rendering/opengl/frame_buffer_object.h"
-#include "game/hud.h"
-#include "game/loading_screen.h"
-#include "game/skybox.h"
+
+#include "networking/client.h"
+#include "networking/network_handlers/client_handlers/game_client_handler.h"
 
 //static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
 //static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
@@ -141,14 +145,11 @@ static std::pair<bool, glm::vec3> get_clicked_world_position(const Camera& camer
 
 
 static void draw_loading_screen(sf::RenderWindow& window, LoadingScreen& loading_screen, std::string text) {
-	window.clear();
 	loading_screen.set_text(text);
 	loading_screen.draw();
-	window.display();
 }
 
 int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
-	// TEST
 	sf::ContextSettings settings;
 	settings.depthBits = 24;
 	settings.stencilBits = 8;
@@ -163,8 +164,6 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	}
 
 	LoadingScreen loading_screen(window, video_mode);
-	
-	draw_loading_screen(window, loading_screen, "Waiting for opponent...");
 
 	std::string host = get_args_host(argc, argv);
 	unsigned int port = get_args_port(argc, argv);
@@ -174,31 +173,19 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		return EXIT_FAILURE;
 	}
 
-	draw_loading_screen(window, loading_screen, "Loading...");
+	//draw_loading_screen(window, loading_screen, "Loading...");
 
-	// TEST
 	Timer timer;
 	timer.advance();
-	timer.advance();
-	
-	Map map = Map::create_test_map(1.0F);
-	PathFinder path_finder(map, 12);
-	
-	Explosion explosion(glm::translate(glm::vec3(8.0F, 0.2F, 8.0F)), map, 1.0F);
 	
 	Game game;
-	PlayerHandler player_handler(game);
+	GameClientHandler game_client_handler(client.create_base_network_id(), client);
+	game.set_network_handler(game_client_handler);
+
 	Skybox skybox(glm::translate(glm::vec3(15.0F, 0.0F, 15.0F)) * glm::scale(glm::vec3(60.0F, 60.0F, 60.0F)), game.get_map());
+	PlayerHandler player_handler(game);
+	MapCamera map_camera(game.get_map(), glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 	HUD hud(game, window, video_mode);
-	//LoadingScreen loading_screen(game, window, video_mode);
-	
-	Player player(glm::vec3(0.1F, 0.3F, 0.8F));
-	std::unique_ptr<LaserUnit> laser_unit = LaserUnit::create(glm::vec2(1.0F, 1.0F), map, player);
-	/*UnitClientHandler unit_client_handler(client.create_base_network_id(), client);
-	laser_unit.set_network_handler(unit_client_handler);*/
-	//laser_unit->start_shooting(glm::vec2(5.0F, 2.0F));
-	
-	MapCamera map_camera(map, glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
 
 	FrameBufferObject frame_buffer_object;
 	Texture color_texture;
@@ -234,6 +221,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	VertexArrayObject::unbind_any();
 	VertexBufferObjects::unbind_any();
 	
+	timer.reset(0.0F);
 	while (window.isOpen()) {
 		sf::Vector2i mouse_coordinates = sf::Mouse::getPosition(window);
 		std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, mouse_coordinates.x, mouse_coordinates.y);
@@ -243,10 +231,15 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 			player_handler.on_mouse_hover(timer, world_position.second);
 		}
 		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			window.close();
+			return EXIT_SUCCESS;
+		}
 		sf::Event event;
 		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			if (event.type == sf::Event::Closed) {
 				window.close();
+				return EXIT_SUCCESS;
 			} else if (event.type == sf::Event::MouseWheelMoved) {
 				map_camera.change_zoom(event.mouseWheel.delta);
 			} else if (event.type == sf::Event::MouseButtonPressed) {
@@ -284,100 +277,92 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		// Update scene.
 		
 		timer.advance();
-		
-		map_camera.update(timer);
+
 		client.update();
-		
-		map.update(timer);
 		game.update(timer);
-		hud.update(timer);
-		//laser_unit->update(timer);
-		
-		/*static float trigger_explosion_time_seconds;
-		trigger_explosion_time_seconds += timer.get_delta_time_seconds();
-		if (trigger_explosion_time_seconds >= 1.0F && explosion.has_finished()) {
-			trigger_explosion_time_seconds = 0.0F;
-			explosion.trigger(timer.get_current_time_seconds());
-		}
-		explosion.update(timer);*/
-		
-		// Settings for rendering.
-		
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW);
-		glEnable(GL_DEPTH_TEST);
-		
-		static bool is_wireframe_mode = false;
-		static bool is_wireframe_key_down = false;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			if (!is_wireframe_key_down) {
-				is_wireframe_mode = !is_wireframe_mode;
-			}
-			is_wireframe_key_down = true;
-		}
-		else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			is_wireframe_key_down = false;
-		}
-		if (is_wireframe_mode) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		if (!game.has_started()) {
+			timer.reset(0.0F);
 		} else {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			map_camera.update(timer);
+			hud.update(timer);
+
+			// Settings for rendering.
+		
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+			glFrontFace(GL_CCW);
+			glEnable(GL_DEPTH_TEST);
+		
+			static bool is_wireframe_mode = false;
+			static bool is_wireframe_key_down = false;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				if (!is_wireframe_key_down) {
+					is_wireframe_mode = !is_wireframe_mode;
+				}
+				is_wireframe_key_down = true;
+			}
+			else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				is_wireframe_key_down = false;
+			}
+			if (is_wireframe_mode) {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			} else {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			}
+		
+			glClearColor(0.0F, 0.0F, 0.2F, 0.0F);
+		
+			// Render scene to scene texture.
+		
+			frame_buffer_object.bind();
+		
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+			game.draw(map_camera);
+		
+			FrameBufferObject::unbind_any();
 		}
-		
-		glClearColor(0.0F, 0.0F, 0.2F, 0.0F);
-		
-		// Render scene to scene texture.
-		
-		frame_buffer_object.bind();
-		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		//map.draw(map_camera);
-		game.draw(map_camera);
-		//laser_unit->draw(map_camera);
-		//explosion.draw(map_camera);
-		
-		FrameBufferObject::unbind_any();
-		
-		// Render scene texture to screen.
 		
 		window.clear();
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		if (!game.has_started()) {
+			draw_loading_screen(window, loading_screen, "Waiting for opponent...");
+		} else {
+			// Render scene texture to screen.
+
+			const RenderProgram& render_program = RenderPrograms::get_render_program("deferred");
+			render_program.set_uniform("u_color_texture", 0);
+			render_program.set_uniform("u_position_texture", 1);
+			render_program.set_uniform("u_normal_texture", 2);
+			render_program.set_uniform("u_depth_texture", 3);
+
+			render_program.bind();
+			fbo_vao.bind();
+
+			color_texture.bind(GL_TEXTURE0);
+			position_texture.bind(GL_TEXTURE1);
+			normal_texture.bind(GL_TEXTURE2);
+			depth_texture.bind(GL_TEXTURE3);
 		
-		const RenderProgram& render_program = RenderPrograms::get_render_program("deferred");
-		render_program.set_uniform("u_color_texture", 0);
-		render_program.set_uniform("u_position_texture", 1);
-		render_program.set_uniform("u_normal_texture", 2);
-		render_program.set_uniform("u_depth_texture", 3);
+			glDrawArrays(GL_QUADS, 0, 4);
 
-		render_program.bind();
-		fbo_vao.bind();
+			Texture::unbind_any(GL_TEXTURE0);
+			Texture::unbind_any(GL_TEXTURE1);
+			Texture::unbind_any(GL_TEXTURE2);
+			Texture::unbind_any(GL_TEXTURE3);
 
-		color_texture.bind(GL_TEXTURE0);
-		position_texture.bind(GL_TEXTURE1);
-		normal_texture.bind(GL_TEXTURE2);
-		depth_texture.bind(GL_TEXTURE3);
+			VertexArrayObject::unbind_any();
+			RenderProgram::unbind_any();
 		
-		glDrawArrays(GL_QUADS, 0, 4);
-
-		Texture::unbind_any(GL_TEXTURE0);
-		Texture::unbind_any(GL_TEXTURE1);
-		Texture::unbind_any(GL_TEXTURE2);
-		Texture::unbind_any(GL_TEXTURE3);
-
-		VertexArrayObject::unbind_any();
-		RenderProgram::unbind_any();
+			// Deferred rendering to screen.
 		
-		// Deferred rendering to screen.
-		
-		skybox.draw(map_camera);
-		game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
-		//laser_unit->draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
-		//explosion.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+			skybox.draw(map_camera);
+			game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
 
-		hud.draw(map_camera);
+			hud.draw(map_camera);
+		}
 
 		window.display();
 	}

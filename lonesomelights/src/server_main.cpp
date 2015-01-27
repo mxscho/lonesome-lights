@@ -2,12 +2,20 @@
 #include <iostream>
 #include <sstream>
 
-#include "networking/server.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
-// TEST
 #include "timer.h"
-#include "game/units/unit.h"
-#include "networking/network_handlers/server_handlers/unit_server_handler.h"
+
+#include "game/game.h"
+
+#include "networking/server.h"
+#include "networking/network_handlers/server_handlers/game_server_handler.h"
+
+//static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
+//static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
+static sf::VideoMode video_mode = sf::VideoMode(200, 100);
+static unsigned int style = sf::Style::Titlebar | sf::Style::Close;
 
 void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
@@ -35,18 +43,54 @@ int main(int argc, char** argv) {
 	if (!server.start(port)) {
 		return EXIT_FAILURE;
 	}
-	// TEST
+
+	sf::ContextSettings settings;
+	settings.depthBits = 24;
+	settings.stencilBits = 8;
+	settings.antialiasingLevel = 4;
+	settings.majorVersion = 3;
+	settings.minorVersion = 3;
+	sf::RenderWindow window(video_mode, "Lonesome Lights (Server)", style, settings);
+	GLenum glew_error = glewInit();
+	if (glew_error != GLEW_OK) {
+		std::cerr << "Rendering: Glew initialization failed." << std::endl;
+		return EXIT_FAILURE;
+	}
+
 	Timer timer;
-	//Unit unit;
-	//UnitServerHandler unit_server_handler(server.create_base_network_id(), server);
-	//unit.set_network_handler(unit_server_handler);
-	while (true) {
-		server.update();
-		if (server.get_participants().size() == 0) {
-			continue;
+	Game game;
+	GameServerHandler game_server_handler(server.create_base_network_id(), server);
+	game.set_network_handler(game_server_handler);
+	timer.reset(0.0F);
+	while (window.isOpen()) {
+		sf::Event event;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			window.close();
+			break;
 		}
-		
-		//unit.update(timer);
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+				break;
+			}
+		}
+
+		server.update();
+
+		static bool started = false;
+		if (server.get_participants().size() < 2) {
+			if (!started) {
+				timer.reset(0.0F);
+				continue;
+			} else {
+				return EXIT_SUCCESS;
+			}
+		}
+		started = true;
+
+		timer.advance();
+
+		game.update(timer);
 	}
     return EXIT_SUCCESS;
 }

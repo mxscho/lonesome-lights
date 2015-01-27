@@ -18,6 +18,8 @@ class Texture;
 class Timer;
 
 class Game : public Networkable, public Updatable {
+friend class GameServerHandler;
+friend class GameClientHandler;
 public:
 	static float c_worker_unit_plasma_cost;
 	static float c_worker_unit_crystals_cost;
@@ -33,6 +35,9 @@ public:
 
 	Game();
 
+	bool has_started() const;
+	void start();
+
 	float get_own_plasma_count() const;
 	float get_own_crystal_count() const;
 	
@@ -43,6 +48,9 @@ public:
 	void spawn_own_worker_unit();
 	void spawn_own_laser_unit();
 	void spawn_own_shockwave_unit();
+	void spawn_opponent_worker_unit();
+	void spawn_opponent_laser_unit();
+	void spawn_opponent_shockwave_unit();
 
 	void draw(const Camera& camera) const;
 	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
@@ -54,6 +62,7 @@ public:
 	std::vector<DestructibleRockTile*> m_opponent_selected_destructible_rock_tiles;
 	std::vector<CrystalTile*> m_opponent_selected_crystal_tiles;
 private:
+	bool m_is_started;
 	Map m_map;
 	Player m_own_player;
 	Player m_opponent_player;
@@ -61,10 +70,12 @@ private:
 	std::list<std::unique_ptr<Unit>> m_opponent_units;
 	float m_own_plasma_count;
 	float m_own_crystal_count;
-	//float m_opponent_plasma_count;
+	float m_opponent_plasma_count;
 	float m_opponent_crystal_count;
 
 	std::list<Explosion> m_explosions;
+
+	unsigned int m_player_id;
 };
 
 #endif
