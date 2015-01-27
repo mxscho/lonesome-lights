@@ -54,9 +54,6 @@ public:
 	void spawn_opponent_worker_unit();
 	void spawn_opponent_laser_unit();
 	void spawn_opponent_shockwave_unit();
-
-	void draw(const Camera& camera) const;
-	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	
 	void update(const Timer& timer) override final;
 
@@ -65,6 +62,8 @@ public:
 	std::vector<DestructibleRockTile*> m_opponent_selected_destructible_rock_tiles;
 	std::vector<CrystalTile*> m_opponent_selected_crystal_tiles;
 private:
+	static unsigned int m_current_unit_id;
+
 	bool m_is_started;
 	Map m_map;
 	Player m_own_player;
@@ -75,8 +74,6 @@ private:
 	float m_own_crystal_count;
 	float m_opponent_plasma_count;
 	float m_opponent_crystal_count;
-
-	std::list<Explosion> m_explosions;
 
 	Server& m_server;
 	unsigned int m_player_id;

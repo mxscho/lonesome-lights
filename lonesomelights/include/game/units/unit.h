@@ -42,6 +42,9 @@ public:
 	void draw_selection_circle(const Camera& camera) const;
 	
 	void update(const Timer& timer) override;
+
+	unsigned int m_id;
+	bool m_has_changed_path;
 protected:
 	const Player& m_player;
 	bool m_is_selected;

@@ -15,6 +15,8 @@ public:
 
 	virtual glm::vec2 get_position_vec2() const = 0;
 	
+	float get_health() const;
+	void set_health(float health);
 	void change_health(float delta_health);
 	bool is_dead() const;
 	bool is_full() const;

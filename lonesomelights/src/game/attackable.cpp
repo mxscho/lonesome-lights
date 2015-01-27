@@ -7,6 +7,13 @@ Attackable::Attackable(const glm::mat4& transformation, const Transformable& par
 	m_health_bar(transformation, parent_transformable, max_health, health) {
 }
 
+float Attackable::get_health() const {
+	return m_health_bar.get_health();
+}
+void Attackable::set_health(float health) {
+	m_health_bar.set_health(health);
+}
+
 void Attackable::change_health(float delta_health) {
 	float health = std::max(0.0F, m_health_bar.get_health() + delta_health);
 	m_health_bar.set_health(health);

@@ -17,7 +17,7 @@ class Timer;
 class Map : public Networkable, public Updatable, public Transformable {
 public:
 	static Map create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size);
-	static Map create_test_map(float tile_size);
+	static Map create_map(float tile_size);
 
 	Map(unsigned int tile_count_x, unsigned int tile_count_y, float tile_size);
 

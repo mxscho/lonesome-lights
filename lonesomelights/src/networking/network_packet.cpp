@@ -19,7 +19,6 @@ NetworkPacket NetworkPacket::create_incoming(sf::Packet& packet) {
 	network_packet >> network_id_id;
 	network_packet >> network_id_description;
 	network_packet >> type;
-	
 	return network_packet;
 }
 

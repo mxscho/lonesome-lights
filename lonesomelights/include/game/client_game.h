@@ -24,13 +24,6 @@ class ClientGame : public Networkable, public Updatable {
 friend class GameServerHandler;
 friend class GameClientHandler;
 public:
-	static float c_worker_unit_plasma_cost;
-	static float c_worker_unit_crystals_cost;
-	static float c_laser_unit_plasma_cost;
-	static float c_laser_unit_crystals_cost;
-	static float c_shockwave_unit_plasma_cost;
-	static float c_shockwave_unit_crystals_cost;
-
 	static unsigned int c_own_base_x;
 	static unsigned int c_own_base_y;
 	static unsigned int c_opponent_base_x;

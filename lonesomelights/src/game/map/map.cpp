@@ -25,7 +25,7 @@ Map Map::create_empty_map(unsigned int tile_count_x, unsigned int tile_count_y, 
 	return map;
 }
 
-Map Map::create_test_map(float tile_size) {
+Map Map::create_map(float tile_size) {
 	unsigned int map_size = 30;
 	Map map = create_empty_map(map_size, map_size, tile_size);
 	

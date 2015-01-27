@@ -15,13 +15,6 @@
 
 #include <iostream>
 
-float ClientGame::c_worker_unit_plasma_cost = 100.0F;
-float ClientGame::c_worker_unit_crystals_cost = 20.0F;
-float ClientGame::c_laser_unit_plasma_cost = 100.0F;
-float ClientGame::c_laser_unit_crystals_cost = 20.0F;
-float ClientGame::c_shockwave_unit_plasma_cost = 100.0F;
-float ClientGame::c_shockwave_unit_crystals_cost = 20.0F;
-
 unsigned int ClientGame::c_own_base_x = 27;
 unsigned int ClientGame::c_own_base_y = 2;
 unsigned int ClientGame::c_opponent_base_x = 2;
@@ -38,44 +31,47 @@ ClientGame::ClientGame(Client& client)
 
 	m_is_started(false),
 
-	m_map(Map::create_test_map(1.0F)), // TEST
+	m_map(Map::create_map(1.0F)),
 	m_own_player(glm::vec3(0.0F, 0.0F, 0.8F)),
 	m_opponent_player(glm::vec3(0.8F, 0.0F, 0.0F)),
 	m_own_units(),
 	m_opponent_units(),
 
-	m_own_plasma_count(1000.0F), // TEST
-	m_own_crystal_count(100.0F),
-	m_opponent_plasma_count(1000.0F),
-	m_opponent_crystal_count(100.0F),
-
 	m_explosions(),
 	m_client(client) {
 
 	m_map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(m_map, c_own_base_x, c_own_base_y, m_own_player))));
+	Tile& base_up_own = m_map.get_tile(c_own_base_x, c_own_base_y + 1);
+	Tile& base_down_own = m_map.get_tile(c_own_base_x, c_own_base_y - 1);
+	Tile& base_left_own = m_map.get_tile(c_own_base_x - 1, c_own_base_y);
+	Tile& base_right_own = m_map.get_tile(c_own_base_x + 1, c_own_base_y);
+	base_up_own.set_is_walkable(false);
+	base_down_own.set_is_walkable(false);
+	base_left_own.set_is_walkable(false);
+	base_right_own.set_is_walkable(false);
 	m_map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(m_map, c_opponent_base_x, c_opponent_base_y, m_opponent_player))));
+	Tile& base_up_opponent = m_map.get_tile(c_opponent_base_x, c_opponent_base_y + 1);
+	Tile& base_down_opponent = m_map.get_tile(c_opponent_base_x, c_opponent_base_y - 1);
+	Tile& base_left_opponent = m_map.get_tile(c_opponent_base_x - 1, c_opponent_base_y);
+	Tile& base_right_opponent = m_map.get_tile(c_opponent_base_x + 1, c_opponent_base_y);
+	base_up_opponent.set_is_walkable(false);
+	base_down_opponent.set_is_walkable(false);
+	base_left_opponent.set_is_walkable(false);
+	base_right_opponent.set_is_walkable(false);
 
 	// TEST
-	m_own_units.push_back(LaserUnit::create(glm::vec2(4.0F, 4.0F), m_map, m_own_player));
-	m_own_units.push_back(LaserUnit::create(glm::vec2(2.0F, 2.0F), m_map, m_own_player));
-	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(8.0F, 2.0F), m_map, m_own_player));
-	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(1.0F, 1.0F), m_map, m_own_player));
-	m_own_units.push_back(WorkerUnit::create(glm::vec2(2.0F, 15.0F), m_map, m_own_player));
-	//static_cast<WorkerUnit*>(m_own_units.back().get())->start_exploiting(static_cast<CrystalTile*>(&m_map.get_tile(9, 9)));
-	m_opponent_units.push_back(LaserUnit::create(glm::vec2(7.0F, 3.0F), m_map, m_opponent_player));
-	m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(10.0F, 5.0F), m_map, m_opponent_player));
-	m_opponent_units.push_back(LaserUnit::create(glm::vec2(15.0F, 3.0F), m_map, m_opponent_player));
-	
-	// -- for test map' base ---
-	Tile& base_up = m_map.get_tile(2, 7);
-	Tile& base_down = m_map.get_tile(2, 5);
-	Tile& base_left = m_map.get_tile(1, 6);
-	Tile& base_right = m_map.get_tile(3, 6);
-	base_up.set_is_walkable(false);
-	base_down.set_is_walkable(false);
-	base_left.set_is_walkable(false);
-	base_right.set_is_walkable(false);
-	// --------------------
+	m_own_units.push_back(LaserUnit::create(glm::vec2(7.0F, 2.0F), m_map, m_own_player));
+	m_own_units.back()->m_id = 1000U;
+	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(11.0F, 6.0F), m_map, m_own_player));
+	m_own_units.back()->m_id = 1001U;
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(15.0F, 10.0F), m_map, m_own_player));
+	m_own_units.back()->m_id = 1002U;
+	m_opponent_units.push_back(LaserUnit::create(glm::vec2(2.0F, 7.0F), m_map, m_opponent_player));
+	m_opponent_units.back()->m_id = 1003U;
+	m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(6.0F, 11.0F), m_map, m_opponent_player));
+	m_opponent_units.back()->m_id = 1004U;
+	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(10.0F, 15.0F), m_map, m_opponent_player));
+	m_opponent_units.back()->m_id = 1005U;
 }
 
 bool ClientGame::has_started() const {
@@ -107,7 +103,7 @@ void ClientGame::spawn_own_worker_unit() {
 
 	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << 0;
+	network_packet << 0U;
 	m_client.get_participant().add_outgoing_network_packet(network_packet);
 }
 void ClientGame::spawn_own_laser_unit() {
@@ -115,7 +111,7 @@ void ClientGame::spawn_own_laser_unit() {
 
 	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << 1;
+	network_packet << 1U;
 	m_client.get_participant().add_outgoing_network_packet(network_packet);
 }
 void ClientGame::spawn_own_shockwave_unit() {
@@ -123,7 +119,7 @@ void ClientGame::spawn_own_shockwave_unit() {
 
 	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << 2;
+	network_packet << 2U;
 	m_client.get_participant().add_outgoing_network_packet(network_packet);
 }
 
@@ -205,232 +201,302 @@ void ClientGame::draw_deferred(const Camera& camera, const Texture& color_textur
 
 void ClientGame::update(const Timer& timer) {
 	if (m_is_started) {
-		float delta_time_seconds = timer.get_delta_time_seconds();
-
 		m_map.update(timer);
 
+		// Update units.
+	
 		for (auto& i_own_unit : m_own_units) {
-			if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
-				// Update attack relationships.
-		
-				float attack_range = own_laser_unit->get_attack_range();
-				Attackable* currently_attacked = own_laser_unit->get_shooting_target();
-				if (currently_attacked) {
-					if (glm::distance(own_laser_unit->get_position_vec2(), currently_attacked->get_position_vec2()) > attack_range) {
-						own_laser_unit->stop_shooting();
-						currently_attacked = nullptr;
-					}
-				}
-				if (!currently_attacked) {
-					Attackable* attacked = nullptr;
-					float min_attack_range = std::numeric_limits<float>::max();
-					for (auto& i_opponent_unit : m_opponent_units) {
-						if (glm::distance(own_laser_unit->get_position(), i_opponent_unit->get_position()) < attack_range &&
-							glm::distance(own_laser_unit->get_position(), i_opponent_unit->get_position()) < min_attack_range) {
-							attacked = i_opponent_unit.get();
-							min_attack_range = glm::distance(own_laser_unit->get_position(), i_opponent_unit->get_position());
-						}
-					}
-					if (attacked) {
-						own_laser_unit->start_shooting(attacked);
-					}
-				}
-			
-				// Update health.
-			
-				Attackable* attacked = own_laser_unit->get_shooting_target();
-				if (attacked) {
-					attacked->change_health(delta_time_seconds * -own_laser_unit->get_attack_dps());
-				}
-			} else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
-				// Update attack relationships.
-			
-				float attack_range = own_shockwave_unit->get_attack_range();
-				own_shockwave_unit->clear_attacks();
-				for (auto& i_opponent_unit : m_opponent_units) {
-					if (glm::distance(own_shockwave_unit->get_position(), i_opponent_unit->get_position()) < attack_range) {
-						own_shockwave_unit->add_attack(i_opponent_unit.get());
-					}
-				}
-			
-				// Update health.
-			
-				for (auto& i_attackable : own_shockwave_unit->get_attacked()) {
-					i_attackable->change_health(delta_time_seconds * -own_shockwave_unit->get_attack_dps());
-				}
-			} else if (WorkerUnit* own_worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
-				// Update exploit relationships.
-		
-				float exploit_range = own_worker_unit->get_attack_range();
-				Tile* currently_exploited = own_worker_unit->get_exploited();
-				if (currently_exploited) {
-					if (glm::distance(own_worker_unit->get_position_vec2(), glm::vec2((currently_exploited->get_x() + 0.5F) * currently_exploited->get_size(), (currently_exploited->get_y() + 0.5F) * currently_exploited->get_size())) > exploit_range ||
-						(std::find(m_own_selected_crystal_tiles.begin(), m_own_selected_crystal_tiles.end(), currently_exploited) == m_own_selected_crystal_tiles.end() &&
-						std::find(m_own_selected_destructible_rock_tiles.begin(), m_own_selected_destructible_rock_tiles.end(), currently_exploited) == m_own_selected_destructible_rock_tiles.end())) {
-						own_worker_unit->stop_exploiting();
-						currently_exploited = nullptr;
-					}
-				}
-				if (!currently_exploited) {
-					CrystalTile* exploited_crystal = nullptr;
-					DestructibleRockTile* exploited_dr = nullptr;
-					float min_exploit_range = std::numeric_limits<float>::max();
-				
-					for (auto& i_tile : m_own_selected_crystal_tiles) {
-						if (glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
-							glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
-							exploited_crystal = i_tile;
-							min_exploit_range = glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
-						}
-					}
-					if (exploited_crystal) {
-						own_worker_unit->start_exploiting(exploited_crystal);
-					} else {
-						for (auto& i_tile : m_own_selected_destructible_rock_tiles) {
-							if (glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
-								glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
-								exploited_dr = i_tile;
-								min_exploit_range = glm::distance(own_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
-							}
-						}
-						if (exploited_dr) {
-							own_worker_unit->start_exploiting(exploited_dr);
-						}
-					}
-				}
-
-				// Update health.
-
-				Tile* exploited = own_worker_unit->get_exploited();
-				if (exploited) {
-					if (CrystalTile* tile = dynamic_cast<CrystalTile*>(exploited)) {
-						tile->change_health(delta_time_seconds * -own_worker_unit->get_attack_dps());
-						own_worker_unit->change_crystal_count(delta_time_seconds * own_worker_unit->get_attack_dps());
-					} else if (DestructibleRockTile* tile = dynamic_cast<DestructibleRockTile*>(exploited)) {
-						tile->change_health(delta_time_seconds * -own_worker_unit->get_attack_dps());
-					}
-				}
-			}
-		}	
+			i_own_unit->update(timer);
+		}
 		for (auto& i_opponent_unit : m_opponent_units) {
-			if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
-				// Update attack relationships.
-		
-				float attack_range = opponent_laser_unit->get_attack_range();
-				Attackable* currently_attacked = opponent_laser_unit->get_shooting_target();
-				if (currently_attacked) {
-					if (glm::distance(opponent_laser_unit->get_position_vec2(), currently_attacked->get_position_vec2()) > attack_range) {
-						opponent_laser_unit->stop_shooting();
-						currently_attacked = nullptr;
-					}
-				}
-				if (!currently_attacked) {
-					Attackable* attacked = nullptr;
-					float min_attack_range = std::numeric_limits<float>::max();
-					for (auto& i_own_unit : m_own_units) {
-						if (glm::distance(opponent_laser_unit->get_position(), i_own_unit->get_position()) < attack_range &&
-							glm::distance(opponent_laser_unit->get_position(), i_own_unit->get_position()) < min_attack_range) {
-							attacked = i_own_unit.get();
-							min_attack_range = glm::distance(opponent_laser_unit->get_position(), i_own_unit->get_position());
-						}
-					}
-					if (attacked) {
-						opponent_laser_unit->start_shooting(attacked);
-					}
-				}
-			
-				// Update health.
-			
-				Attackable* attacked = opponent_laser_unit->get_shooting_target();
-				if (attacked) {
-					attacked->change_health(delta_time_seconds * -opponent_laser_unit->get_attack_dps());
-				}
+			i_opponent_unit->update(timer);
+		}
+	
+		// Update explosions.
+	
+		for (auto i_explosion = m_explosions.begin(); i_explosion != m_explosions.end(); ) {
+			if (i_explosion->has_finished()) {
+				i_explosion = m_explosions.erase(i_explosion);
+			} else {
+				i_explosion->update(timer);
+				++i_explosion;
 			}
-			else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
-				// Update attack relationships.
-		
-				float attack_range = opponent_shockwave_unit->get_attack_range();
-				opponent_shockwave_unit->clear_attacks();
+		}
+
+
+		// CLIENT RECEIVE
+
+		std::vector<NetworkPacket> network_packets;
+
+		std::vector<NetworkPacket>& incoming_network_packets = m_client.get_participant().get_incoming_network_packets();
+		for (auto i_network_packet = incoming_network_packets.begin(); i_network_packet != incoming_network_packets.end(); ) {
+			if (i_network_packet->get_network_id() == get_network_handler()->m_network_id && i_network_packet->get_type() == NetworkPacket::Type::Update) {
+				network_packets.push_back(*i_network_packet);
+				i_network_packet = incoming_network_packets.erase(i_network_packet);
+			} else {
+				++i_network_packet;
+			}
+		}
+
+		for (auto& i_network_packet : network_packets) {
+			std::string text;
+			i_network_packet >> text;
+
+			if (text == "ressources") {
+				i_network_packet >> m_own_plasma_count;
+				i_network_packet >> m_own_crystal_count;
+			} else if (text == "new_unit") {
+				unsigned int id;
+				i_network_packet >> id;
+				unsigned int type;
+				i_network_packet >> type;
+				unsigned int player_id;
+				i_network_packet >> player_id;
+				float x;
+				i_network_packet >> x;
+				float y;
+				i_network_packet >> y;
+				if (type == 0U) {
+					if (player_id == 0U) {
+						m_own_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_own_player));
+						m_own_units.back()->m_id = id;
+					} else if (player_id == 1U) {
+						m_opponent_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
+						m_own_units.back()->m_id = id;
+					}
+				} else if (type == 1U) {
+					if (player_id == 0U) {
+						m_own_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_own_player));
+						m_own_units.back()->m_id = id;
+					} else if (player_id == 1U) {
+						m_opponent_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
+						m_own_units.back()->m_id = id;
+					}
+				} else if (type == 2U) {
+					if (player_id == 0U) {
+						m_own_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_own_player));
+						m_own_units.back()->m_id = id;
+					} else if (player_id == 1U) {
+						m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
+						m_own_units.back()->m_id = id;
+					}
+				}
+			} else if (text == "move_unit") {
+				unsigned int id;
+				i_network_packet >> id;
 				for (auto& i_own_unit : m_own_units) {
-					if (glm::distance(opponent_shockwave_unit->get_position(), i_own_unit->get_position()) < attack_range) {
-						opponent_shockwave_unit->add_attack(i_own_unit.get());
+					if (i_own_unit->m_id == id) {
+						unsigned int size;
+						i_network_packet >> size;
+						std::list<glm::vec3> target_path;
+						for (unsigned int i = 0; i < size; ++i) {
+							float x;
+							i_network_packet >> x;
+							float y;
+							i_network_packet >> y;
+							float z;
+							i_network_packet >> z;
+							target_path.push_back(glm::vec3(x, y, z));
+						}
+						i_own_unit->InertialMovable::set_target_path(timer, target_path);
 					}
 				}
-			
-				// Update health.
-			
-				for (auto& i_attackable : opponent_shockwave_unit->get_attacked()) {
-					i_attackable->change_health(delta_time_seconds * -opponent_shockwave_unit->get_attack_dps());
-				}
-			} else if (WorkerUnit* opponent_worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
-				// Update exploit relationships.
-		
-				float exploit_range = opponent_worker_unit->get_attack_range();
-				Tile* currently_exploited = opponent_worker_unit->get_exploited();
-				if (currently_exploited) {
-					if (glm::distance(opponent_worker_unit->get_position_vec2(), glm::vec2((currently_exploited->get_x() + 0.5F) * currently_exploited->get_size(), (currently_exploited->get_y() + 0.5F) * currently_exploited->get_size())) > exploit_range ||
-						(std::find(m_opponent_selected_crystal_tiles.begin(), m_opponent_selected_crystal_tiles.end(), currently_exploited) == m_opponent_selected_crystal_tiles.end() &&
-						std::find(m_opponent_selected_destructible_rock_tiles.begin(), m_opponent_selected_destructible_rock_tiles.end(), currently_exploited) == m_opponent_selected_destructible_rock_tiles.end())) {
-						opponent_worker_unit->stop_exploiting();
-						currently_exploited = nullptr;
+				for (auto& i_opponent_unit : m_opponent_units) {
+					if (i_opponent_unit->m_id == id) {
+						unsigned int size;
+						i_network_packet >> size;
+						std::list<glm::vec3> target_path;
+						for (unsigned int i = 0; i < size; ++i) {
+							float x;
+							i_network_packet >> x;
+							float y;
+							i_network_packet >> y;
+							float z;
+							i_network_packet >> z;
+							target_path.push_back(glm::vec3(x, y, z));
+						}
+						i_opponent_unit->InertialMovable::set_target_path(timer, target_path);
 					}
 				}
-				if (!currently_exploited) {
-					CrystalTile* exploited_crystal = nullptr;
-					DestructibleRockTile* exploited_dr = nullptr;
-					float min_exploit_range = std::numeric_limits<float>::max();
-				
-					for (auto& i_tile : m_opponent_selected_crystal_tiles) {
-						if (glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
-							glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
-							exploited_crystal = i_tile;
-							min_exploit_range = glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
+			} else if (text == "unit_health") {
+				unsigned int size;
+				i_network_packet >> size;
+				for (unsigned int i = 0; i < size; ++i) {
+					unsigned int id;
+					i_network_packet >> id;
+
+					for (auto& i_own_unit : m_own_units) {
+						if (i_own_unit->m_id == id) {
+							float health;
+							i_network_packet >> health;
+							i_own_unit->set_health(health);
 						}
 					}
-					if (exploited_crystal) {
-						opponent_worker_unit->start_exploiting(exploited_crystal);
-					} else {
-						for (auto& i_tile : m_opponent_selected_destructible_rock_tiles) {
-							if (glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < exploit_range &&
-								glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size())) < min_exploit_range) {
-								exploited_dr = i_tile;
-								min_exploit_range = glm::distance(opponent_worker_unit->get_position(), glm::vec3((i_tile->get_x() + 0.5F) * i_tile->get_size(), 0.5F * i_tile->get_size(), (i_tile->get_y() + 0.5F) * i_tile->get_size()));
+					for (auto& i_opponent_unit : m_opponent_units) {
+						if (i_opponent_unit->m_id == id) {
+							float health;
+							i_network_packet >> health;
+							i_opponent_unit->set_health(health);
+						}
+					}
+				}
+			} else if (text == "worker_crystals") {
+				unsigned int size;
+				i_network_packet >> size;
+				for (unsigned int i = 0; i < size; ++i) {
+					bool is_worker;
+					i_network_packet >> is_worker;
+					
+					if (is_worker) {
+						unsigned int id;
+						i_network_packet >> id;
+						float crystal_count;
+						i_network_packet >> crystal_count;
+
+						for (auto& i_own_unit : m_own_units) {
+							if (i_own_unit->m_id == id) {
+								static_cast<WorkerUnit*>(i_own_unit.get())->set_crystal_count(crystal_count);
 							}
 						}
-						if (exploited_dr) {
-							opponent_worker_unit->start_exploiting(exploited_dr);
+						for (auto& i_opponent_unit : m_opponent_units) {
+							if (i_opponent_unit->m_id == id) {
+								static_cast<WorkerUnit*>(i_opponent_unit.get())->set_crystal_count(crystal_count);
+							}
 						}
 					}
 				}
+			} else if (text == "tile_health") {
+				unsigned int size;
+				i_network_packet >> size;
+				for (unsigned int i = 0; i < size; ++i) {
+					unsigned int x;
+					i_network_packet >> x;
+					unsigned int y;
+					i_network_packet >> y;
+					bool has_health;
+					i_network_packet >> has_health;
+					
+					if (has_health) {
+						float health;
+						i_network_packet >> health;		
 
-				// Update health.
-		
-				Tile* exploited = opponent_worker_unit->get_exploited();
-				if (exploited) {
-					if (CrystalTile* tile = dynamic_cast<CrystalTile*>(exploited)) {
-						tile->change_health(delta_time_seconds * -opponent_worker_unit->get_attack_dps());
-						opponent_worker_unit->change_crystal_count(delta_time_seconds * opponent_worker_unit->get_attack_dps());
-					} else if (DestructibleRockTile* tile = dynamic_cast<DestructibleRockTile*>(exploited)) {
-						tile->change_health(delta_time_seconds * -opponent_worker_unit->get_attack_dps());
+						Tile& tile = m_map.get_tile(x, y);
+						if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+							destructible_rock_tile->set_health(health);
+						} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+							crystal_tile->set_health(health);
+						}
+					}
+				}
+			} else if (text == "unit_attack") {
+				unsigned int id;
+				i_network_packet >> id;
+
+				for (auto& i_own_unit : m_own_units) {
+					if (i_own_unit->m_id == id) {
+						if (LaserUnit* laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
+							bool has_attackable;
+							i_network_packet >> has_attackable;
+							if (has_attackable) {
+								unsigned int attacked_id;
+								i_network_packet >> attacked_id;
+								for (auto& i_opponent_unit : m_opponent_units) {
+									if (attacked_id == i_opponent_unit->m_id) {
+										laser_unit->start_shooting(static_cast<Attackable*>(i_opponent_unit.get()));
+									}
+								}
+							} else {
+								laser_unit->stop_shooting();
+							}	
+						} else if (ShockwaveUnit* shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
+							unsigned int size;
+							i_network_packet >> size;
+							shockwave_unit->clear_attacks();
+							for (unsigned int i = 0; i < size; ++i) {
+								unsigned int attacked_id;
+								i_network_packet >> attacked_id;
+								for (auto& i_opponent_unit : m_opponent_units) {
+									if (attacked_id == i_opponent_unit->m_id) {
+										shockwave_unit->add_attack(static_cast<Attackable*>(i_opponent_unit.get()));
+									}
+								}
+							}	
+						} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
+							bool has_exploited;
+							i_network_packet >> has_exploited;
+							if (has_exploited) {
+								unsigned int x;
+								i_network_packet >> x;
+								unsigned int y;
+								i_network_packet >> y;
+								Tile& tile = m_map.get_tile(x, y);
+								if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+									worker_unit->start_exploiting(crystal_tile);
+								} else if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+									worker_unit->start_exploiting(destructible_rock_tile);
+								}
+							} else {
+								worker_unit->stop_exploiting();
+							}	
+						}
+					}
+				}
+				for (auto& i_opponent_unit : m_opponent_units) {
+					if (i_opponent_unit->m_id == id) {
+						if (LaserUnit* laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
+							bool has_attackable;
+							i_network_packet >> has_attackable;
+							if (has_attackable) {
+								unsigned int attacked_id;
+								i_network_packet >> attacked_id;
+								for (auto& i_own_unit : m_own_units) {
+									if (attacked_id == i_own_unit->m_id) {
+										laser_unit->start_shooting(static_cast<Attackable*>(i_own_unit.get()));
+									}
+								}
+							} else {
+								laser_unit->stop_shooting();
+							}	
+						} else if (ShockwaveUnit* shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
+							unsigned int size;
+							i_network_packet >> size;
+							shockwave_unit->clear_attacks();
+							for (unsigned int i = 0; i < size; ++i) {
+								unsigned int attacked_id;
+								i_network_packet >> attacked_id;
+								for (auto& i_own_unit : m_own_units) {
+									if (attacked_id == i_own_unit->m_id) {
+										shockwave_unit->add_attack(static_cast<Attackable*>(i_own_unit.get()));
+									}
+								}
+							}	
+						} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
+							bool has_exploited;
+							i_network_packet >> has_exploited;
+							if (has_exploited) {
+								unsigned int x;
+								i_network_packet >> x;
+								unsigned int y;
+								i_network_packet >> y;
+								Tile& tile = m_map.get_tile(x, y);
+								if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+									worker_unit->start_exploiting(crystal_tile);
+								} else if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+									worker_unit->start_exploiting(destructible_rock_tile);
+								}
+							} else {
+								worker_unit->stop_exploiting();
+							}	
+						}
 					}
 				}
 			}
 		}
-	
+
 		// Update deaths.
 	
 		for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ) {
 			if ((*i_own_unit)->is_dead()) {
-				for (auto& i_opponent_unit : m_opponent_units) {
-					if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
-						if (opponent_laser_unit->get_shooting_target() == i_own_unit->get()) {
-							opponent_laser_unit->stop_shooting();
-						}
-					}
-					else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
-						opponent_shockwave_unit->remove_attack(i_own_unit->get());
-					}
-				}
 				glm::vec2 position = (*i_own_unit)->get_position_vec2();
 				m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F);
 				m_explosions.back().trigger(timer.get_current_time_seconds());
@@ -441,16 +507,6 @@ void ClientGame::update(const Timer& timer) {
 		}
 		for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ) {
 			if ((*i_opponent_unit)->is_dead()) {
-				for (auto& i_own_unit : m_own_units) {
-					if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
-						if (own_laser_unit->get_shooting_target() == i_opponent_unit->get()) {
-							own_laser_unit->stop_shooting();
-						}
-					}
-					else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
-						own_shockwave_unit->remove_attack(i_opponent_unit->get());
-					}
-				}
 				glm::vec2 position = (*i_opponent_unit)->get_position_vec2();
 				m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F);
 				m_explosions.back().trigger(timer.get_current_time_seconds());
@@ -497,141 +553,83 @@ void ClientGame::update(const Timer& timer) {
 					}
 				}
 				if (dead_tile) {
-					for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
-						if (WorkerUnit* own_worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit->get())) {
-							if (own_worker_unit->get_exploited() == dead_tile) {
-								own_worker_unit->stop_exploiting();
-							}
-						}
-					}
-					for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
-						if (WorkerUnit* opponent_worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit->get())) {
-							if (opponent_worker_unit->get_exploited() == dead_tile) {
-								opponent_worker_unit->stop_exploiting();
-							}
-						}
-					}
-
 					m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
-				}
-			}
-		}
-	
-		// Update ressource to base.
-
-		BaseTile* own_base_tile;
-		BaseTile* opponent_base_tile;
-		for (unsigned int i_y = 0; i_y < m_map.get_tile_count_y(); ++i_y) {
-			for (unsigned int i_x = 0; i_x < m_map.get_tile_count_x(); ++i_x) {
-				if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&m_map.get_tile(i_x, i_y))) {
-					if (&base_tile->get_player() == &m_own_player) {
-						own_base_tile = base_tile;
-					} else if (&base_tile->get_player() == &m_opponent_player) {
-						opponent_base_tile = base_tile;
-					}
-				}
-			}
-		}
-		for (auto& i_own_unit : m_own_units) {
-			if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
-				if (glm::distance(worker_unit->get_position(), own_base_tile->get_position()) <= 3.0F) {
-					m_own_crystal_count += worker_unit->get_crystal_count();
-					worker_unit->set_crystal_count(0.0F);
-				}
-			}
-		}
-		for (auto& i_opponent_unit : m_opponent_units) {
-			if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
-				if (glm::distance(worker_unit->get_position(), opponent_base_tile->get_position()) <= 3.0F) {
-					m_opponent_crystal_count += worker_unit->get_crystal_count();
-					worker_unit->set_crystal_count(0.0F);
-				}
-			}
-		}
-
-		// Update units.
-	
-		for (auto& i_own_unit : m_own_units) {
-			i_own_unit->update(timer);
-		}
-		for (auto& i_opponent_unit : m_opponent_units) {
-			i_opponent_unit->update(timer);
-		}
-	
-		// Update explosions.
-	
-		for (auto i_explosion = m_explosions.begin(); i_explosion != m_explosions.end(); ) {
-			if (i_explosion->has_finished()) {
-				i_explosion = m_explosions.erase(i_explosion);
-			} else {
-				i_explosion->update(timer);
-				++i_explosion;
-			}
-		}
-
-		static float update_time = 0.0F;
-		if (update_time < timer.get_current_time_seconds()) {
-			Networkable::on_update();
-			update_time = timer.get_current_time_seconds() + 0.05F;
-		}
-
-
-
-
-
-
-		// CLIENT REVCEIVE
-
-		GameClientHandler* game_client_handler = static_cast<GameClientHandler*>(get_network_handler());
-		std::vector<NetworkPacket> network_packets = game_client_handler->receive_incoming_update_network_packets();
-
-		for (auto& i_network_packet : network_packets) {
-			std::string text;
-			i_network_packet >> text;
-
-			if (text == "ressources") {
-				i_network_packet >> m_own_plasma_count;
-				i_network_packet >> m_own_crystal_count;
-			} else if (text == "new_unit") {
-				unsigned int type;
-				i_network_packet >> type;
-				unsigned int player_id;
-				i_network_packet >> player_id;
-				float x;
-				i_network_packet >> x;
-				float y;
-				i_network_packet >> y;
-				if (type == 0) {
-					if (player_id == 0) {
-						m_own_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_own_player));
-					} else if (player_id == 1) {
-						m_opponent_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
-					}
-				} else if (type == 1) {
-					if (player_id == 0) {
-						m_own_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_own_player));
-					} else if (player_id == 1) {
-						m_opponent_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
-					}
-				} else if (type == 2) {
-					if (player_id == 0) {
-						m_own_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_own_player));
-					} else if (player_id == 1) {
-						m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
-					}
+					m_map.update_neighbors_of_tile(i_x, i_y);
 				}
 			}
 		}
 
 		// CLIENT SEND
 
-		NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
-		network_packet << std::string("test");
-		network_packet << 12.0F;
-		m_client.get_participant().add_outgoing_network_packet(network_packet);
+		if (m_player_id == 0) {
+			for (auto& i_own_unit : m_own_units) {
+				if (i_own_unit->m_has_changed_path) {
+					NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+					network_packet << std::string("move_unit");
+					network_packet << i_own_unit->m_id;
+					std::list<glm::vec3>& target_path = i_own_unit->get_target_path();
+					network_packet << static_cast<unsigned int>(target_path.size());
+					for (auto& i_target_position : target_path) {
+						network_packet << i_target_position.x;
+						network_packet << i_target_position.y;
+						network_packet << i_target_position.z;
+					}
+				
+					m_client.get_participant().add_outgoing_network_packet(network_packet);
 
+					i_own_unit->m_has_changed_path = false;
+				}
+			}
+		} else if (m_player_id == 1) {
+			for (auto& i_opponent_unit : m_opponent_units) {
+				if (i_opponent_unit->m_has_changed_path) {
+					NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+					network_packet << std::string("move_unit");
+					network_packet << i_opponent_unit->m_id;
+					std::list<glm::vec3>& target_path = i_opponent_unit->get_target_path();
+					network_packet << static_cast<unsigned int>(target_path.size());
+					for (auto& i_target_position : target_path) {
+						network_packet << i_target_position.x;
+						network_packet << i_target_position.y;
+						network_packet << i_target_position.z;
+					}
+				
+					m_client.get_participant().add_outgoing_network_packet(network_packet);
 
+					i_opponent_unit->m_has_changed_path = false;
+				}
+			}
+		}
 
+		if (m_player_id == 0) {
+			NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+			network_packet << std::string("select_tiles");
+			network_packet << static_cast<unsigned int>(m_own_selected_destructible_rock_tiles.size());
+			for (auto& i_tile : m_own_selected_destructible_rock_tiles) {
+				network_packet << i_tile->get_x();
+				network_packet << i_tile->get_y();
+			}
+			network_packet << static_cast<unsigned int>(m_own_selected_crystal_tiles.size());
+			for (auto& i_tile : m_own_selected_crystal_tiles) {
+				network_packet << i_tile->get_x();
+				network_packet << i_tile->get_y();
+			}
+			m_client.get_participant().add_outgoing_network_packet(network_packet);
+		} else if (m_player_id == 1) {
+			NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+			network_packet << std::string("select_tiles");
+			network_packet << static_cast<unsigned int>(m_opponent_selected_destructible_rock_tiles.size());
+			for (auto& i_tile : m_opponent_selected_destructible_rock_tiles) {
+				network_packet << i_tile->get_x();
+				network_packet << i_tile->get_y();
+			}
+			network_packet << static_cast<unsigned int>(m_opponent_selected_crystal_tiles.size());
+			for (auto& i_tile : m_opponent_selected_crystal_tiles) {
+				network_packet << i_tile->get_x();
+				network_packet << i_tile->get_y();
+			}
+			m_client.get_participant().add_outgoing_network_packet(network_packet);
+		}
 	} else {
 		Networkable::on_update();
 	}

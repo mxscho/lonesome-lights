@@ -20,6 +20,7 @@ public:
 	bool is_moving() const;
 	
 	glm::vec3 get_target_position() const;
+	std::list<glm::vec3>& get_target_path();
 	void set_target_path(const Timer& timer, const std::list<glm::vec3>& target_path);
 	void add_target_position_to_path(const Timer& timer, const glm::vec3& target_position);
 	void add_target_path_to_path(const Timer& timer, const std::list<glm::vec3>& target_path);

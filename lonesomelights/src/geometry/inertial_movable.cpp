@@ -32,6 +32,9 @@ bool InertialMovable::is_moving() const {
 glm::vec3 InertialMovable::get_target_position() const {
 	return m_target_path.size() > 0 ? m_target_path.back() : Transformable::get_position();
 }
+std::list<glm::vec3>& InertialMovable::get_target_path() {
+	return m_target_path;
+}
 void InertialMovable::set_target_path(const Timer& timer, const std::list<glm::vec3>& target_path) {
 	m_start_position = Transformable::get_position();
 	m_start_velocity = m_velocity;
