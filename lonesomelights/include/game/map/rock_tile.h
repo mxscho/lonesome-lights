@@ -43,8 +43,9 @@ public:
 	
 	void draw(const Camera& camera) const override;
 	void set_color(glm::vec3 new_color);
-	void set_cliff_type(CliffType cliff_type);
+	void set_cliff_type(unsigned short cliff_type) override final;
 	CliffType get_cliff_type() const;
+	bool is_rock() const override final;
 private:
 	struct Data {
 		Data(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texel);

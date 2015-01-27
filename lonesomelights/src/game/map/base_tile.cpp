@@ -50,6 +50,13 @@ void BaseTile::draw(const Camera& camera) const {
 	}
 }
 
+bool BaseTile::is_rock() const {
+	return false;
+}
+
+void BaseTile::set_cliff_type(unsigned short cliff_type) {
+}
+
 BaseTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 	: position(position),
 	normal(normal) {

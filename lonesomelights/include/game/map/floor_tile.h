@@ -16,6 +16,8 @@ public:
 	FloorTile(const Map& map, unsigned int x, unsigned int y);
 	
 	void draw(const Camera& camera) const override final;
+	bool is_rock() const override final;
+	void set_cliff_type(unsigned short cliff_type) override final;
 private:
 	VertexBufferObject<glm::vec3> m_vertices_vbo;
 	VertexArrayObject m_vertex_array_object;

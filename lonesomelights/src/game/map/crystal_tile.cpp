@@ -87,12 +87,16 @@ void CrystalTile::hover(const glm::vec3& color) {
 	m_destructible_rock_tile.hover(color);
 }
 
-void CrystalTile::set_cliff_type(RockTile::CliffType cliff_type) {
+void CrystalTile::set_cliff_type(unsigned short cliff_type) {
 	m_destructible_rock_tile.set_cliff_type(cliff_type);
 }
 
 RockTile::CliffType CrystalTile::get_cliff_type() const {
 	return m_destructible_rock_tile.get_cliff_type();
+}
+
+bool CrystalTile::is_rock() const {
+	return true;
 }
 
 CrystalTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)

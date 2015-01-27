@@ -22,6 +22,8 @@ public:
 	const Player& get_player() const;
 
 	void draw(const Camera& camera) const override final;
+	bool is_rock() const override final;
+	void set_cliff_type(unsigned short cliff_type) override final;
 private:
 	struct Data {
 		Data(const glm::vec3& position, const glm::vec3& normal);

@@ -37,3 +37,10 @@ void FloorTile::draw(const Camera& camera) const {
 	VertexArrayObject::unbind_any();
 	RenderProgram::unbind_any();
 }
+
+bool FloorTile::is_rock() const {
+	return false;
+}
+
+void FloorTile::set_cliff_type(unsigned short cliff_type) {
+}
