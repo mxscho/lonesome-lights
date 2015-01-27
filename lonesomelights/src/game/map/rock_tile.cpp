@@ -68,7 +68,6 @@ RockTile RockTile::create(const Map& map, unsigned int x, unsigned int y, const 
 	std::vector<RockTile::Data> side_neg_y;
 	std::vector<RockTile::Data> side_neg_x;
 	std::vector<RockTile::Data> side_pos_y;
-
 	
 	std::vector<RockTile::Data> cliff_vertices;
 	for (unsigned int i_cliff_type = 1; i_cliff_type <= 8; i_cliff_type *= 2) {
