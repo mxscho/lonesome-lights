@@ -329,14 +329,16 @@ void ClientGame::update(const Timer& timer) {
 					if (has_health) {
 						float health;
 						i_network_packet >> health;		
-
-						Tile& tile = m_map.get_tile(x, y);
-						if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
-							destructible_rock_tile->set_health(health);
-						} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
-							crystal_tile->set_health(health);
-						} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
-							base_tile->set_health(health);
+						
+						if (x >= 0 && x < m_map.get_tile_count_x() && y >= 0 && y < m_map.get_tile_count_y()) {
+							Tile& tile = m_map.get_tile(x, y);
+							if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+								destructible_rock_tile->set_health(health);
+							} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+								crystal_tile->set_health(health);
+							} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+								base_tile->set_health(health);
+							}
 						}
 					}
 				}

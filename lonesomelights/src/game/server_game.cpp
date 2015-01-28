@@ -48,10 +48,10 @@ ServerGame::ServerGame(Server& server)
 	m_own_units(),
 	m_opponent_units(),
 
-	m_own_plasma_count(10000.0F),
-	m_own_crystal_count(5000.0F),
-	m_opponent_plasma_count(10000.0F),
-	m_opponent_crystal_count(5000.0F),
+	m_own_plasma_count(100.0F),
+	m_own_crystal_count(50.0F),
+	m_opponent_plasma_count(100.0F),
+	m_opponent_crystal_count(50.0F),
 
 	m_server(server) {
 

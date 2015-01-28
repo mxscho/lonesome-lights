@@ -54,6 +54,12 @@ Map Map::create_map(float tile_size) {
 		}	
 	}
 	
+	for (unsigned int i_y = 0; i_y < map.get_tile_count_y(); ++i_y) {
+		for (unsigned int i_x = 0; i_x < map.get_tile_count_x(); ++i_x) {
+			assert(!!map.m_tiles[i_y * map.m_tile_count_x + i_x]);
+		}
+	}
+
 	return map;
 }
 
