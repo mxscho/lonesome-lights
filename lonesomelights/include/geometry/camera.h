@@ -23,8 +23,8 @@ protected:
 	glm::vec3 m_eye_position;
 	glm::vec3 m_center_position;
 	glm::vec3 m_up_direction;
-private:
 	glm::mat4 m_view_transformation;
+private:
 	glm::mat4 m_projection_transformation;
 };
 
