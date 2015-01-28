@@ -128,7 +128,7 @@ void InertialMovable::update(const Timer& timer) {
 		}
 	}
 	
-	if (m_velocity <= 0.0F) {
+	if (m_velocity <= 0.0F && time_since_start_seconds > 0.0F) {
 		m_velocity = 0.0F;
 		m_is_moving = false;
 	}

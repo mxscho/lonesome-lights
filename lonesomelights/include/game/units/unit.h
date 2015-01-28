@@ -19,7 +19,7 @@ class Timer;
 
 class Unit : public Attackable, public Networkable, public InertialMovable {
 public:
-	Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration, float max_health);
+	Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration, float max_health, unsigned int id);
 	virtual ~Unit();
 	
 	virtual float get_attack_range() const = 0;

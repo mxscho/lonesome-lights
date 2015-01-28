@@ -62,7 +62,7 @@ public:
 	std::vector<DestructibleRockTile*> m_opponent_selected_destructible_rock_tiles;
 	std::vector<CrystalTile*> m_opponent_selected_crystal_tiles;
 private:
-	static unsigned int m_current_unit_id;
+	unsigned int m_current_unit_id;
 
 	bool m_is_started;
 	Map m_map;

@@ -59,10 +59,8 @@ ClientGame::ClientGame(Client& client)
 	base_left_opponent.set_is_walkable(false);
 	base_right_opponent.set_is_walkable(false);
 
-	m_own_units.push_back(WorkerUnit::create(glm::vec2(c_own_base_x - 1, c_own_base_y + 1), m_map, m_own_player));
-	m_own_units.back()->m_id = 1000001U;
-	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(c_opponent_base_x + 1, c_opponent_base_y - 1), m_map, m_opponent_player));
-	m_opponent_units.back()->m_id = 1000002U;
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(c_own_base_x - 1, c_own_base_y + 1), m_map, m_own_player, 1000));
+	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(c_opponent_base_x + 1, c_opponent_base_y - 1), m_map, m_opponent_player, 1001));
 }
 
 bool ClientGame::has_started() const {
@@ -196,6 +194,12 @@ void ClientGame::draw_deferred(const Camera& camera, const Texture& color_textur
 
 void ClientGame::update(const Timer& timer) {
 	if (m_is_started) {
+		//static bool first_time = true;
+		//if (first_time) {
+		//	first_time = false;
+		//	spawn_own_worker_unit();
+		//}
+
 		m_map.update(timer);
 
 		// CLIENT RECEIVE
@@ -222,6 +226,7 @@ void ClientGame::update(const Timer& timer) {
 			} else if (text == "new_unit") {
 				unsigned int id;
 				i_network_packet >> id;
+				std::cout << "id is: " << id << std::endl;
 				unsigned int type;
 				i_network_packet >> type;
 				unsigned int player_id;
@@ -232,27 +237,21 @@ void ClientGame::update(const Timer& timer) {
 				i_network_packet >> y;
 				if (type == 0U) {
 					if (player_id == 0U) {
-						m_own_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_own_player));
-						m_own_units.back()->m_id = id;
+						m_own_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_own_player, id));
 					} else if (player_id == 1U) {
-						m_opponent_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
-						m_own_units.back()->m_id = id;
+						m_opponent_units.push_back(WorkerUnit::create(glm::vec2(x, y), m_map, m_opponent_player, id));
 					}
 				} else if (type == 1U) {
 					if (player_id == 0U) {
-						m_own_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_own_player));
-						m_own_units.back()->m_id = id;
+						m_own_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_own_player, id));
 					} else if (player_id == 1U) {
-						m_opponent_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
-						m_own_units.back()->m_id = id;
+						m_opponent_units.push_back(LaserUnit::create(glm::vec2(x, y), m_map, m_opponent_player, id));
 					}
 				} else if (type == 2U) {
 					if (player_id == 0U) {
-						m_own_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_own_player));
-						m_own_units.back()->m_id = id;
+						m_own_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_own_player, id));
 					} else if (player_id == 1U) {
-						m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_opponent_player));
-						m_own_units.back()->m_id = id;
+						m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_opponent_player, id));
 					}
 				}
 			} else if (text == "move_unit") {

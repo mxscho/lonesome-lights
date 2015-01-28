@@ -7,10 +7,11 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-Unit::Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration, float max_health)
+Unit::Unit(const glm::mat4& transformation, const glm::vec2& position, const Map& map, const Player& player, float max_velocity, float acceleration, float decceleration, float max_health, unsigned int id)
 	: Attackable(glm::inverse(transformation) * glm::translate(glm::vec3(0.0F, 0.90F, 0.0F)), *this, max_health, max_health),
 	Networkable(),
 	InertialMovable(glm::translate(glm::vec3(position.x, 0.0F, position.y)) * transformation, map, max_velocity, acceleration, decceleration),
+	m_id(id),
 	m_has_changed_path(false),
 	m_player(player),
 	m_is_selected(false),
@@ -98,7 +99,6 @@ void Unit::draw_selection_circle(const Camera& camera) const {
 
 void Unit::update(const Timer& timer) {
 	InertialMovable::update(timer);
-	
 	glm::vec3 unit_position = InertialMovable::get_position();
 	m_selection_circle.set_position(glm::vec3(unit_position.x, 0.05F, unit_position.z));
 	

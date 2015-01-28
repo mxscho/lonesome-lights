@@ -19,7 +19,7 @@ class Player;
 
 class LaserUnit : public Drawable, public Unit {
 public:
-	static std::unique_ptr<LaserUnit> create(const glm::vec2& position, const Map& map, const Player& player);
+	static std::unique_ptr<LaserUnit> create(const glm::vec2& position, const Map& map, const Player& player, unsigned int id);
 
 	float get_attack_range() const override final;
 	float get_attack_dps() const override final;
@@ -41,7 +41,7 @@ private:
 		glm::vec3 normal;
 	};
 	
-	LaserUnit(const glm::vec2& position, const Map& map, const Player& player, const std::vector<Data>& vertices, const std::vector<unsigned int>& vertex_counts);
+	LaserUnit(const glm::vec2& position, const Map& map, const Player& player, const std::vector<Data>& vertices, const std::vector<unsigned int>& vertex_counts, unsigned int id);
 
 	VertexBufferObject<Data> m_vertices_vbo;
 	std::vector<unsigned int> m_vertex_counts;
