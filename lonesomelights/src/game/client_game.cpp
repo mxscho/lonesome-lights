@@ -330,7 +330,7 @@ void ClientGame::update(const Timer& timer) {
 						float health;
 						i_network_packet >> health;		
 						
-						if (x >= 0 && x < m_map.get_tile_count_x() && y >= 0 && y < m_map.get_tile_count_y()) {
+						if (x < m_map.get_tile_count_x() && y < m_map.get_tile_count_y()) {
 							Tile& tile = m_map.get_tile(x, y);
 							if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
 								destructible_rock_tile->set_health(health);
