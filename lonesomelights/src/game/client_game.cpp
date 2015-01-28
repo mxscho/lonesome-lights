@@ -226,7 +226,6 @@ void ClientGame::update(const Timer& timer) {
 			} else if (text == "new_unit") {
 				unsigned int id;
 				i_network_packet >> id;
-				std::cout << "id is: " << id << std::endl;
 				unsigned int type;
 				i_network_packet >> type;
 				unsigned int player_id;

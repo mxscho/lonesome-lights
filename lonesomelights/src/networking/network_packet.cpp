@@ -1,14 +1,21 @@
 #include "networking/network_packet.h"
 
+#include <iostream>
+
 NetworkPacket NetworkPacket::create_incoming(sf::Packet& packet) {
 	sf::Int8 magic_number;
 	sf::Uint32 network_id_id;
 	std::string network_id_description;
 	sf::Int8 type;
-	if (!(packet >> magic_number) || magic_number != NetworkPacket::c_magic_number ||
-		!(packet >> network_id_id) || !(packet >> network_id_description) ||
+	if (!(packet >> magic_number) | (magic_number != NetworkPacket::c_magic_number) |
+		!(packet >> network_id_id) | !(packet >> network_id_description) |
 		!(packet >> type)) {
-		throw; // TODO: Exception handling.
+		std::cerr << "WARNING: Received unknown/wrong packet:" << std::endl;
+		std::cerr << "---------------------------------------" << std::endl;
+		std::cerr << "Magic Number: " << magic_number << std::endl;
+		std::cerr << "ID/ID: " << network_id_id << std::endl;
+		std::cerr << "ID/Description: " << network_id_description << std::endl;
+		std::cerr << "Type: " << type << std::endl;
 	}
 	
 	NetworkID network_id(network_id_id, network_id_description);
