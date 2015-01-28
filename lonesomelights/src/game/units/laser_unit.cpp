@@ -98,6 +98,7 @@ void LaserUnit::update(const Timer& timer) {
 	m_flash.update(timer);
 	
 	m_laser.Transformable::set_position(Transformable::get_position());
+	
 	if (m_attacked) {
 		glm::vec2 position = m_attacked->get_position_vec2();
 		m_laser.set_target(glm::vec3(position.x, Transformable::get_position().y, position.y));

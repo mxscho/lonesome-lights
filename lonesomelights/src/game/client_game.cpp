@@ -207,27 +207,6 @@ void ClientGame::update(const Timer& timer) {
 	if (m_is_started) {
 		m_map.update(timer);
 
-		// Update units.
-	
-		for (auto& i_own_unit : m_own_units) {
-			i_own_unit->update(timer);
-		}
-		for (auto& i_opponent_unit : m_opponent_units) {
-			i_opponent_unit->update(timer);
-		}
-	
-		// Update explosions.
-	
-		for (auto i_explosion = m_explosions.begin(); i_explosion != m_explosions.end(); ) {
-			if (i_explosion->has_finished()) {
-				i_explosion = m_explosions.erase(i_explosion);
-			} else {
-				i_explosion->update(timer);
-				++i_explosion;
-			}
-		}
-
-
 		// CLIENT RECEIVE
 
 		std::vector<NetworkPacket> network_packets;
@@ -320,28 +299,6 @@ void ClientGame::update(const Timer& timer) {
 							target_path.push_back(glm::vec3(x, y, z));
 						}
 						i_opponent_unit->InertialMovable::set_target_path(timer, target_path);
-					}
-				}
-			} else if (text == "unit_health") {
-				unsigned int size;
-				i_network_packet >> size;
-				for (unsigned int i = 0; i < size; ++i) {
-					unsigned int id;
-					i_network_packet >> id;
-
-					for (auto& i_own_unit : m_own_units) {
-						if (i_own_unit->m_id == id) {
-							float health;
-							i_network_packet >> health;
-							i_own_unit->set_health(health);
-						}
-					}
-					for (auto& i_opponent_unit : m_opponent_units) {
-						if (i_opponent_unit->m_id == id) {
-							float health;
-							i_network_packet >> health;
-							i_opponent_unit->set_health(health);
-						}
 					}
 				}
 			} else if (text == "worker_crystals") {
@@ -548,6 +505,28 @@ void ClientGame::update(const Timer& timer) {
 						}
 					}
 				}
+			} else if (text == "unit_health") {
+				unsigned int size;
+				i_network_packet >> size;
+				for (unsigned int i = 0; i < size; ++i) {
+					unsigned int id;
+					i_network_packet >> id;
+
+					for (auto& i_own_unit : m_own_units) {
+						if (i_own_unit->m_id == id) {
+							float health;
+							i_network_packet >> health;
+							i_own_unit->set_health(health);
+						}
+					}
+					for (auto& i_opponent_unit : m_opponent_units) {
+						if (i_opponent_unit->m_id == id) {
+							float health;
+							i_network_packet >> health;
+							i_opponent_unit->set_health(health);
+						}
+					}
+				}
 			}
 		}
 
@@ -614,6 +593,26 @@ void ClientGame::update(const Timer& timer) {
 					m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
 					m_map.update_neighbors_of_tile(i_x, i_y);
 				}
+			}
+		}
+
+		// Update units.
+	
+		for (auto& i_own_unit : m_own_units) {
+			i_own_unit->update(timer);
+		}
+		for (auto& i_opponent_unit : m_opponent_units) {
+			i_opponent_unit->update(timer);
+		}
+	
+		// Update explosions.
+	
+		for (auto i_explosion = m_explosions.begin(); i_explosion != m_explosions.end(); ) {
+			if (i_explosion->has_finished()) {
+				i_explosion = m_explosions.erase(i_explosion);
+			} else {
+				i_explosion->update(timer);
+				++i_explosion;
 			}
 		}
 

@@ -269,9 +269,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 
 		if (std::abs(mouse_position.x) > 0.95F || std::abs(mouse_position.y) > 0.95F) {
 			mouse_position = glm::normalize(mouse_position);
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) { // DEBUG
-				map_camera.set_velocity(mouse_position * 10.0F);
-			}
+			map_camera.set_velocity(mouse_position * 10.0F);
 		} else {
 			map_camera.set_velocity(glm::vec2(0.0F));
 		}

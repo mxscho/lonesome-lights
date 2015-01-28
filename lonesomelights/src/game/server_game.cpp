@@ -816,97 +816,6 @@ void ServerGame::update(const Timer& timer) {
 			m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 			m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 
-			for (auto& i_own_unit : m_own_units) {
-				NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);				
-				network_packet << std::string("unit_attack");
-				network_packet << i_own_unit->m_id;
-				if (LaserUnit* laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
-					Attackable* attackable = laser_unit->get_shooting_target();
-					if (attackable) {
-						network_packet << true;
-						if (Unit* attacked = dynamic_cast<Unit*>(attackable)) {
-							network_packet << 0U;
-							network_packet << attacked->m_id;
-						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(attackable)) {
-							network_packet << 1U;
-							network_packet << attacked->get_x();
-							network_packet << attacked->get_y();
-						}
-					} else {
-						network_packet << false;
-					}		
-				} else if (ShockwaveUnit* shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
-					const std::set<Attackable*>& attacked = shockwave_unit->get_attacked();
-					network_packet << static_cast<unsigned int>(attacked.size());
-					for (auto& i_attacked : attacked) {
-						if (Unit* attacked_unit = dynamic_cast<Unit*>(i_attacked)) {
-							network_packet << 0U;
-							network_packet << attacked_unit->m_id;
-						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(i_attacked)) {
-							network_packet << 1U;
-							network_packet << attacked->get_x();
-							network_packet << attacked->get_y();
-						}
-					}		
-				} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
-					Tile* exploited = worker_unit->get_exploited();
-					if (exploited) {
-						network_packet << true;
-						network_packet << exploited->get_x();
-						network_packet << exploited->get_y();
-					} else {
-						network_packet << false;
-					}
-				}
-				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
-				m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
-			}
-			for (auto& i_opponent_unit : m_opponent_units) {
-				NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);				
-				network_packet << std::string("unit_attack");
-				network_packet << i_opponent_unit->m_id;
-				if (LaserUnit* laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
-					Attackable* attackable = laser_unit->get_shooting_target();
-					if (attackable) {
-						network_packet << true;
-						if (Unit* attacked = dynamic_cast<Unit*>(attackable)) {
-							network_packet << 0U;
-							network_packet << attacked->m_id;
-						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(attackable)) {
-							network_packet << 1U;
-							network_packet << attacked->get_x();
-							network_packet << attacked->get_y();
-						}
-					} else {
-						network_packet << false;
-					}		
-				} else if (ShockwaveUnit* shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
-					const std::set<Attackable*>& attacked = shockwave_unit->get_attacked();
-					network_packet << static_cast<unsigned int>(attacked.size());
-					for (auto& i_attacked : attacked) {
-						if (Unit* attacked_unit = dynamic_cast<Unit*>(i_attacked)) {
-							network_packet << 0U;
-							network_packet << attacked_unit->m_id;
-						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(i_attacked)) {
-							network_packet << 1U;
-							network_packet << attacked->get_x();
-							network_packet << attacked->get_y();
-						}
-					}		
-				} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
-					Tile* exploited = worker_unit->get_exploited();
-					if (exploited) {
-						network_packet << true;
-						network_packet << exploited->get_x();
-						network_packet << exploited->get_y();
-					} else {
-						network_packet << false;
-					}
-				}
-				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
-				m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
-			}
-
 			// Update deaths.
 
 			for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ) {
@@ -1000,6 +909,99 @@ void ServerGame::update(const Timer& timer) {
 						m_map.update_neighbors_of_tile(i_x, i_y);
 					}
 				}
+			}
+
+			// SERVER SEND
+
+			for (auto& i_own_unit : m_own_units) {
+				NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);				
+				network_packet << std::string("unit_attack");
+				network_packet << i_own_unit->m_id;
+				if (LaserUnit* laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
+					Attackable* attackable = laser_unit->get_shooting_target();
+					if (attackable) {
+						network_packet << true;
+						if (Unit* attacked = dynamic_cast<Unit*>(attackable)) {
+							network_packet << 0U;
+							network_packet << attacked->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(attackable)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
+						}
+					} else {
+						network_packet << false;
+					}		
+				} else if (ShockwaveUnit* shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
+					const std::set<Attackable*>& attacked = shockwave_unit->get_attacked();
+					network_packet << static_cast<unsigned int>(attacked.size());
+					for (auto& i_attacked : attacked) {
+						if (Unit* attacked_unit = dynamic_cast<Unit*>(i_attacked)) {
+							network_packet << 0U;
+							network_packet << attacked_unit->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(i_attacked)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
+						}
+					}		
+				} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
+					Tile* exploited = worker_unit->get_exploited();
+					if (exploited) {
+						network_packet << true;
+						network_packet << exploited->get_x();
+						network_packet << exploited->get_y();
+					} else {
+						network_packet << false;
+					}
+				}
+				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+				m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
+			}
+			for (auto& i_opponent_unit : m_opponent_units) {
+				NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);				
+				network_packet << std::string("unit_attack");
+				network_packet << i_opponent_unit->m_id;
+				if (LaserUnit* laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
+					Attackable* attackable = laser_unit->get_shooting_target();
+					if (attackable) {
+						network_packet << true;
+						if (Unit* attacked = dynamic_cast<Unit*>(attackable)) {
+							network_packet << 0U;
+							network_packet << attacked->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(attackable)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
+						}
+					} else {
+						network_packet << false;
+					}		
+				} else if (ShockwaveUnit* shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
+					const std::set<Attackable*>& attacked = shockwave_unit->get_attacked();
+					network_packet << static_cast<unsigned int>(attacked.size());
+					for (auto& i_attacked : attacked) {
+						if (Unit* attacked_unit = dynamic_cast<Unit*>(i_attacked)) {
+							network_packet << 0U;
+							network_packet << attacked_unit->m_id;
+						} else if (BaseTile* attacked = dynamic_cast<BaseTile*>(i_attacked)) {
+							network_packet << 1U;
+							network_packet << attacked->get_x();
+							network_packet << attacked->get_y();
+						}
+					}		
+				} else if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
+					Tile* exploited = worker_unit->get_exploited();
+					if (exploited) {
+						network_packet << true;
+						network_packet << exploited->get_x();
+						network_packet << exploited->get_y();
+					} else {
+						network_packet << false;
+					}
+				}
+				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+				m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 			}
 		} else {
 			time += delta_time_seconds;
