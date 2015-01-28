@@ -294,7 +294,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 			if (first_time) {
 				first_time = false;
 
-				glm::vec2 camera_position;
+				glm::vec2 camera_position = glm::vec2(0.0F, 0.0F);
 				if (game.m_player_id == 0U) {
 					camera_position = glm::vec2(static_cast<float>(ClientGame::c_own_base_x) - 3.0F, static_cast<float>(ClientGame::c_own_base_y) - 3.0F);
 				} else {

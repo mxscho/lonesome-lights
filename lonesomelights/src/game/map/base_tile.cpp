@@ -71,7 +71,7 @@ BaseTile::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 }
 
 BaseTile::BaseTile(const Map& map, unsigned int x, unsigned int y, const std::vector<BaseTile::Data>& vertices, const Player& player)
-	: Attackable(glm::translate(glm::vec3(0.5F, 1.0F, 0.5F)), *this, 750.0F, 750.0F),
+	: Attackable(glm::translate(glm::vec3(0.5F, 1.0F, 0.5F)), *this, 150.0F, 150.0F),
 	Tile(map, x, y, RenderPrograms::get_render_program("unit")),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_elements_vbo(ObjLoader::get_obj_elements("base", 0), GL_ELEMENT_ARRAY_BUFFER),

@@ -33,7 +33,7 @@ std::unique_ptr<ShockwaveUnit> ShockwaveUnit::create(const glm::vec2& position, 
 }
 
 float ShockwaveUnit::get_attack_range() const {
-	return 2.5F;
+	return 2.0F;
 }
 float ShockwaveUnit::get_attack_dps() const {
 	return 10.0F;
@@ -128,8 +128,8 @@ ShockwaveUnit::Data::Data(const glm::vec3& position, const glm::vec3& normal)
 ShockwaveUnit::ShockwaveUnit(const glm::vec2& position, const Map& map, const Player& player, const std::vector<ShockwaveUnit::Data>& vertices, const std::vector<unsigned int>& vertex_counts, unsigned int id)
 	: Drawable(RenderPrograms::get_render_program("unit")),
 	Unit(glm::translate(glm::vec3(0.0F, 0.3F, 0.0F)) * glm::scale(glm::vec3(0.0065F, 0.0065F, 0.0065F)), position, map, player,
-	0.8F, // Maximum velocity
-	0.5F, 0.5F, // Acceleration/Decceleration
+	1.0F, // Maximum velocity
+	0.4F, 0.4F, // Acceleration/Decceleration
 	100.0F, // Maximum health
 	id), // TODO: find nice values for shockwave unit
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),

@@ -10,7 +10,7 @@
 
 
 DestructibleRockTile::DestructibleRockTile(const Map& map, unsigned int x, unsigned int y, const CliffType& cliff_type)
-	: Attackable(glm::translate(glm::vec3(0.5F, 1.0F, 0.5F)), *this, 100.0F, 100.0F),
+	: Attackable(glm::translate(glm::vec3(0.5F, 1.0F, 0.5F)), *this, 10.0F, 10.0F),
 	RockTile(RockTile::create(map, x, y, cliff_type)),
 	m_is_selected(false),
 	m_is_hovered(false),

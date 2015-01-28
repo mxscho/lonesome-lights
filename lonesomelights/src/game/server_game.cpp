@@ -24,7 +24,7 @@ float ServerGame::c_laser_unit_crystals_cost = 50.0F;
 float ServerGame::c_shockwave_unit_plasma_cost = 150.0F;
 float ServerGame::c_shockwave_unit_crystals_cost = 100.0F;
 
-float ServerGame::c_plasma_generation = 5.0F;
+float ServerGame::c_plasma_generation = 1.0F;
 float ServerGame::c_crystals_generation = 0.0F;
 
 unsigned int ServerGame::c_own_base_x = 27;
@@ -743,7 +743,7 @@ void ServerGame::update(const Timer& timer) {
 		}
 
 		static float time = 0.0F;
-		if (time >= 0.03F) {
+		if (time >= 0.1F) {
 			time = 0.0F;
 
 			// SERVER SEND
@@ -760,68 +760,74 @@ void ServerGame::update(const Timer& timer) {
 			network_packet << m_opponent_crystal_count;
 			m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 
-			network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
-			network_packet << std::string("unit_health");
-			network_packet << static_cast<unsigned int>(m_own_units.size() + m_opponent_units.size());
 			for (auto& i_own_unit : m_own_units) {
+				network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+				network_packet << std::string("unit_health");
 				network_packet << i_own_unit->m_id;
 				network_packet << i_own_unit->get_health();
+				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+				m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 			}
 			for (auto& i_opponent_unit : m_opponent_units) {
+				network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+				network_packet << std::string("unit_health");
 				network_packet << i_opponent_unit->m_id;
 				network_packet << i_opponent_unit->get_health();
+				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+				m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 			}
-			m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
-			m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 
-			network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
-			network_packet << std::string("worker_crystals");
-			network_packet << static_cast<unsigned int>(m_own_units.size() + m_opponent_units.size());
 			for (auto& i_own_unit : m_own_units) {
 				if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
-					network_packet << true;
+					network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+					network_packet << std::string("worker_crystals");
 					network_packet << i_own_unit->m_id;
 					network_packet << worker_unit->get_crystal_count();
-				} else {
-					network_packet << false;
+					m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+					m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 				}
 			}
 			for (auto& i_opponent_unit : m_opponent_units) {
 				if (WorkerUnit* worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit.get())) {
-					network_packet << true;
+					network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+					network_packet << std::string("worker_crystals");
 					network_packet << i_opponent_unit->m_id;
 					network_packet << worker_unit->get_crystal_count();
-				} else {
-					network_packet << false;
+					m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+					m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 				}
 			}
-			m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
-			m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 
-			network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
-			network_packet << std::string("tile_health");
-			network_packet << (m_map.get_tile_count_x() * m_map.get_tile_count_y());
 			for (unsigned int i_y = 0; i_y < m_map.get_tile_count_y(); ++i_y) {
 				for (unsigned int i_x = 0; i_x < m_map.get_tile_count_x(); ++i_x) {
 					Tile& tile = m_map.get_tile(i_x, i_y);
-					network_packet << i_x;
-					network_packet << i_y;
 					if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
-						network_packet << true;
+						network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+						network_packet << std::string("tile_health");
+						network_packet << i_x;
+						network_packet << i_y;
 						network_packet << destructible_rock_tile->get_health();
+						m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+						m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 					} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
-						network_packet << true;
+						network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+						network_packet << std::string("tile_health");
+						network_packet << i_x;
+						network_packet << i_y;
 						network_packet << crystal_tile->get_health();
+						m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+						m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 					} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
-						network_packet << true;
+						network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+						network_packet << std::string("tile_health");
+						network_packet << i_x;
+						network_packet << i_y;
 						network_packet << base_tile->get_health();
-					} else {
-						network_packet << false;
+						m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+						m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 					}
 				}
 			}
-			m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
-			m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 
 			// Update deaths.
 
@@ -914,6 +920,27 @@ void ServerGame::update(const Timer& timer) {
 
 						m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
 						m_map.update_neighbors_of_tile(i_x, i_y);
+					} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+						if (base_tile->is_dead()) {
+							for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
+								if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit->get())) {
+									if (own_laser_unit->get_shooting_target() == base_tile) {
+										own_laser_unit->stop_shooting();
+									}
+								} else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit->get())) {
+									own_shockwave_unit->remove_attack(base_tile);
+								}
+							}
+							for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
+								if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit->get())) {
+									if (opponent_laser_unit->get_shooting_target() == base_tile) {
+										opponent_laser_unit->stop_shooting();
+									} else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit->get())) {
+										opponent_shockwave_unit->remove_attack(base_tile);
+									}
+								}
+							}
+						}
 					}
 				}
 			}

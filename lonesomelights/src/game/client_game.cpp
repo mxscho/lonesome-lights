@@ -291,56 +291,36 @@ void ClientGame::update(const Timer& timer) {
 					}
 				}
 			} else if (text == "worker_crystals") {
-				unsigned int size;
-				i_network_packet >> size;
-				for (unsigned int i = 0; i < size; ++i) {
-					bool is_worker;
-					i_network_packet >> is_worker;
-					
-					if (is_worker) {
-						unsigned int id;
-						i_network_packet >> id;
-						float crystal_count;
-						i_network_packet >> crystal_count;
+				unsigned int id;
+				i_network_packet >> id;
+				float crystal_count;
+				i_network_packet >> crystal_count;
 
-						for (auto& i_own_unit : m_own_units) {
-							if (i_own_unit->m_id == id) {
-								static_cast<WorkerUnit*>(i_own_unit.get())->set_crystal_count(crystal_count);
-							}
-						}
-						for (auto& i_opponent_unit : m_opponent_units) {
-							if (i_opponent_unit->m_id == id) {
-								static_cast<WorkerUnit*>(i_opponent_unit.get())->set_crystal_count(crystal_count);
-							}
-						}
+				for (auto& i_own_unit : m_own_units) {
+					if (i_own_unit->m_id == id) {
+						static_cast<WorkerUnit*>(i_own_unit.get())->set_crystal_count(crystal_count);
+					}
+				}
+				for (auto& i_opponent_unit : m_opponent_units) {
+					if (i_opponent_unit->m_id == id) {
+						static_cast<WorkerUnit*>(i_opponent_unit.get())->set_crystal_count(crystal_count);
 					}
 				}
 			} else if (text == "tile_health") {
-				unsigned int size;
-				i_network_packet >> size;
-				for (unsigned int i = 0; i < size; ++i) {
-					unsigned int x;
-					i_network_packet >> x;
-					unsigned int y;
-					i_network_packet >> y;
-					bool has_health;
-					i_network_packet >> has_health;
+				unsigned int x;
+				i_network_packet >> x;
+				unsigned int y;
+				i_network_packet >> y;
+				float health;
+				i_network_packet >> health;		
 					
-					if (has_health) {
-						float health;
-						i_network_packet >> health;		
-						
-						if (x < m_map.get_tile_count_x() && y < m_map.get_tile_count_y()) {
-							Tile& tile = m_map.get_tile(x, y);
-							if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
-								destructible_rock_tile->set_health(health);
-							} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
-								crystal_tile->set_health(health);
-							} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
-								base_tile->set_health(health);
-							}
-						}
-					}
+				Tile& tile = m_map.get_tile(x, y);
+				if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+					destructible_rock_tile->set_health(health);
+				} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+					crystal_tile->set_health(health);
+				} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+					base_tile->set_health(health);
 				}
 			} else if (text == "unit_attack") {
 				unsigned int id;
@@ -497,25 +477,21 @@ void ClientGame::update(const Timer& timer) {
 					}
 				}
 			} else if (text == "unit_health") {
-				unsigned int size;
-				i_network_packet >> size;
-				for (unsigned int i = 0; i < size; ++i) {
-					unsigned int id;
-					i_network_packet >> id;
+				unsigned int id;
+				i_network_packet >> id;
 
-					for (auto& i_own_unit : m_own_units) {
-						if (i_own_unit->m_id == id) {
-							float health;
-							i_network_packet >> health;
-							i_own_unit->set_health(health);
-						}
+				for (auto& i_own_unit : m_own_units) {
+					if (i_own_unit->m_id == id) {
+						float health;
+						i_network_packet >> health;
+						i_own_unit->set_health(health);
 					}
-					for (auto& i_opponent_unit : m_opponent_units) {
-						if (i_opponent_unit->m_id == id) {
-							float health;
-							i_network_packet >> health;
-							i_opponent_unit->set_health(health);
-						}
+				}
+				for (auto& i_opponent_unit : m_opponent_units) {
+					if (i_opponent_unit->m_id == id) {
+						float health;
+						i_network_packet >> health;
+						i_opponent_unit->set_health(health);
 					}
 				}
 			}
@@ -583,6 +559,13 @@ void ClientGame::update(const Timer& timer) {
 				if (dead_tile) {
 					m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
 					m_map.update_neighbors_of_tile(i_x, i_y);
+				} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+					if (base_tile->is_dead()) {
+						glm::vec2 position = static_cast<Attackable*>(base_tile)->get_position_vec2();
+						m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
+						m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F);
+						m_explosions.back().trigger(timer.get_current_time_seconds());
+					}
 				}
 			}
 		}
