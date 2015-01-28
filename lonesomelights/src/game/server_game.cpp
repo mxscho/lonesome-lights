@@ -24,6 +24,9 @@ float ServerGame::c_laser_unit_crystals_cost = 50.0F;
 float ServerGame::c_shockwave_unit_plasma_cost = 150.0F;
 float ServerGame::c_shockwave_unit_crystals_cost = 100.0F;
 
+float ServerGame::c_plasma_generation = 5.0F;
+float ServerGame::c_crystals_generation = 0.0F;
+
 unsigned int ServerGame::c_own_base_x = 27;
 unsigned int ServerGame::c_own_base_y = 2;
 unsigned int ServerGame::c_opponent_base_x = 2;
@@ -509,6 +512,13 @@ void ServerGame::update(const Timer& timer) {
 				}
 			}
 		}
+
+		// Update ressources.
+
+		m_own_plasma_count += delta_time_seconds * c_plasma_generation;
+		m_opponent_plasma_count += delta_time_seconds * c_plasma_generation;
+		m_own_crystal_count += delta_time_seconds * c_crystals_generation;
+		m_opponent_crystal_count += delta_time_seconds * c_crystals_generation;
 	
 		// Update ressource to base.
 

@@ -33,7 +33,7 @@ std::unique_ptr<WorkerUnit> WorkerUnit::create(const glm::vec2& position, const 
 }
 
 float WorkerUnit::get_attack_range() const {
-	return 2.0F;
+	return 1.5F;
 }
 float WorkerUnit::get_attack_dps() const {
 	return 5.0F;
