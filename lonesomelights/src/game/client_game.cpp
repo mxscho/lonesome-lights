@@ -59,19 +59,10 @@ ClientGame::ClientGame(Client& client)
 	base_left_opponent.set_is_walkable(false);
 	base_right_opponent.set_is_walkable(false);
 
-	// TEST
-	m_own_units.push_back(LaserUnit::create(glm::vec2(7.0F, 2.0F), m_map, m_own_player));
-	m_own_units.back()->m_id = 1000U;
-	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(11.0F, 6.0F), m_map, m_own_player));
-	m_own_units.back()->m_id = 1001U;
-	m_own_units.push_back(WorkerUnit::create(glm::vec2(15.0F, 10.0F), m_map, m_own_player));
-	m_own_units.back()->m_id = 1002U;
-	m_opponent_units.push_back(LaserUnit::create(glm::vec2(2.0F, 7.0F), m_map, m_opponent_player));
-	m_opponent_units.back()->m_id = 1003U;
-	m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(6.0F, 11.0F), m_map, m_opponent_player));
-	m_opponent_units.back()->m_id = 1004U;
-	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(10.0F, 15.0F), m_map, m_opponent_player));
-	m_opponent_units.back()->m_id = 1005U;
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(c_own_base_x - 1, c_own_base_y + 1), m_map, m_own_player));
+	m_own_units.back()->m_id = 1000001U;
+	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(c_opponent_base_x + 1, c_opponent_base_y - 1), m_map, m_opponent_player));
+	m_opponent_units.back()->m_id = 1000002U;
 }
 
 bool ClientGame::has_started() const {

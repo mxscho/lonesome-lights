@@ -36,7 +36,7 @@ float WorkerUnit::get_attack_range() const {
 	return 2.0F;
 }
 float WorkerUnit::get_attack_dps() const {
-	return 10.0F;
+	return 5.0F;
 }
 
 Tile* WorkerUnit::get_exploited() const {

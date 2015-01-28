@@ -33,7 +33,7 @@ std::unique_ptr<ShockwaveUnit> ShockwaveUnit::create(const glm::vec2& position, 
 }
 
 float ShockwaveUnit::get_attack_range() const {
-	return 2.0F;
+	return 2.5F;
 }
 float ShockwaveUnit::get_attack_dps() const {
 	return 10.0F;

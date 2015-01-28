@@ -17,12 +17,12 @@
 
 #include <iostream>
 
-float ServerGame::c_worker_unit_plasma_cost = 100.0F;
-float ServerGame::c_worker_unit_crystals_cost = 20.0F;
+float ServerGame::c_worker_unit_plasma_cost = 50.0F;
+float ServerGame::c_worker_unit_crystals_cost = 0.0F;
 float ServerGame::c_laser_unit_plasma_cost = 100.0F;
-float ServerGame::c_laser_unit_crystals_cost = 20.0F;
-float ServerGame::c_shockwave_unit_plasma_cost = 100.0F;
-float ServerGame::c_shockwave_unit_crystals_cost = 20.0F;
+float ServerGame::c_laser_unit_crystals_cost = 50.0F;
+float ServerGame::c_shockwave_unit_plasma_cost = 150.0F;
+float ServerGame::c_shockwave_unit_crystals_cost = 100.0F;
 
 unsigned int ServerGame::c_own_base_x = 27;
 unsigned int ServerGame::c_own_base_y = 2;
@@ -46,10 +46,10 @@ ServerGame::ServerGame(Server& server)
 	m_own_units(),
 	m_opponent_units(),
 
-	m_own_plasma_count(1000.0F),
-	m_own_crystal_count(100.0F),
-	m_opponent_plasma_count(1000.0F),
-	m_opponent_crystal_count(100.0F),
+	m_own_plasma_count(100.0F),
+	m_own_crystal_count(50.0F),
+	m_opponent_plasma_count(100.0F),
+	m_opponent_crystal_count(50.0F),
 
 	m_server(server) {
 
@@ -72,19 +72,10 @@ ServerGame::ServerGame(Server& server)
 	base_left_opponent.set_is_walkable(false);
 	base_right_opponent.set_is_walkable(false);
 
-	// TEST
-	m_own_units.push_back(LaserUnit::create(glm::vec2(7.0F, 2.0F), m_map, m_own_player));
-	m_own_units.back()->m_id = 1000U;
-	m_own_units.push_back(ShockwaveUnit::create(glm::vec2(11.0F, 6.0F), m_map, m_own_player));
-	m_own_units.back()->m_id = 1001U;
-	m_own_units.push_back(WorkerUnit::create(glm::vec2(15.0F, 10.0F), m_map, m_own_player));
-	m_own_units.back()->m_id = 1002U;
-	m_opponent_units.push_back(LaserUnit::create(glm::vec2(2.0F, 7.0F), m_map, m_opponent_player));
-	m_opponent_units.back()->m_id = 1003U;
-	m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(6.0F, 11.0F), m_map, m_opponent_player));
-	m_opponent_units.back()->m_id = 1004U;
-	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(10.0F, 15.0F), m_map, m_opponent_player));
-	m_opponent_units.back()->m_id = 1005U;
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(c_own_base_x - 1, c_own_base_y + 1), m_map, m_own_player));
+	m_own_units.back()->m_id = 1000001U;
+	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(c_opponent_base_x + 1, c_opponent_base_y - 1), m_map, m_opponent_player));
+	m_opponent_units.back()->m_id = 1000002U;
 }
 
 bool ServerGame::has_started() const {
@@ -127,16 +118,16 @@ void ServerGame::spawn_own_worker_unit() {
 	network_packet << m_own_units.back()->m_id;
 	network_packet << 0U;
 	network_packet << 0U;
-	network_packet << static_cast<float>(c_own_base_x);
-	network_packet << static_cast<float>(c_own_base_y);
+	network_packet << static_cast<float>(c_own_base_x - 1);
+	network_packet << static_cast<float>(c_own_base_y + 1);
 	m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 	network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
 	network_packet << m_own_units.back()->m_id;
 	network_packet << 0U;
 	network_packet << 0U;
-	network_packet << static_cast<float>(c_own_base_x);
-	network_packet << static_cast<float>(c_own_base_y);
+	network_packet << static_cast<float>(c_own_base_x - 1);
+	network_packet << static_cast<float>(c_own_base_y + 1);
 	m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 }
 void ServerGame::spawn_own_laser_unit() {
@@ -155,16 +146,16 @@ void ServerGame::spawn_own_laser_unit() {
 	network_packet << m_own_units.back()->m_id;
 	network_packet << 1U;
 	network_packet << 0U;
-	network_packet << static_cast<float>(c_own_base_x);
-	network_packet << static_cast<float>(c_own_base_y);
+	network_packet << static_cast<float>(c_own_base_x - 1);
+	network_packet << static_cast<float>(c_own_base_y + 1);
 	m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 	network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
 	network_packet << m_own_units.back()->m_id;
 	network_packet << 1U;
 	network_packet << 0U;
-	network_packet << static_cast<float>(c_own_base_x);
-	network_packet << static_cast<float>(c_own_base_y);
+	network_packet << static_cast<float>(c_own_base_x - 1);
+	network_packet << static_cast<float>(c_own_base_y + 1);
 	m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 }
 void ServerGame::spawn_own_shockwave_unit() {
@@ -183,16 +174,16 @@ void ServerGame::spawn_own_shockwave_unit() {
 	network_packet << m_own_units.back()->m_id;
 	network_packet << 2U;
 	network_packet << 0U;
-	network_packet << static_cast<float>(c_own_base_x);
-	network_packet << static_cast<float>(c_own_base_y);
+	network_packet << static_cast<float>(c_own_base_x - 1);
+	network_packet << static_cast<float>(c_own_base_y + 1);
 	m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 	network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
 	network_packet << m_own_units.back()->m_id;
 	network_packet << 2U;
 	network_packet << 0U;
-	network_packet << static_cast<float>(c_own_base_x);
-	network_packet << static_cast<float>(c_own_base_y);
+	network_packet << static_cast<float>(c_own_base_x - 1);
+	network_packet << static_cast<float>(c_own_base_y + 1);
 	m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 }
 
@@ -209,19 +200,19 @@ void ServerGame::spawn_opponent_worker_unit() {
 
 	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << m_own_units.back()->m_id;
+	network_packet << m_opponent_units.back()->m_id;
 	network_packet << 0U;
 	network_packet << 1U;
-	network_packet << static_cast<float>(c_opponent_base_x);
-	network_packet << static_cast<float>(c_opponent_base_y);
+	network_packet << static_cast<float>(c_opponent_base_x + 1);
+	network_packet << static_cast<float>(c_opponent_base_y - 1);
 	m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 	network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << m_own_units.back()->m_id;
+	network_packet << m_opponent_units.back()->m_id;
 	network_packet << 0U;
 	network_packet << 1U;
-	network_packet << static_cast<float>(c_opponent_base_x);
-	network_packet << static_cast<float>(c_opponent_base_y);
+	network_packet << static_cast<float>(c_opponent_base_x + 1);
+	network_packet << static_cast<float>(c_opponent_base_y - 1);
 	m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 }
 void ServerGame::spawn_opponent_laser_unit() {
@@ -237,19 +228,19 @@ void ServerGame::spawn_opponent_laser_unit() {
 
 	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << m_own_units.back()->m_id;
+	network_packet << m_opponent_units.back()->m_id;
 	network_packet << 1U;
 	network_packet << 1U;
-	network_packet << static_cast<float>(c_opponent_base_x);
-	network_packet << static_cast<float>(c_opponent_base_y);
+	network_packet << static_cast<float>(c_opponent_base_x + 1);
+	network_packet << static_cast<float>(c_opponent_base_y - 1);
 	m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 	network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << m_own_units.back()->m_id;
+	network_packet << m_opponent_units.back()->m_id;
 	network_packet << 1U;
 	network_packet << 1U;
-	network_packet << static_cast<float>(c_opponent_base_x);
-	network_packet << static_cast<float>(c_opponent_base_y);
+	network_packet << static_cast<float>(c_opponent_base_x + 1);
+	network_packet << static_cast<float>(c_opponent_base_y - 1);
 	m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 }
 void ServerGame::spawn_opponent_shockwave_unit() {
@@ -265,19 +256,19 @@ void ServerGame::spawn_opponent_shockwave_unit() {
 
 	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << m_own_units.back()->m_id;
+	network_packet << m_opponent_units.back()->m_id;
 	network_packet << 2U;
 	network_packet << 1U;
-	network_packet << static_cast<float>(c_opponent_base_x);
-	network_packet << static_cast<float>(c_opponent_base_y);
+	network_packet << static_cast<float>(c_opponent_base_x + 1);
+	network_packet << static_cast<float>(c_opponent_base_y - 1);
 	m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 	network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
 	network_packet << std::string("new_unit");
-	network_packet << m_own_units.back()->m_id;
+	network_packet << m_opponent_units.back()->m_id;
 	network_packet << 2U;
 	network_packet << 1U;
-	network_packet << static_cast<float>(c_opponent_base_x);
-	network_packet << static_cast<float>(c_opponent_base_y);
+	network_packet << static_cast<float>(c_opponent_base_x + 1);
+	network_packet << static_cast<float>(c_opponent_base_y - 1);
 	m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 }
 
