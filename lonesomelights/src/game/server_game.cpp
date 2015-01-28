@@ -74,8 +74,8 @@ ServerGame::ServerGame(Server& server)
 	base_left_opponent.set_is_walkable(false);
 	base_right_opponent.set_is_walkable(false);
 
-	m_own_units.push_back(WorkerUnit::create(glm::vec2(c_own_base_x - 1, c_own_base_y + 1), m_map, m_own_player, 1000));
-	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(c_opponent_base_x + 1, c_opponent_base_y - 1), m_map, m_opponent_player, 1001));
+	m_own_units.push_back(WorkerUnit::create(glm::vec2(c_own_base_x - 1, c_own_base_y + 1), m_map, m_own_player, 1000000U));
+	m_opponent_units.push_back(WorkerUnit::create(glm::vec2(c_opponent_base_x + 1, c_opponent_base_y - 1), m_map, m_opponent_player, 1000001U));
 }
 
 bool ServerGame::has_started() const {
@@ -216,6 +216,8 @@ void ServerGame::spawn_opponent_worker_unit() {
 	network_packet << static_cast<float>(c_opponent_base_x + 1);
 	network_packet << static_cast<float>(c_opponent_base_y - 1);
 	m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
+
+	m_current_unit_id++;
 }
 void ServerGame::spawn_opponent_laser_unit() {
 	if (m_opponent_plasma_count < c_laser_unit_plasma_cost || m_opponent_crystal_count < c_laser_unit_crystals_cost) {

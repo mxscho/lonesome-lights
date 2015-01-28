@@ -184,7 +184,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 
 	Skybox skybox(glm::translate(glm::vec3(15.0F, 0.0F, 15.0F)) * glm::scale(glm::vec3(60.0F, 60.0F, 60.0F)), game.get_map());
 	PlayerHandler player_handler(game);
-	MapCamera map_camera(game.get_map(), glm::vec2(0.0F, 0.0F), (float) video_mode.width / video_mode.height);
+	std::unique_ptr<MapCamera> map_camera;
 	HUD hud(game, window, video_mode);
 
 	FrameBufferObject frame_buffer_object;
@@ -224,7 +224,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	timer.reset(0.0F);
 	while (window.isOpen()) {
 		sf::Vector2i mouse_coordinates = sf::Mouse::getPosition(window);
-		std::pair<bool, glm::vec3> world_position = get_clicked_world_position(map_camera, mouse_coordinates.x, mouse_coordinates.y);
+		std::pair<bool, glm::vec3> world_position = get_clicked_world_position(*map_camera, mouse_coordinates.x, mouse_coordinates.y);
 		glm::vec2 mouse_position((float) mouse_coordinates.x / video_mode.width * 2.0F - 1.0F, (1.0F - (float) mouse_coordinates.y / video_mode.height) * 2.0F - 1.0F);		
 		
 		if (world_position.first) {
@@ -241,7 +241,9 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 				window.close();
 				return EXIT_SUCCESS;
 			} else if (event.type == sf::Event::MouseWheelMoved) {
-				map_camera.change_zoom(event.mouseWheel.delta);
+				if (map_camera) {
+					map_camera->change_zoom(event.mouseWheel.delta);
+				}
 			} else if (event.type == sf::Event::MouseButtonPressed) {
 				if (world_position.first) {
 					if (event.mouseButton.button == sf::Mouse::Left) {
@@ -269,9 +271,13 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 
 		if (std::abs(mouse_position.x) > 0.95F || std::abs(mouse_position.y) > 0.95F) {
 			mouse_position = glm::normalize(mouse_position);
-			map_camera.set_velocity(mouse_position * 10.0F);
+			if (map_camera) {
+				map_camera->set_velocity(mouse_position * 10.0F);
+			}
 		} else {
-			map_camera.set_velocity(glm::vec2(0.0F));
+			if (map_camera) {
+				map_camera->set_velocity(glm::vec2(0.0F));
+			}
 		}
 		
 		// Update scene.
@@ -284,7 +290,20 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		if (!game.has_started()) {
 			timer.reset(0.0F);
 		} else {
-			map_camera.update(timer);
+			static bool first_time = true;
+			if (first_time) {
+				first_time = false;
+
+				glm::vec2 camera_position;
+				if (game.m_player_id == 0U) {
+					camera_position = glm::vec2(static_cast<float>(ClientGame::c_own_base_x) - 3.0F, static_cast<float>(ClientGame::c_own_base_y) - 3.0F);
+				} else {
+					camera_position = glm::vec2(static_cast<float>(ClientGame::c_opponent_base_x) - 3.0F, static_cast<float>(ClientGame::c_opponent_base_y) - 3.0F);
+				}
+				map_camera = std::unique_ptr<MapCamera>(new MapCamera(game.get_map(), camera_position, (float) video_mode.width / video_mode.height));
+			}
+
+			map_camera->update(timer);
 			hud.update(timer);
 
 			// Settings for rendering.
@@ -319,7 +338,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-			game.draw(map_camera);
+			game.draw(*map_camera);
 		
 			FrameBufferObject::unbind_any();
 		}
@@ -358,10 +377,10 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 			// Deferred rendering to screen.
 		
-			skybox.draw(map_camera);
-			game.draw_deferred(map_camera, color_texture, position_texture, normal_texture, depth_texture);
+			skybox.draw(*map_camera);
+			game.draw_deferred(*map_camera, color_texture, position_texture, normal_texture, depth_texture);
 
-			hud.draw(map_camera);
+			hud.draw(*map_camera);
 		}
 
 		window.display();
