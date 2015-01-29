@@ -13,6 +13,7 @@ float Attackable::get_health() const {
 }
 void Attackable::set_health(float health) {
 	m_health_bar.set_health(health);
+	m_current_health = health;
 }
 
 void Attackable::change_health(float delta_health) {

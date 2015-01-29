@@ -110,8 +110,6 @@ void LaserUnit::update(const Timer& timer) {
 	float rotation_angle = timer.get_current_time_seconds();
 	m_vine_transformation = glm::rotate(rotation_angle, glm::vec3(0.0F, 1.0F, 0.0F));
 	
-	// TEST
-	// Networkable::on_update();
 }
 
 LaserUnit::Data::Data(const glm::vec3& position, const glm::vec3& normal)

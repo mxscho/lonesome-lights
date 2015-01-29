@@ -13,7 +13,6 @@ GameServerHandler::GameServerHandler(const NetworkID& network_id, Server& server
 
 void GameServerHandler::on_create(Networkable& networkable, const Networkable& new_networkable) {
 	NetworkPacket network_packet = NetworkPacket::create_outgoing(m_network_id, NetworkPacket::Type::Create);
-	// TODO: Fill network_packet with actual initial information.
 	for (auto& i_participant : m_server.get_participants()) {
 		i_participant.add_outgoing_network_packet(network_packet);
 	}

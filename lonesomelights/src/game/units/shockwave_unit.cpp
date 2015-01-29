@@ -108,7 +108,6 @@ void ShockwaveUnit::update(const Timer& timer) {
 	m_flash.update(timer);
 	
 	m_shockwave.Transformable::set_position(glm::vec3(Transformable::get_position().x, 0.001F, Transformable::get_position().z));
-	// TODO: Maybe set on/off if attackables available.
 	m_shockwave.update(timer);
 	
 	float scale_factor = 0.6F + (sin(timer.get_current_time_seconds() * 2.0F) + 1.0F) / 2.0F * 0.4F;
@@ -131,7 +130,7 @@ ShockwaveUnit::ShockwaveUnit(const glm::vec2& position, const Map& map, const Pl
 	1.0F, // Maximum velocity
 	0.4F, 0.4F, // Acceleration/Decceleration
 	100.0F, // Maximum health
-	id), // TODO: find nice values for shockwave unit
+	id),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_vertex_counts(vertex_counts),
 	m_vine_elements_vbo(ObjLoader::get_obj_elements("MMdoodlesample1", 0), GL_ELEMENT_ARRAY_BUFFER),
