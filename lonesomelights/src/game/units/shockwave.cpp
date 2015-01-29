@@ -8,7 +8,6 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
-#include <iostream>
 
 Shockwave::Shockwave(const glm::mat4& transformation, const Map& map, const glm::vec3& color)
 	: Drawable(RenderPrograms::get_render_program("shockwave")),

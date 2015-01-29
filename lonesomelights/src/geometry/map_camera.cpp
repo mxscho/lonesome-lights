@@ -42,7 +42,7 @@ void MapCamera::change_position(const glm::vec3& offset) {
 		m_eye_position.x -= offset2.x;
 		m_center_position.x -= offset2.x;
 	}
-	if (m_eye_position.y > 20.0F) { // TODO: niedriger, zB 10 - 15
+	if (m_eye_position.y > 20.0F) {
 		m_eye_position -= offset2;
 		m_center_position -= offset2;
 	}

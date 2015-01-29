@@ -7,9 +7,6 @@
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
 
-//test
-#include <iostream>
-
 Tile::Tile(const Map& map, unsigned int x, unsigned int y, const RenderProgram& render_program)
 	: Drawable(render_program),
 	Networkable(),

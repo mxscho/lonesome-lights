@@ -33,14 +33,14 @@ void Transformable::set_position(const glm::vec3& position) {
 }
 
 const glm::mat4& Transformable::get_global_transformation() const {
-	// TODO: Don't always recalculate here - only recalculate if parent changed.
+	// Don't always recalculate here - only recalculate if parent changed.
 	// Currently we use this dirty hack until the mentioned thing has been implemented.
 	const_cast<Transformable*>(this)->recalculate_global_transformation();
 	return m_global_transformation;
 }
 
 glm::mat4 Transformable::get_global_transformation(const glm::mat4& additional_local_transformation) const {
-	// TODO: Don't always recalculate here - only recalculate if parent changed.
+	// Don't always recalculate here - only recalculate if parent changed.
 	// Currently we use this dirty hack until the mentioned thing has been implemented.
 	const_cast<Transformable*>(this)->recalculate_global_transformation();
 	return m_parent_transformation * additional_local_transformation * m_local_transformation;
@@ -48,7 +48,7 @@ glm::mat4 Transformable::get_global_transformation(const glm::mat4& additional_l
 
 void Transformable::recalculate_global_transformation() {
 	if (!!m_parent_transformable) {
-		// TODO: Don't always recalculate parent here.
+		// Don't always recalculate parent here.
 		// Currently we use this dirty hack.
 		const_cast<Transformable*>(m_parent_transformable)->recalculate_global_transformation();
 		m_parent_transformation = m_parent_transformable->m_global_transformation;

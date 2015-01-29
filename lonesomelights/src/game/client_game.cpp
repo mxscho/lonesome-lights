@@ -13,8 +13,6 @@
 #include "game/units/worker_unit.h"
 #include "timer.h"
 
-#include <iostream>
-
 unsigned int ClientGame::c_own_base_x = 27;
 unsigned int ClientGame::c_own_base_y = 2;
 unsigned int ClientGame::c_opponent_base_x = 2;

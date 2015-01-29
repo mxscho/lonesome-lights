@@ -8,8 +8,6 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-#include <iostream>
-
 CrystalTile CrystalTile::create(const Map& map, unsigned int x, unsigned int y, const RockTile::CliffType& cliff_type) {
 	std::vector<GLfloat> crystals_positions = ObjLoader::get_obj_positions("crystals", 0);
 	std::vector<GLfloat> crystals_normals = ObjLoader::get_obj_normals("crystals", 0);

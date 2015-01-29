@@ -131,9 +131,7 @@ void WorkerUnit::update(const Timer& timer) {
 	m_ball_transformation = glm::scale(glm::vec3(scale_factor, scale_factor, scale_factor));
 	float rotation_angle = timer.get_current_time_seconds();
 	m_vine_transformation = glm::rotate(rotation_angle, glm::vec3(0.0F, 1.0F, 0.0F));
-	
-	// TEST
-	// Networkable::on_update();
+
 }
 
 WorkerUnit::Data::Data(const glm::vec3& position, const glm::vec3& normal)
@@ -147,7 +145,7 @@ WorkerUnit::WorkerUnit(const glm::vec2& position, const Map& map, const Player& 
 	1.2F, // Maximum velocity
 	0.9F, 0.9F, // Acceleration/Decceleration
 	100.0F, // Maximum health
-	id), // TODO: find nice values for worker unit
+	id),
 	m_vertices_vbo(vertices, GL_ARRAY_BUFFER),
 	m_vertex_counts(vertex_counts),
 	m_vine_elements_vbo(ObjLoader::get_obj_elements("unit_0", 0), GL_ELEMENT_ARRAY_BUFFER),
