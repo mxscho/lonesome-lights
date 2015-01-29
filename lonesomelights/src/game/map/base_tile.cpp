@@ -31,6 +31,11 @@ const Player& BaseTile::get_player() const {
 
 void BaseTile::update(const Timer& timer) {
 	Attackable::update(timer);
+	m_flames1.update(timer);
+	m_flames2.update(timer);
+	m_flames3.update(timer);
+	m_flames4.update(timer);
+	m_flames5.update(timer);
 }
 
 void BaseTile::draw(const Camera& camera) const {
@@ -58,6 +63,22 @@ void BaseTile::draw(const Camera& camera) const {
 	}
 }
 
+void BaseTile::draw_flames(const Camera& camera) const {
+	m_flames1.draw(camera);
+	m_flames2.draw(camera);
+	m_flames3.draw(camera);
+	m_flames4.draw(camera);
+	m_flames5.draw(camera);
+}
+
+void BaseTile::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	m_flames1.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_flames2.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_flames3.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_flames4.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+	m_flames5.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+}
+
 bool BaseTile::is_rock() const {
 	return false;
 }
@@ -78,7 +99,77 @@ BaseTile::BaseTile(const Map& map, unsigned int x, unsigned int y, const std::ve
 	m_vertex_array_object(),
 	m_floor_tile(FloorTile(map, x, y)),
 	m_base_transformation(glm::mat4(glm::translate(glm::vec3(get_size() / 2.0f,0.0f, get_size() / 2.0f))) * glm::mat4(glm::scale(glm::vec3(0.38f, 0.38f, 0.38f)))),
-	m_player(player) {
+	m_player(player),
+	m_flames1(
+		glm::mat4(glm::translate(glm::vec3(get_size() / 2.0F, 0.5F, get_size() / 2.0F))), // Transformation
+		*this, // Parent transformable
+		glm::vec2(0.74F * 0.6F, 0.74F * 0.6F), // Billboard size
+		Textures::get_texture("particles/smoke"), // Texture
+		glm::vec3(1.0F, 0.7F, 0.1F), // Start color
+		glm::vec3(1.0F, 0.2F, 0.1F), // End color
+		0.0F, // Radius
+		0.74F * 0.1F, // Particle start velocity
+		0.4F, // Gravity
+		0.4F, // Minimum particle lifetime (seconds)
+		0.7F, // Maximum particle lifetime (seconds)
+		0.74F * 15.0F  // Frequency
+	),
+	m_flames2(
+		glm::mat4(glm::translate(glm::vec3(get_size() / 2.0F, 0.5F, -0.2F))), // Transformation
+		*this, // Parent transformable
+		glm::vec2(0.74F * 0.8F, 0.74F * 0.8F), // Billboard size
+		Textures::get_texture("particles/smoke"), // Texture
+		glm::vec3(1.0F, 0.7F, 0.1F), // Start color
+		glm::vec3(1.0F, 0.2F, 0.1F), // End color
+		0.0F, // Radius
+		0.74F * 0.1F, // Particle start velocity
+		0.0F, // Gravity
+		0.45F, // Minimum particle lifetime (seconds)
+		0.9F, // Maximum particle lifetime (seconds)
+		0.74F * 15.0F  // Frequency
+	),
+	m_flames3(
+		glm::mat4(glm::translate(glm::vec3(1.2, 0.5F, 0.5F))), // Transformation
+		*this, // Parent transformable
+		glm::vec2(0.74F * 0.8F, 0.74F * 0.8F), // Billboard size
+		Textures::get_texture("particles/smoke"), // Texture
+		glm::vec3(1.0F, 0.7F, 0.1F), // Start color
+		glm::vec3(1.0F, 0.2F, 0.1F), // End color
+		0.0F, // Radius
+		0.74F * 0.1F, // Particle start velocity
+		0.0F, // Gravity
+		0.45F, // Minimum particle lifetime (seconds)
+		0.9F, // Maximum particle lifetime (seconds)
+		0.74F * 15.0F  // Frequency
+	),
+	m_flames4(
+		glm::mat4(glm::translate(glm::vec3(0.53F, 0.5F, 1.3F))), // Transformation
+		*this, // Parent transformable
+		glm::vec2(0.74F * 0.8F, 0.74F * 0.8F), // Billboard size
+		Textures::get_texture("particles/smoke"), // Texture
+		glm::vec3(1.0F, 0.7F, 0.1F), // Start color
+		glm::vec3(1.0F, 0.2F, 0.1F), // End color
+		0.0F, // Radius
+		0.74F * 0.1F, // Particle start velocity
+		0.0F, // Gravity
+		0.45F, // Minimum particle lifetime (seconds)
+		0.9F, // Maximum particle lifetime (seconds)
+		0.74F * 15.0F  // Frequency
+	),
+	m_flames5(
+		glm::mat4(glm::translate(glm::vec3(-0.23, 0.5F, 0.53F))), // Transformation
+		*this, // Parent transformable
+		glm::vec2(0.74F * 0.8F, 0.74F * 0.8F), // Billboard size
+		Textures::get_texture("particles/smoke"), // Texture
+		glm::vec3(1.0F, 0.7F, 0.1F), // Start color
+		glm::vec3(1.0F, 0.2F, 0.1F), // End color
+		0.0F, // Radius
+		0.74F * 0.1F, // Particle start velocity
+		0.0F, // Gravity
+		0.45F, // Minimum particle lifetime (seconds)
+		0.9F, // Maximum particle lifetime (seconds)
+		0.74F * 15.0F  // Frequency
+	) {
 	
 	set_is_walkable(false);
 	

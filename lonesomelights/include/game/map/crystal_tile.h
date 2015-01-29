@@ -7,6 +7,7 @@
 #include "game/map/tile.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
+#include "rendering/particles/spheric_particle_emitter.h"
 
 #include <glm/glm.hpp>
 #include <vector>
@@ -24,6 +25,7 @@ public:
 
 	void draw(const Camera& camera) const override final;
 	void draw_crystals(const Camera& camera) const;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 
 	void update(const Timer& timer) override final;
 
@@ -52,6 +54,7 @@ private:
 	VertexArrayObject m_crystals_vao;
 	DestructibleRockTile m_destructible_rock_tile;
 	glm::mat4 m_crystal_tile_transformation;
+	SphericParticleEmitter m_particles;
 };
 
 #endif

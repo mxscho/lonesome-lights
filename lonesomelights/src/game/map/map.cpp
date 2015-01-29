@@ -1,5 +1,6 @@
 #include "game/map/map.h"
 
+#include "game/map/base_tile.h"
 #include "game/map/crystal_tile.h"
 #include "game/map/destructible_rock_tile.h"
 #include "game/map/floor_tile.h"
@@ -121,6 +122,21 @@ void Map::draw_extras(const Camera& camera) const {
 		if (!!i_tile) {
 			if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(i_tile.get())) {
 				crystal_tile->draw_crystals(camera);
+			}
+			if (BaseTile* base_tile = dynamic_cast<BaseTile*>(i_tile.get())) {
+				base_tile->draw_flames(camera);
+			}
+		}
+	}
+}
+
+void Map::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	for (auto& i_tile : m_tiles) {
+		if (!!i_tile) {
+			if (BaseTile* base_tile = dynamic_cast<BaseTile*>(i_tile.get())) {
+				base_tile->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
+			} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(i_tile.get())) {
+				crystal_tile->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 			}
 		}
 	}

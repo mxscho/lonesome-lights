@@ -29,12 +29,17 @@ glm::vec2 CrystalTile::get_position_vec2() const {
 
 void CrystalTile::update(const Timer& timer) {
 	Attackable::update(timer);
+	m_particles.update(timer);
 }
 
 void CrystalTile::draw(const Camera& camera) const {
 	m_destructible_rock_tile.draw(camera);
 	
 	Drawable::draw(camera);
+}
+
+void CrystalTile::draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const {
+	m_particles.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 }
 
 void CrystalTile::draw_crystals(const Camera& camera) const {
@@ -111,7 +116,21 @@ CrystalTile::CrystalTile(const Map& map, unsigned int x, unsigned int y, const s
 	m_crystals_elements_vbo(ObjLoader::get_obj_elements("crystals", 0), GL_ELEMENT_ARRAY_BUFFER),
 	m_crystals_vao(),
 	m_destructible_rock_tile(map, x, y, cliff_type),
-	m_crystal_tile_transformation(glm::mat4(glm::translate(glm::vec3(get_size() / 2.0f, 0.9f, get_size() / 2.0f))) * glm::mat4(glm::scale(glm::vec3(0.15f, 0.15f, 0.15f)))) {
+	m_crystal_tile_transformation(glm::mat4(glm::translate(glm::vec3(get_size() / 2.0f, 0.9f, get_size() / 2.0f))) * glm::mat4(glm::scale(glm::vec3(0.15f, 0.15f, 0.15f)))),
+	m_particles(
+		glm::mat4(glm::translate(glm::vec3(get_size() / 2.0F, 0.5F, get_size() / 2.0F))), // Transformation
+		*this, // Parent transformable
+		glm::vec2(12.0F * 0.03F, 0.03F), // Billboard size
+		Textures::get_texture("particles/spark"), // Texture
+		glm::vec3(0.16f, 0.45f, 0.2f), // Start color
+		glm::vec3(0.16f, 0.45f, 0.2f), // End color
+		0.0F, // Radius
+		1.0F, // Particle start velocity
+		0.0F, // Gravity
+		0.5F, // Minimum particle lifetime (seconds)
+		0.25F, // Maximum particle lifetime (seconds)
+		15.0F  // Frequency
+	) {
 	
 	set_is_walkable(false);
 	
