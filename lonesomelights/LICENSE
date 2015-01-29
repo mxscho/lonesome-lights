@@ -1,56 +1,111 @@
-- Models: unit_0
-- Libraries: tinyobjloader
-- Textures: floor_tile
-- Fonts: Lato
+===========================================
+              OUR LICENSE
+===========================================
+
+CC BY 4.0
+http://creativecommons.org/licenses/by/4.0/
+
+===========================================
+             OTHER LICENSES
+===========================================
+
+include/rendering/obj_loader/tiny_obj_loader.h, /rendering/obj_loader/tiny_obj_loader.cpp by Syoyo Fujita (https://github.com/syoyo)
+    Link: https://github.com/syoyo/tinyobjloader
+    License: 2 clause BSD
+    modified
+
+-----
+    Copyright (c) Syoyo Fujita
+    The Regents of the University of California. All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    
+    HIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-----
 
 
 
+res/textures/floor_tile.png
+    Link: http://opengameart.org/content/free-metal-texture-creation-set-01
+    License: CC-0
+    not modified
 
 
 
-///////////////////////////
-MMdoodlesample1.obj and MMdoodlesample2.obj: http://www.sharecg.com/v/29571/related/5/3D-Model/ShareCG.com
+res/textures/rock_tile.png by p0ss
+    Link: http://opengameart.org/node/9124
+    License: CC-BY 3.0
+    not modified
 
+
+
+res/textures/skybox/*
+    Link: http://opengameart.org/node/15294
+    License: CC-0
+    not modified
+    
+    
+    
+res/textures/hud.png
+    Source 1 by Osmic:
+    Link: http://opengameart.org/content/gem-jewel-diamond-glass
+    License: CC-BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+    modified
+    
+    Source 2:
+    Link: http://opengameart.org/content/ui-elements-0
+    License: CC-0
+    modified
+
+
+
+res/fonts/Lato-Regular.ttf by Łukasz Dziedzic
+    Link: https://www.google.com/fonts/specimen/Lato
+    License: SIL Open Font License, 1.1
+    not modified
+
+
+
+res/models/base.obj
+    Link: http://www.cadnav.com/3d-models/model-23099.html
+    License: (none)
+    modified
+
+
+
+res/models/crystal.obj, res/models/crystal.mtl, res/models/crystals.obj, res/models/crystals.mtl
+    Link: http://www.blendswap.com/blends/view/64912
+    License: CC-0
+    modified
+
+
+
+res/models/MMdoodlesample1.obj
+    Link: http://www.sharecg.com/v/29571/related/5/3D-Model/ShareCG.com
+    License: (see text)
+    not modified
+
+-----
 This pack contains two sample meshes, similar to the "MatheMagic Doodles available at Renderosity.
 Link: http://market.renderosity.com/mod/bcs/index.php?ViewProduct=67482
-
 You can use MatheMagic Doodles in any 3D application which supports the Wavefront obj file format. Just hit the import tab, and you're good to go.
- 
 The Doodles are not UV mapped, but you can use any material or shader preset from your preferred software.
-
 Copyright notice:
 By using this downloaded file, you agree to abide by the following conditions of this agreement:
- 
 The contents in this package remain the property of Christel Dall aka Dmon aka natrix natrix.
-
 You may use these meshes in their original or altered form for commercial or non-commercial renders.
-
 You may alter the meshes in any way you wish, but you may not redistribute the meshes, altered or original, in any form.
-
 You may create 3D hardcopies (rapid prototypes) of the meshes in their original unaltered form for personal non-commercial use only.
-
 If significantly altered - as part of a figure or scene setup - the meshes may be 3D printed for commercial as well as non-commercial purposes.
-
 If in doubt, e-mail vichibo@gmail.com
-
-
-Thank you for downloading MatheMagic Doodles!
-//////////////////////////
-ressources textures:
-=== License ===
-
-By using this piece of work you agree:
-
-    * to include my name "Ville Seppanen" in the credits list in the application/game and everywhere else where the creators/contributors are listed
+-----
     
-You are free:
-
-    * to Share  to copy, distribute and transmit the work
-    * to Remix  to adapt the work
-
-Under the following conditions:
-
-    * Attribution  You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
-
-http://creativecommons.org/licenses/by/3.0/
-/////////////////
+    
+    
+res/models/unit_0.obj, res/models/unit_0.mtl by stevemedwin
+    Link: https://www.thingiverse.com/thing:112655
+    License: CC BY-ND 3.0
+    modified: low poly wavefront

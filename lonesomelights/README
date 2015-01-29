@@ -1,30 +1,71 @@
--------------------------------------------
-Spiel im Huber-CIP zum Laufen bringen:
-cd team02/lonesomelights/
-./configure-cip
+===========================================
+                HOW TO RUN
+===========================================
+
+Compile:
+
+./configure-cip.sh
 make -j 16
-./bin/lonesomelights_server <serverport>
-./bin/lonesomelights_client <ip bzw "faui04x", x == PC, auf dem der Server laeuft> <serverport>
-./bin/lonesomelights_client <ip bzw "faui04x", x == PC, auf dem der Server laeuft> <serverport>
--------------------------------------------
 
-Anmerkungen zum Spiel:
-- Kamerabewegung durch Mausbewegung zum Fensterrand, Zoomen mit Mausrad
-- Bauen von Units, Upgrades durch Klick auf den entsprechenden Button mit Bild auf dem HUD. Wenn die Ressourcen nicht reichen, ist der Preis rechts daneben rot markiert
-- Einheiten koennen einzeln per Linksklick ausgewaehlt werden und mit Rechtsklick an eine Stelle auf der Karte geschickt werden. Existiert bisher kein Weg, weil ueberall Bloecke im Weg waeren, laeuft die Einheit nicht los.
-- Ressource 1 (Plasma) wird automatisch ueber die Zeit hinweg generiert, Ressource 2 (Crystals) kann von durch gruene Kristalle gekennzeichnete Bloecken abgebaut werden
-- Abbau: mit Linksklick auf einen abbaubaren Block wird dieser markiert. Sobald Arbeiter-Einheiten nah genug an ihn herankommen, fangen sie an, ihn abzubauen. Enhaelt der Block Kristalle, wird durch ein Kristallsymbol ueber dem Arbeiter gekennzeichnet, dass er Ressourcen geladen hat. Wenn er nun in die Naehe der eigenen Basis faehrt, werden diese auf das Konto des Spielers uebertragen (oben rechts im HUD)
-- hellgraue Bloecke sind abbaubar, dunkelgraue nicht
-- es koennen mehrere Bloecke gleichzeitig markiert sein
-- im HUD rechts unten kann man jeweils einmalig 2 Upgrades aktivieren:
-    + DMG erhoeht den Schaden der eigenen Laser(Single Target)- und Shockwave(AoE)-Einheiten um das 1,5-fache der Grundwerte
-    + Range erhoeht die Reichweite des Lasers der Laser-Einheiten um das 1,5-fache des Grundwerts
-- in res/maps/default_map.txt kann theoretisch eine eigene neue Karte kreiert werden. Die Groesse muss aber 30x30 bleiben und es darf auch sonst nichts in der Datei stehen.
-    "-" = kein Block
-    "X" = unzerstoerbarer Block
-    "D" = zerstoerbarer Block
-    "C" = Kristallblock (zerstoerbar und enthaelt Ressourcen)
-- Bei vollem Leben werden die Lebenspunktebalken nicht angezeigt
-- Und natuerlich nicht vergessen: Ziel ist, die gegnerische Basis zu zerstoeren.
+Run (1 server, exactly 2 clients):
 
-Bei Fragen E-Mail an maximilian.scholze.fau.de / patrick.becker@fau.de
+cd a5/team02/lonesomelights/ (moeglicherweise nur aus diesem Ordner startbar)
+./bin/lonesomelights_server <port>
+./bin/lonesomelights_client <hostname (e.g. faui04a)> <port> (2x)
+
+===========================================
+            HOW TO PLAY / DE-DE
+===========================================
+
+Allgemein:
+- 1on1 Echtzeit-Strategie.
+- Sammeln von Rohstoffen, Bauen von Einheiten, Upgraden von Einheiten.
+- Ziel: Zerstoerung der gegnerischen Basis.
+
+Details:
+- Kamerabewegung durch Mausbewegung zum Fensterrand, Zoom mit Mausrad.
+- Bauen von Einheiten, Upgrades durch Klick auf den entsprechenden Button am unteren Bildschirmrand. Falls die Ressourcen nicht ausreichen, ist der Preis im rechten Feld nebenan rot markiert.
+- Auswahl der Einheiten durch Linksklick, Bewegung der ausgewaehlten Einheit durch Rechtsklick an eine Stelle auf der Karte.
+- Angriff der Gegnereinheiten durch Manoevrierung der eigenen Einheiten in deren Naehe. Angriffe erfolgen automatisch, sobald sich gegnerische Einheiten in der Naehe befinden.
+- Karte nahezu vollstaendig durch Arbeitereinheiten zerstoer-/abbaubar.
+- Jeder der Spieler startet mit einer Basis in einer Ecke der Karte und besitzt zu Beginn einige Rohstoffe und einen Arbeiter.
+
+Einheiten:
+- Jeder der zwei Spieler hat die Moeglichkeit, 3 verschiedene Einheiten zu bauen.
+- Die Ringe um die Einheiten und deren Waffeneffekt-Farben sind in Spielerfarben.
+- Die Typen der Einheiten sind durch deren Leuchteffekte gekennzeichnet.
+Einheitentypen:
+- Arbeiter (gruen, erste Einheit im HUD): Kann nicht angreifen. Kann markierte Bloecke abbauen und Kristalle transportieren (siehe unten).
+- Laser: (violett, zweite Einheit im HUD): Single-Target-Angriff (erstes Ziel in Reichweite wird angegriffen).
+- Shockwave: (gelb, dritte Einheit im HUD): Area-of-Effect/Flaechenschaden-Angriff (alle Ziele in Reichweite werden angegriffen).
+
+Ressourcen:
+- Plasma (magenta, erste Ressource im HUD): Generierung automatisch ueber die Zeit.
+- Kristalle (smaragd, zweite Ressource im HUD): Kann durch den Abbau von Kristallbloecken gewonnen werden.
+Abbau:
+- Linksklick auf einen abbaubaren Block markiert diesen global fuer den Spieler.
+- Befinden sich Arbeiter-Einheiten nah genug an dem Block, wird er abgebaut
+- Enhaelt der Block Kristalle, wird durch ein Kristallsymbol ueber dem Arbeiter gekennzeichnet, dass er Kristalle geladen hat.
+- Wenn ein Arbeiter Kristalle geladen hat, koennen diese durch Bewegen des Arbeiters zurueck zur eigenen Basis auf das Spielerkonto transferiert werden (oben rechts).
+- Zusaetzlich koennen alle hellgrauen Bloecke abgebaut werden, um neue Wege freizulegen.
+
+Upgrades:
+- Schadensbonus (einmalig pro Spieler): Wirkt auf Laser- und Shockwave-Einheiten (1,5x).
+- Reichweite-Bonus (einmalig pro Spieler): Wirkt auf Laser-Einheiten (1,5x).
+
+Extra:
+- In res/maps/default_map.txt kann die Karte veraendert werden. Die Groesse muss 30x30 bleiben und es darf auch sonst nichts in der Datei stehen.
+- Die Felder fuer die Basen muessen entsprechend gross frei bleiben.
+"-" = kein Block
+"X" = Unzerstoerbarer Block
+"D" = Zerstoerbarer Block
+"C" = Kristallblock (zerstoerbar und enthaelt Ressourcen)
+
+Fuer weitere Fragen...
+
+===========================================
+                   CONTACT
+===========================================
+
+maximilian.scholze@fau.de (yz63obav)
+patrick.becker@fau.de (oh32afyr)
