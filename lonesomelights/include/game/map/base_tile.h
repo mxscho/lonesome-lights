@@ -5,8 +5,10 @@
 #include "game/map/tile.h"
 #include "game/map/floor_tile.h"
 #include "game/player.h"
+#include "rendering/opengl/texture.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
+#include "rendering/particles/spheric_particle_emitter.h"
 
 #include <glm/glm.hpp>
 #include <vector>
@@ -26,6 +28,8 @@ public:
 	void update(const Timer& timer) override final;
 
 	void draw(const Camera& camera) const override final;
+	void draw_flames(const Camera& camera) const;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 	bool is_rock() const override final;
 	void set_cliff_type(unsigned short cliff_type) override final;
 private:
@@ -45,6 +49,11 @@ private:
 	glm::mat4 m_base_transformation;
 
 	const Player& m_player;
+	SphericParticleEmitter m_flames1;
+	SphericParticleEmitter m_flames2;
+	SphericParticleEmitter m_flames3;
+	SphericParticleEmitter m_flames4;
+	SphericParticleEmitter m_flames5;
 };
 
 #endif

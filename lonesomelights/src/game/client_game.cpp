@@ -172,6 +172,7 @@ void ClientGame::draw_deferred(const Camera& camera, const Texture& color_textur
 	for (auto& i_explosion : m_explosions) {
 		i_explosion.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 	}
+	m_map.draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);
 	for (auto& i_own_unit : m_own_units) {
 		if (WorkerUnit* own_worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit.get())) {
 			own_worker_unit->draw_deferred(camera, color_texture, position_texture, normal_texture, depth_texture);

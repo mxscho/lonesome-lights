@@ -4,6 +4,7 @@
 #include "game/map/tile.h"
 #include "geometry/transformable.h"
 #include "networking/networkable.h"
+#include "rendering/opengl/texture.h"
 #include "updatable.h"
 
 #include <memory>
@@ -33,6 +34,7 @@ public:
 	void set_base_tile(unsigned int x, unsigned int y, Player& player);
 	void draw(const Camera& camera) const;
 	void draw_extras(const Camera& camera) const;
+	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;
 
 	void update(const Timer& timer) override final;
 	
