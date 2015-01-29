@@ -286,8 +286,8 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		timer.advance();
 
-		if (!client.is_connected()) return EXIT_SUCCESS;
 		client.update();
+		if (!client.is_connected()) return EXIT_SUCCESS;
 		game.update(timer);
 
 		if (!game.has_started()) {

@@ -78,10 +78,10 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		if (!server.is_listening()) return EXIT_SUCCESS;
 		server.update();
+		if (!server.is_listening()) return EXIT_SUCCESS;
 
-		draw_loading_screen(window, loading_screen, "Running...");
+		draw_loading_screen(window, loading_screen, "Server is running...");
 		loading_screen.draw();
 		window.display();
 

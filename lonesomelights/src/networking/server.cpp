@@ -87,6 +87,8 @@ void Server::update() {
 			(*i_client_socket)->disconnect();
 			i_client_socket = m_client_sockets.erase(i_client_socket);
 			i_participant = m_participants.erase(i_participant);
+			stop();
+			return;
 		} else {
 			if (send_status == sf::Socket::Status::Error) {
 				std::cerr << "Server: An unexpected error occured while sending a network packet." << std::endl;
