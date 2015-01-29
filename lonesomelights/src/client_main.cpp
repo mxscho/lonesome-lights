@@ -387,9 +387,9 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 
 			if (game.m_is_won) {
 				if (game.m_won_id == 0) {
-					draw_loading_screen(window, loading_screen, "Blue player won!");
+					draw_loading_screen(window, loading_screen, "Base has been destroyed!");
 				} else if (game.m_won_id == 1) {
-					draw_loading_screen(window, loading_screen, "Red player won!");
+					draw_loading_screen(window, loading_screen, "Base has been destroyed!");
 				}
 			}
 		}
