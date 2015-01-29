@@ -792,7 +792,7 @@ void ServerGame::update(const Timer& timer) {
 		}
 
 		static float time = 0.0F;
-		if (time >= 0.015F) {
+		if (time >= 0.05F) {
 			time = 0.0F;
 
 			// SERVER SEND
