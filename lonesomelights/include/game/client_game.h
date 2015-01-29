@@ -11,6 +11,7 @@
 #include "networking/network_packet.h"
 #include "networking/network_handlers/client_handlers/game_client_handler.h"
 #include "rendering/particles/particle_systems/explosion.h"
+#include "rendering/particles/particle_systems/smoke.h"
 #include "updatable.h"
 
 #include <memory>
@@ -72,6 +73,7 @@ private:
 	float m_opponent_crystal_count;
 
 	std::list<Explosion> m_explosions;
+	std::list<Smoke> m_smokes;
 
 	Client& m_client;
 };

@@ -38,6 +38,7 @@ ClientGame::ClientGame(Client& client)
 	m_opponent_units(),
 
 	m_explosions(),
+	m_smokes(),
 	m_client(client) {
 
 	m_map.set_tile(std::unique_ptr<Tile>(new BaseTile(BaseTile::create(m_map, c_own_base_x, c_own_base_y, m_own_player))));
@@ -118,6 +119,9 @@ void ClientGame::draw(const Camera& camera) const {
 	// Draw explosions.
 	for (auto& i_explosion : m_explosions) {
 		i_explosion.draw(camera);
+	}
+	for (auto& i_smoke : m_smokes) {
+		i_smoke.draw(camera);
 	}
 	// Draw own weapon particles.
 	for (auto& i_own_unit : m_own_units) {
@@ -560,6 +564,8 @@ void ClientGame::update(const Timer& timer) {
 				if (dead_tile) {
 					m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
 					m_map.update_neighbors_of_tile(i_x, i_y);
+					m_smokes.emplace_back(glm::translate(glm::vec3(static_cast<float>(i_x) + 0.5F, 0.2F, static_cast<float>(i_y) + 0.5F)), m_map, 1.2F);
+					m_smokes.back().trigger(timer.get_current_time_seconds());
 				} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
 					if (base_tile->is_dead()) {
 						glm::vec2 position = static_cast<Attackable*>(base_tile)->get_position_vec2();
@@ -588,6 +594,17 @@ void ClientGame::update(const Timer& timer) {
 			} else {
 				i_explosion->update(timer);
 				++i_explosion;
+			}
+		}
+		
+		// Update smokes.
+	
+		for (auto i_smoke = m_smokes.begin(); i_smoke != m_smokes.end(); ) {
+			if (i_smoke->has_finished()) {
+				i_smoke = m_smokes.erase(i_smoke);
+			} else {
+				i_smoke->update(timer);
+				++i_smoke;
 			}
 		}
 

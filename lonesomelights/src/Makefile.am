@@ -77,6 +77,7 @@ __top_builddir__bin_lonesomelights_SOURCES = \
 				\
 				rendering/particles/particle_systems/explosion.cpp \
 				rendering/particles/particle_systems/laser.cpp \
+				rendering/particles/particle_systems/smoke.cpp \
 				\
 			rendering/obj_loader/obj_loader.cpp \
 			rendering/obj_loader/tiny_obj_loader.cpp
