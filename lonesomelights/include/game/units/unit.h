@@ -45,6 +45,9 @@ public:
 
 	unsigned int m_id;
 	bool m_has_changed_path;
+
+	bool m_damage_upgrade;
+	bool m_range_upgrade;
 protected:
 	const Player& m_player;
 	bool m_is_selected;

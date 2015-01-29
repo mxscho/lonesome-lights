@@ -3,10 +3,14 @@
 #include <cmath>
 #include <string>
 
+#include "game/hud.h"
 #include "game/server_game.h"
 #include "rendering/opengl/render_program.h"
 #include "rendering/opengl/render_programs.h"
 #include "rendering/opengl/textures.h"
+
+bool HUD::m_used_upgrade1 = false;
+bool HUD::m_used_upgrade2 = false;
 
 HUD::HUD(ClientGame& game, sf::RenderWindow& render_window, sf::VideoMode& video_mode)
 	: Drawable(RenderPrograms::get_render_program("hud")),
@@ -84,47 +88,34 @@ HUD::HUD(ClientGame& game, sf::RenderWindow& render_window, sf::VideoMode& video
 	m_shockwave_unit_crystals_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_shockwave_unit_crystals_cost))));
 	
 	// upgrade costs
-	m_upgrade1_plasma_cost_text.setFont(m_font);
-	m_upgrade1_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
-	m_upgrade1_plasma_cost_text.setColor(sf::Color(200, 200, 200));
-	m_upgrade1_plasma_cost_text.setStyle(sf::Text::Bold);
-	m_upgrade1_plasma_cost_text.setPosition((0.643F) * video_mode.width, 0.9F * video_mode.height);
-	m_upgrade1_plasma_cost_text.setString("todo");
-	
-	m_upgrade1_crystals_cost_text.setFont(m_font);
-	m_upgrade1_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
-	m_upgrade1_crystals_cost_text.setColor(sf::Color(200, 200, 200));
-	m_upgrade1_crystals_cost_text.setStyle(sf::Text::Bold);
-	m_upgrade1_crystals_cost_text.setPosition((0.643F) * video_mode.width, 0.932F * video_mode.height);
-	m_upgrade1_crystals_cost_text.setString("todo");
 	
 	m_upgrade2_plasma_cost_text.setFont(m_font);
 	m_upgrade2_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
 	m_upgrade2_plasma_cost_text.setColor(sf::Color(200, 200, 200));
 	m_upgrade2_plasma_cost_text.setStyle(sf::Text::Bold);
 	m_upgrade2_plasma_cost_text.setPosition((0.758F) * video_mode.width, 0.9F * video_mode.height);
-	m_upgrade2_plasma_cost_text.setString("todo");
+	m_upgrade2_plasma_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_upgrade1_plasma_cost))));
 	
 	m_upgrade2_crystals_cost_text.setFont(m_font);
 	m_upgrade2_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
 	m_upgrade2_crystals_cost_text.setColor(sf::Color(200, 200, 200));
 	m_upgrade2_crystals_cost_text.setStyle(sf::Text::Bold);
 	m_upgrade2_crystals_cost_text.setPosition((0.758F) * video_mode.width, 0.932F * video_mode.height);
-	m_upgrade2_crystals_cost_text.setString("todo");
+	m_upgrade2_crystals_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_upgrade1_crystals_cost))));
 	
 	m_upgrade3_plasma_cost_text.setFont(m_font);
 	m_upgrade3_plasma_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
 	m_upgrade3_plasma_cost_text.setColor(sf::Color(200, 200, 200));
 	m_upgrade3_plasma_cost_text.setStyle(sf::Text::Bold);
 	m_upgrade3_plasma_cost_text.setPosition((0.873F) * video_mode.width, 0.9F * video_mode.height);
-	m_upgrade3_plasma_cost_text.setString("todo");
+	m_upgrade3_plasma_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_upgrade2_plasma_cost))));
 	
 	m_upgrade3_crystals_cost_text.setFont(m_font);
 	m_upgrade3_crystals_cost_text.setCharacterSize(static_cast<unsigned int>(round(0.0222222222F * video_mode.height)));
 	m_upgrade3_crystals_cost_text.setColor(sf::Color(200, 200, 200));
 	m_upgrade3_crystals_cost_text.setStyle(sf::Text::Bold);
 	m_upgrade3_crystals_cost_text.setPosition((0.873F) * video_mode.width, 0.932F * video_mode.height);
-	m_upgrade3_crystals_cost_text.setString("todo");
+	m_upgrade3_crystals_cost_text.setString(std::to_string(static_cast<unsigned int>(floor(ServerGame::c_upgrade2_crystals_cost))));
 }
 
 std::pair<bool, unsigned int> HUD::get_clicked_index(float mouse_x, float mouse_y) {
@@ -139,14 +130,11 @@ std::pair<bool, unsigned int> HUD::get_clicked_index(float mouse_x, float mouse_
 			return std::make_pair(true, 2);
 		}
 
-		if (mouse_x > 0.1203125F + 0.4182291667F + 0 * 0.1140625F && mouse_x < 0.1609375F + 0.4182291667F + 0 * 0.1140625F) {
+		if (mouse_x > 0.1203125F + 0.4182291667F + 1 * 0.1140625F && mouse_x < 0.1609375F + 0.4182291667F + 1 * 0.1140625F) {
 			return std::make_pair(true, 3);
 		}
-		if (mouse_x > 0.1203125F + 0.4182291667F + 1 * 0.1140625F && mouse_x < 0.1609375F + 0.4182291667F + 1 * 0.1140625F) {
-			return std::make_pair(true, 4);
-		}
 		if (mouse_x > 0.1203125F + 0.4182291667F + 2 * 0.1140625F && mouse_x < 0.1609375F + 0.4182291667F + 2 * 0.1140625F) {
-			return std::make_pair(true, 5);
+			return std::make_pair(true, 4);
 		}
 	}
 	return std::make_pair(false, 0);
@@ -167,8 +155,6 @@ void HUD::update(const Timer& timer) {
 	m_shockwave_unit_crystals_cost_text.setOrigin(m_shockwave_unit_crystals_cost_text.getLocalBounds().left + m_shockwave_unit_crystals_cost_text.getLocalBounds().width, m_shockwave_unit_crystals_cost_text.getLocalBounds().top);
 
 	// upgrade costs text positions
-	m_upgrade1_plasma_cost_text.setOrigin(m_upgrade1_plasma_cost_text.getLocalBounds().left + m_upgrade1_plasma_cost_text.getLocalBounds().width, m_upgrade1_plasma_cost_text.getLocalBounds().top);	
-	m_upgrade1_crystals_cost_text.setOrigin(m_upgrade1_crystals_cost_text.getLocalBounds().left + m_upgrade1_crystals_cost_text.getLocalBounds().width, m_upgrade1_crystals_cost_text.getLocalBounds().top);
 	m_upgrade2_plasma_cost_text.setOrigin(m_upgrade2_plasma_cost_text.getLocalBounds().left + m_upgrade2_plasma_cost_text.getLocalBounds().width, m_upgrade2_plasma_cost_text.getLocalBounds().top);	
 	m_upgrade2_crystals_cost_text.setOrigin(m_upgrade2_crystals_cost_text.getLocalBounds().left + m_upgrade2_crystals_cost_text.getLocalBounds().width, m_upgrade2_crystals_cost_text.getLocalBounds().top);
 	m_upgrade3_plasma_cost_text.setOrigin(m_upgrade3_plasma_cost_text.getLocalBounds().left + m_upgrade3_plasma_cost_text.getLocalBounds().width, m_upgrade3_plasma_cost_text.getLocalBounds().top);	
@@ -205,8 +191,27 @@ void HUD::update(const Timer& timer) {
 	} else {
 		m_shockwave_unit_crystals_cost_text.setColor(sf::Color::Red);
 	}
-	// upgrade costs text colors
-	//TODO
+
+	if (m_game.get_own_plasma_count() >= ServerGame::c_upgrade1_plasma_cost) {
+		m_upgrade2_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_upgrade2_plasma_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_crystal_count() >= ServerGame::c_upgrade1_crystals_cost) {
+		m_upgrade2_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_upgrade2_crystals_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_plasma_count() >= ServerGame::c_upgrade2_plasma_cost) {
+		m_upgrade3_plasma_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_upgrade3_plasma_cost_text.setColor(sf::Color::Red);
+	}
+	if (m_game.get_own_crystal_count() >= ServerGame::c_upgrade2_crystals_cost) {
+		m_upgrade3_crystals_cost_text.setColor(sf::Color(200, 200, 200));
+	} else {
+		m_upgrade3_crystals_cost_text.setColor(sf::Color::Red);
+	}
 }
 
 void HUD::draw(const Camera& camera) const {
@@ -243,12 +248,13 @@ void HUD::draw(const Camera& camera) const {
 	m_render_window.draw(m_laser_unit_crystals_cost_text);
 	m_render_window.draw(m_shockwave_unit_plasma_cost_text);
 	m_render_window.draw(m_shockwave_unit_crystals_cost_text);
-	m_render_window.draw(m_upgrade1_plasma_cost_text);
-	m_render_window.draw(m_upgrade1_crystals_cost_text);
-	m_render_window.draw(m_upgrade2_plasma_cost_text);
-	m_render_window.draw(m_upgrade2_crystals_cost_text);
-	m_render_window.draw(m_upgrade3_plasma_cost_text);
-	m_render_window.draw(m_upgrade3_crystals_cost_text);
-
+	if (!m_used_upgrade1) {
+		m_render_window.draw(m_upgrade2_plasma_cost_text);
+		m_render_window.draw(m_upgrade2_crystals_cost_text);
+	}
+	if (!m_used_upgrade2) {
+		m_render_window.draw(m_upgrade3_plasma_cost_text);
+		m_render_window.draw(m_upgrade3_crystals_cost_text);
+	}
 	m_render_window.popGLStates();
 }

@@ -24,6 +24,11 @@ float ServerGame::c_laser_unit_crystals_cost = 50.0F;
 float ServerGame::c_shockwave_unit_plasma_cost = 150.0F;
 float ServerGame::c_shockwave_unit_crystals_cost = 100.0F;
 
+float ServerGame::c_upgrade1_plasma_cost = 200.0F;
+float ServerGame::c_upgrade1_crystals_cost = 150.0F;
+float ServerGame::c_upgrade2_plasma_cost = 200.0F;
+float ServerGame::c_upgrade2_crystals_cost = 150.0F;
+
 float ServerGame::c_plasma_generation = 1.0F;
 float ServerGame::c_crystals_generation = 0.0F;
 
@@ -629,6 +634,28 @@ void ServerGame::update(const Timer& timer) {
 						m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 					}
 				}
+			} else if (text == "upgrade_damage") {
+				if (m_own_plasma_count >= c_upgrade1_plasma_cost && m_own_crystal_count >= c_upgrade1_crystals_cost) {
+					for (auto& i_own_unit : m_own_units) {
+						i_own_unit->m_damage_upgrade = true;
+					}
+					m_own_plasma_count -= c_upgrade1_plasma_cost;
+					m_own_crystal_count -= c_upgrade1_crystals_cost;
+				}
+				NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+				network_packet << std::string("upgrade_damage");
+				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
+			} else if (text == "upgrade_range") {
+				if (m_own_plasma_count >= c_upgrade2_plasma_cost && m_own_crystal_count >= c_upgrade2_crystals_cost) {
+					for (auto& i_own_unit : m_own_units) {
+						i_own_unit->m_range_upgrade = true;
+					}
+					m_own_plasma_count -= c_upgrade2_plasma_cost;
+					m_own_crystal_count -= c_upgrade2_crystals_cost;
+				}
+				NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+				network_packet << std::string("upgrade_range");
+				m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 			} else if (text == "select_tiles") {
 				m_own_selected_destructible_rock_tiles.clear();
 				unsigned int size;
@@ -714,6 +741,28 @@ void ServerGame::update(const Timer& timer) {
 
 						m_server.get_participants()[0].add_outgoing_network_packet(network_packet);
 					}
+				}
+			} if (text == "upgrade_damage") {
+				if (m_opponent_plasma_count >= c_upgrade1_plasma_cost && m_opponent_crystal_count >= c_upgrade1_crystals_cost) {
+					for (auto& i_opponent_unit : m_opponent_units) {
+						i_opponent_unit->m_damage_upgrade = true;
+					}
+					m_opponent_plasma_count -= c_upgrade1_plasma_cost;
+					m_opponent_crystal_count -= c_upgrade1_crystals_cost;
+					NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+					network_packet << std::string("upgrade_damage");
+					m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
+				}
+			} else if (text == "upgrade_range") {
+				if (m_opponent_plasma_count >= c_upgrade2_plasma_cost && m_opponent_crystal_count >= c_upgrade2_crystals_cost) {
+					for (auto& i_opponent_unit : m_opponent_units) {
+						i_opponent_unit->m_range_upgrade = true;
+					}
+					m_opponent_plasma_count -= c_upgrade2_plasma_cost;
+					m_opponent_crystal_count -= c_upgrade2_crystals_cost;
+					NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+					network_packet << std::string("upgrade_range");
+					m_server.get_participants()[1].add_outgoing_network_packet(network_packet);
 				}
 			} else if (text == "select_tiles") {
 				m_opponent_selected_destructible_rock_tiles.clear();

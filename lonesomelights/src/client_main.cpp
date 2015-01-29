@@ -224,7 +224,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 	timer.reset(0.0F);
 	while (window.isOpen()) {
 		sf::Vector2i mouse_coordinates = sf::Mouse::getPosition(window);
-		std::pair<bool, glm::vec3> world_position = get_clicked_world_position(*map_camera, mouse_coordinates.x, mouse_coordinates.y);
+		std::pair<bool, glm::vec3> world_position = map_camera ? get_clicked_world_position(*map_camera, mouse_coordinates.x, mouse_coordinates.y) : std::make_pair(false, glm::vec3());
 		glm::vec2 mouse_position((float) mouse_coordinates.x / video_mode.width * 2.0F - 1.0F, (1.0F - (float) mouse_coordinates.y / video_mode.height) * 2.0F - 1.0F);		
 		
 		if (world_position.first) {
@@ -264,6 +264,10 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 						game.spawn_own_laser_unit();
 					} else if (clicked_index.second == 2) {
 						game.spawn_own_shockwave_unit();
+					} else if (clicked_index.second == 3) {
+						game.upgrade_damage();
+					} else if (clicked_index.second == 4) {
+						game.upgrade_range();
 					}
 				}
 			}

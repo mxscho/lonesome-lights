@@ -5,6 +5,7 @@
 #include "game/map/crystal_tile.h"
 #include "game/map/map.h"
 #include "game/player.h"
+#include "game/hud.h"
 #include "game/units/unit.h"
 #include "networking/client.h"
 #include "networking/networkable.h"
@@ -47,6 +48,10 @@ public:
 	void spawn_opponent_worker_unit();
 	void spawn_opponent_laser_unit();
 	void spawn_opponent_shockwave_unit();
+
+	void upgrade_damage();
+	void upgrade_speed();
+	void upgrade_range();
 
 	void draw(const Camera& camera) const;
 	void draw_deferred(const Camera& camera, const Texture& color_texture, const Texture& position_texture, const Texture& normal_texture, const Texture& depth_texture) const;

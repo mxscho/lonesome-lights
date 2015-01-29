@@ -9,7 +9,9 @@
 #include "rendering/drawable.h"
 #include "rendering/opengl/vertex_array_object.h"
 #include "rendering/opengl/vertex_buffer_object.h"
+#include "updatable.h"
 
+class ClientGame;
 class Camera;
 class Timer;
 
@@ -22,6 +24,9 @@ public:
 	void update(const Timer& timer) override final;
 
 	void draw(const Camera& camera) const override final;
+
+	static bool m_used_upgrade1;
+	static bool m_used_upgrade2;
 private:
 	ClientGame& m_game;
 	sf::RenderWindow& m_render_window;

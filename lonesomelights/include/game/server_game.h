@@ -31,6 +31,11 @@ public:
 	static float c_shockwave_unit_plasma_cost;
 	static float c_shockwave_unit_crystals_cost;
 
+	static float c_upgrade1_plasma_cost;
+	static float c_upgrade1_crystals_cost;
+	static float c_upgrade2_plasma_cost;
+	static float c_upgrade2_crystals_cost;
+
 	static float c_plasma_generation;
 	static float c_crystals_generation;
 

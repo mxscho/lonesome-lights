@@ -112,6 +112,21 @@ void ClientGame::spawn_own_shockwave_unit() {
 	m_client.get_participant().add_outgoing_network_packet(network_packet);
 }
 
+void ClientGame::upgrade_damage() {
+	// CLIENT SEND
+
+	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+	network_packet << std::string("upgrade_damage");
+	m_client.get_participant().add_outgoing_network_packet(network_packet);
+}
+void ClientGame::upgrade_range() {
+	// CLIENT SEND
+
+	NetworkPacket network_packet = NetworkPacket::create_outgoing(get_network_handler()->m_network_id, NetworkPacket::Type::Update);
+	network_packet << std::string("upgrade_range");
+	m_client.get_participant().add_outgoing_network_packet(network_packet);
+}
+
 void ClientGame::draw(const Camera& camera) const {
 	m_map.draw(camera);
 	
@@ -253,6 +268,10 @@ void ClientGame::update(const Timer& timer) {
 						m_opponent_units.push_back(ShockwaveUnit::create(glm::vec2(x, y), m_map, m_opponent_player, id));
 					}
 				}
+			} else if (text == "upgrade_damage") {
+				HUD::m_used_upgrade1 = true;
+			} else if (text == "upgrade_range") {
+				HUD::m_used_upgrade2 = true;
 			} else if (text == "move_unit") {
 				unsigned int id;
 				i_network_packet >> id;
