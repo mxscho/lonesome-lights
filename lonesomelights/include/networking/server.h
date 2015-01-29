@@ -15,6 +15,8 @@ public:
 	bool start(unsigned int port);
 	void stop();
 	void update();
+
+	bool is_listening() const;
 	
 	NetworkID create_base_network_id();
 	NetworkID create_next_network_id(const std::string& description);

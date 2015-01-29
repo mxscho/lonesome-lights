@@ -104,6 +104,10 @@ void Server::update() {
 	}
 }
 
+bool Server::is_listening() const {
+	return m_is_listening;
+}
+
 NetworkID Server::create_base_network_id() {
 	m_current_network_id = NetworkID::create_base();
 	return m_current_network_id;

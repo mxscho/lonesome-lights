@@ -6,7 +6,7 @@
 #include <SFML/Window.hpp>
 
 #include "timer.h"
-
+#include "game/loading_screen.h"
 #include "game/server_game.h"
 
 #include "networking/server.h"
@@ -14,7 +14,7 @@
 
 //static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
 //static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
-static sf::VideoMode video_mode = sf::VideoMode(200, 100);
+static sf::VideoMode video_mode = sf::VideoMode(500, 375);
 static unsigned int style = sf::Style::Titlebar | sf::Style::Close;
 
 void print_usage_and_die(int argc, char** argv) {
@@ -34,6 +34,11 @@ unsigned int get_args_port(int argc, char** argv) {
 		print_usage_and_die(argc, argv);
 	}
 	return port;
+}
+
+static void draw_loading_screen(sf::RenderWindow& window, LoadingScreen& loading_screen, std::string text) {
+	loading_screen.set_text(text);
+	loading_screen.draw();
 }
 
 int main(int argc, char** argv) {
@@ -57,6 +62,8 @@ int main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 
+	LoadingScreen loading_screen(window, video_mode);
+
 	Timer timer;
 	ServerGame game(server);
 	GameServerHandler game_server_handler(server.create_base_network_id(), server);
@@ -64,10 +71,6 @@ int main(int argc, char** argv) {
 	timer.reset(0.0F);
 	while (window.isOpen()) {
 		sf::Event event;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-			window.close();
-			break;
-		}
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
@@ -75,14 +78,19 @@ int main(int argc, char** argv) {
 			}
 		}
 
+		if (!server.is_listening()) return EXIT_SUCCESS;
 		server.update();
+
+		draw_loading_screen(window, loading_screen, "Running...");
+		loading_screen.draw();
+		window.display();
 
 		static bool started = false;
 		if (server.get_participants().size() < 2) {
 			if (!started) {
 				timer.reset(0.0F);
 				continue;
-			} else {
+			} else if (server.get_participants().size() == 0) {
 				return EXIT_SUCCESS;
 			}
 		}

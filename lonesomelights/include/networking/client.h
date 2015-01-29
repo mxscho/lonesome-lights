@@ -13,6 +13,8 @@ public:
 	bool connect(const sf::IpAddress& address, unsigned short port);
 	void disconnect();
 	void update();
+
+	bool is_connected() const;
 	
 	NetworkID create_base_network_id() const;
 private:

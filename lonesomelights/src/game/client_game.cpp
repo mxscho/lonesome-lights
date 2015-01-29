@@ -29,6 +29,8 @@ ClientGame::ClientGame(Client& client)
 	m_opponent_selected_destructible_rock_tiles(),
 	m_opponent_selected_crystal_tiles(),
 
+	m_is_won(false),
+
 	m_is_started(false),
 
 	m_map(Map::create_map(1.0F)),
@@ -591,6 +593,15 @@ void ClientGame::update(const Timer& timer) {
 						m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
 						m_explosions.emplace_back(glm::translate(glm::vec3(position.x, 0.2F, position.y)), m_map, 0.75F);
 						m_explosions.back().trigger(timer.get_current_time_seconds());
+						
+						if (!m_is_won) {
+							if (base_tile->get_x() == c_own_base_x && base_tile->get_y() == c_own_base_y) { 
+								m_won_id = 0;
+							} else {
+								m_won_id = 1;
+							}
+							m_is_won = true;
+						}
 					}
 				}
 			}

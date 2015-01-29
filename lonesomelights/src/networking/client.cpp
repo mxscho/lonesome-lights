@@ -8,6 +8,10 @@ Participant& Client::get_participant() const {
 	return *m_participant;
 }
 
+bool Client::is_connected() const {
+	return m_is_connected;
+}
+
 bool Client::connect(const sf::IpAddress& address, unsigned short port) {
 	disconnect();
 

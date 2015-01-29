@@ -173,8 +173,6 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		return EXIT_FAILURE;
 	}
 
-	//draw_loading_screen(window, loading_screen, "Loading...");
-
 	Timer timer;
 	timer.advance();
 	
@@ -288,6 +286,7 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 		
 		timer.advance();
 
+		if (!client.is_connected()) return EXIT_SUCCESS;
 		client.update();
 		game.update(timer);
 
@@ -385,6 +384,18 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 			game.draw_deferred(*map_camera, color_texture, position_texture, normal_texture, depth_texture);
 
 			hud.draw(*map_camera);
+
+			if (game.m_is_won) {
+				static float time_won = 0.0F;
+				if (time_won >= 4.0) {
+					if (game.m_won_id == 0) {
+						draw_loading_screen(window, loading_screen, "Blue player won!");
+					} else if (game.m_won_id == 1) {
+						draw_loading_screen(window, loading_screen, "Red player won!");
+					}
+				}
+				time_won += timer.get_delta_time_seconds();
+			}
 		}
 
 		window.display();

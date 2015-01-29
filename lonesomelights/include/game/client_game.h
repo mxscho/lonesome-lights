@@ -65,6 +65,9 @@ public:
 	std::vector<CrystalTile*> m_opponent_selected_crystal_tiles;
 
 	unsigned int m_player_id;
+
+	bool m_is_won;
+	unsigned int m_won_id;
 private:
 	bool m_is_started;
 	Map m_map;
