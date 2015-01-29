@@ -7,7 +7,6 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
-#include <iostream>
 
 Crystal Crystal::create(const glm::mat4& transformation, const Map& map) {
 

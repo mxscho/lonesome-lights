@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <limits>
-#include <iostream>
 
 #include "game/units/laser_unit.h"
 

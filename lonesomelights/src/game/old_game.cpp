@@ -13,8 +13,6 @@
 #include "game/units/worker_unit.h"
 #include "timer.h"
 
-#include <iostream>
-
 float Game::c_worker_unit_plasma_cost = 100.0F;
 float Game::c_worker_unit_crystals_cost = 20.0F;
 float Game::c_laser_unit_plasma_cost = 100.0F;

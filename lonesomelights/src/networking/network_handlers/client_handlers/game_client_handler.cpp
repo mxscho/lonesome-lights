@@ -6,7 +6,6 @@
 
 #include "networking/client.h"
 #include "networking/network_packet.h"
-#include <iostream>
 
 GameClientHandler::GameClientHandler(const NetworkID& network_id, Client& client)
 	: ClientHandler(network_id, client) {

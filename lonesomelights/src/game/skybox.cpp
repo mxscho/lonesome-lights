@@ -8,7 +8,6 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
-#include <iostream>
 
 Skybox::Skybox(const glm::mat4& transformation, const Map& map)
 	: Drawable(RenderPrograms::get_render_program("skybox")),

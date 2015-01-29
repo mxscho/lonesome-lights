@@ -8,10 +8,6 @@
 #include "game/map/rock_tile.h"
 
 #include <glm/glm.hpp>
-
-
-//test
-#include <iostream>
 #include <fstream>
 #include <string>
 

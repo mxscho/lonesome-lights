@@ -15,8 +15,6 @@
 
 #include "networking/network_handler.h"
 
-#include <iostream>
-
 float ServerGame::c_worker_unit_plasma_cost = 50.0F;
 float ServerGame::c_worker_unit_crystals_cost = 0.0F;
 float ServerGame::c_laser_unit_plasma_cost = 100.0F;

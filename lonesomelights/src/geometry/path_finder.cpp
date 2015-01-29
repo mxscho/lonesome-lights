@@ -1,5 +1,4 @@
 #include "geometry/path_finder.h"
-#include <iostream>
 #include <vector>
 
 PathFinder::PathFinder(Map& map, unsigned int tile_resolution)
