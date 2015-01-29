@@ -29,7 +29,7 @@ float ServerGame::c_upgrade1_crystals_cost = 150.0F;
 float ServerGame::c_upgrade2_plasma_cost = 200.0F;
 float ServerGame::c_upgrade2_crystals_cost = 150.0F;
 
-float ServerGame::c_plasma_generation = 1.0F;
+float ServerGame::c_plasma_generation = 2.0F;
 float ServerGame::c_crystals_generation = 0.0F;
 
 unsigned int ServerGame::c_own_base_x = 27;
@@ -792,7 +792,7 @@ void ServerGame::update(const Timer& timer) {
 		}
 
 		static float time = 0.0F;
-		if (time >= 0.1F) {
+		if (time >= 0.015F) {
 			time = 0.0F;
 
 			// SERVER SEND

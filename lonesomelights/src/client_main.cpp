@@ -46,10 +46,10 @@
 #include "networking/client.h"
 #include "networking/network_handlers/client_handlers/game_client_handler.h"
 
-//static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
-//static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
-static sf::VideoMode video_mode = sf::VideoMode(1280, 800);
-static unsigned int style = sf::Style::Titlebar | sf::Style::Close;
+static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
+static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
+//static sf::VideoMode video_mode = sf::VideoMode(1280, 800);
+//static unsigned int style = sf::Style::Titlebar | sf::Style::Close;
 
 static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
@@ -386,15 +386,11 @@ int main(int argc, char** argv) {std::vector<sf::VideoMode> modes = sf::VideoMod
 			hud.draw(*map_camera);
 
 			if (game.m_is_won) {
-				static float time_won = 0.0F;
-				if (time_won >= 4.0) {
-					if (game.m_won_id == 0) {
-						draw_loading_screen(window, loading_screen, "Blue player won!");
-					} else if (game.m_won_id == 1) {
-						draw_loading_screen(window, loading_screen, "Red player won!");
-					}
+				if (game.m_won_id == 0) {
+					draw_loading_screen(window, loading_screen, "Blue player won!");
+				} else if (game.m_won_id == 1) {
+					draw_loading_screen(window, loading_screen, "Red player won!");
 				}
-				time_won += timer.get_delta_time_seconds();
 			}
 		}
 
