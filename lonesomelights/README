@@ -1,0 +1,30 @@
+-------------------------------------------
+Spiel im Huber-CIP zum Laufen bringen:
+cd team02/lonesomelights/
+./configure-cip
+make -j 16
+./bin/lonesomelights_server <serverport>
+./bin/lonesomelights_client <ip bzw "faui04x", x == PC, auf dem der Server laeuft> <serverport>
+./bin/lonesomelights_client <ip bzw "faui04x", x == PC, auf dem der Server laeuft> <serverport>
+-------------------------------------------
+
+Anmerkungen zum Spiel:
+- Kamerabewegung durch Mausbewegung zum Fensterrand, Zoomen mit Mausrad
+- Bauen von Units, Upgrades durch Klick auf den entsprechenden Button mit Bild auf dem HUD. Wenn die Ressourcen nicht reichen, ist der Preis rechts daneben rot markiert
+- Einheiten koennen einzeln per Linksklick ausgewaehlt werden und mit Rechtsklick an eine Stelle auf der Karte geschickt werden. Existiert bisher kein Weg, weil ueberall Bloecke im Weg waeren, laeuft die Einheit nicht los.
+- Ressource 1 (Plasma) wird automatisch ueber die Zeit hinweg generiert, Ressource 2 (Crystals) kann von durch gruene Kristalle gekennzeichnete Bloecken abgebaut werden
+- Abbau: mit Linksklick auf einen abbaubaren Block wird dieser markiert. Sobald Arbeiter-Einheiten nah genug an ihn herankommen, fangen sie an, ihn abzubauen. Enhaelt der Block Kristalle, wird durch ein Kristallsymbol ueber dem Arbeiter gekennzeichnet, dass er Ressourcen geladen hat. Wenn er nun in die Naehe der eigenen Basis faehrt, werden diese auf das Konto des Spielers uebertragen (oben rechts im HUD)
+- hellgraue Bloecke sind abbaubar, dunkelgraue nicht
+- es koennen mehrere Bloecke gleichzeitig markiert sein
+- im HUD rechts unten kann man jeweils einmalig 2 Upgrades aktivieren:
+    + DMG erhoeht den Schaden der eigenen Laser(Single Target)- und Shockwave(AoE)-Einheiten um das 1,5-fache der Grundwerte
+    + Range erhoeht die Reichweite des Lasers der Laser-Einheiten um das 1,5-fache des Grundwerts
+- in res/maps/default_map.txt kann theoretisch eine eigene neue Karte kreiert werden. Die Groesse muss aber 30x30 bleiben und es darf auch sonst nichts in der Datei stehen.
+    "-" = kein Block
+    "X" = unzerstoerbarer Block
+    "D" = zerstoerbarer Block
+    "C" = Kristallblock (zerstoerbar und enthaelt Ressourcen)
+- Bei vollem Leben werden die Lebenspunktebalken nicht angezeigt
+- Und natuerlich nicht vergessen: Ziel ist, die gegnerische Basis zu zerstoeren.
+
+Bei Fragen E-Mail an maximilian.scholze.fau.de / patrick.becker@fau.de
