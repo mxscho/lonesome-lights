@@ -46,10 +46,10 @@
 #include "networking/client.h"
 #include "networking/network_handlers/client_handlers/game_client_handler.h"
 
-//static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
-//static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
-static sf::VideoMode video_mode = sf::VideoMode(1280, 800);
-static unsigned int style = sf::Style::Titlebar | sf::Style::Close;
+static sf::VideoMode video_mode = sf::VideoMode::getDesktopMode();
+static unsigned int style = sf::Style::Fullscreen | sf::Style::Close;
+//static sf::VideoMode video_mode = sf::VideoMode(1280, 800);
+//static unsigned int style = sf::Style::Titlebar | sf::Style::Close;
 
 static void print_usage_and_die(int argc, char** argv) {
 	std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;

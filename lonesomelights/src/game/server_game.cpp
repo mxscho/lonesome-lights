@@ -24,12 +24,12 @@ float ServerGame::c_laser_unit_crystals_cost = 50.0F;
 float ServerGame::c_shockwave_unit_plasma_cost = 150.0F;
 float ServerGame::c_shockwave_unit_crystals_cost = 100.0F;
 
-float ServerGame::c_upgrade1_plasma_cost = 200.0F;
+float ServerGame::c_upgrade1_plasma_cost = 100.0F;
 float ServerGame::c_upgrade1_crystals_cost = 150.0F;
-float ServerGame::c_upgrade2_plasma_cost = 200.0F;
+float ServerGame::c_upgrade2_plasma_cost = 100.0F;
 float ServerGame::c_upgrade2_crystals_cost = 150.0F;
 
-float ServerGame::c_plasma_generation = 2.0F;
+float ServerGame::c_plasma_generation = 2.5F;
 float ServerGame::c_crystals_generation = 0.0F;
 
 unsigned int ServerGame::c_own_base_x = 27;
@@ -56,10 +56,10 @@ ServerGame::ServerGame(Server& server)
 	m_own_units(),
 	m_opponent_units(),
 
-	m_own_plasma_count(100.0F),
-	m_own_crystal_count(50.0F),
-	m_opponent_plasma_count(100.0F),
-	m_opponent_crystal_count(50.0F),
+	m_own_plasma_count(10000.0F),
+	m_own_crystal_count(5000.0F),
+	m_opponent_plasma_count(10000.0F),
+	m_opponent_crystal_count(5000.0F),
 
 	m_server(server) {
 
@@ -792,8 +792,91 @@ void ServerGame::update(const Timer& timer) {
 		}
 
 		static float time = 0.0F;
-		if (time >= 0.05F) {
+		if (time >= 0.1F) {
 			time = 0.0F;
+
+			// Update deaths (attacks).
+
+			for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
+				if ((*i_own_unit)->is_dead()) {
+					for (auto& i_opponent_unit : m_opponent_units) {
+						if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
+							if (opponent_laser_unit->get_shooting_target() == i_own_unit->get()) {
+								opponent_laser_unit->stop_shooting();
+							}
+						}
+						else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
+							opponent_shockwave_unit->remove_attack(i_own_unit->get());
+						}
+					}
+				}
+			}
+			for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
+				if ((*i_opponent_unit)->is_dead()) {
+					for (auto& i_own_unit : m_own_units) {
+						if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
+							if (own_laser_unit->get_shooting_target() == i_opponent_unit->get()) {
+								own_laser_unit->stop_shooting();
+							}
+						}
+						else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
+							own_shockwave_unit->remove_attack(i_opponent_unit->get());
+						}
+					}
+				}
+			}
+			for (unsigned int i_y = 0; i_y < m_map.get_tile_count_y(); ++i_y) {
+				for (unsigned int i_x = 0; i_x < m_map.get_tile_count_x(); ++i_x) {
+					Tile& tile = m_map.get_tile(i_x, i_y);
+					Tile* dead_tile = nullptr;
+					if (DestructibleRockTile* destructible_rock_tile = dynamic_cast<DestructibleRockTile*>(&tile)) {
+						if (destructible_rock_tile->is_dead()) {
+							dead_tile = destructible_rock_tile;
+						}
+					} else if (CrystalTile* crystal_tile = dynamic_cast<CrystalTile*>(&tile)) {
+						if (crystal_tile->is_dead()) {
+							dead_tile = crystal_tile;
+						}
+					}
+					if (dead_tile) {
+						for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
+							if (WorkerUnit* own_worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit->get())) {
+								if (own_worker_unit->get_exploited() == dead_tile) {
+									own_worker_unit->stop_exploiting();
+								}
+							}
+						}
+						for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
+							if (WorkerUnit* opponent_worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit->get())) {
+								if (opponent_worker_unit->get_exploited() == dead_tile) {
+									opponent_worker_unit->stop_exploiting();
+								}
+							}
+						}
+					} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
+						if (base_tile->is_dead()) {
+							for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
+								if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit->get())) {
+									if (own_laser_unit->get_shooting_target() == base_tile) {
+										own_laser_unit->stop_shooting();
+									}
+								} else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit->get())) {
+									own_shockwave_unit->remove_attack(base_tile);
+								}
+							}
+							for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
+								if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit->get())) {
+									if (opponent_laser_unit->get_shooting_target() == base_tile) {
+										opponent_laser_unit->stop_shooting();
+									}
+								} else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit->get())) {
+									opponent_shockwave_unit->remove_attack(base_tile);
+								}
+							}
+						}
+					}
+				}
+			}
 
 			// SERVER SEND
 
@@ -878,20 +961,10 @@ void ServerGame::update(const Timer& timer) {
 				}
 			}
 
-			// Update deaths.
+			// Update deaths (removal).
 
 			for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ) {
 				if ((*i_own_unit)->is_dead()) {
-					for (auto& i_opponent_unit : m_opponent_units) {
-						if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit.get())) {
-							if (opponent_laser_unit->get_shooting_target() == i_own_unit->get()) {
-								opponent_laser_unit->stop_shooting();
-							}
-						}
-						else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit.get())) {
-							opponent_shockwave_unit->remove_attack(i_own_unit->get());
-						}
-					}
 					i_own_unit = m_own_units.erase(i_own_unit);
 				} else {
 					++i_own_unit;
@@ -899,16 +972,6 @@ void ServerGame::update(const Timer& timer) {
 			}
 			for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ) {
 				if ((*i_opponent_unit)->is_dead()) {
-					for (auto& i_own_unit : m_own_units) {
-						if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit.get())) {
-							if (own_laser_unit->get_shooting_target() == i_opponent_unit->get()) {
-								own_laser_unit->stop_shooting();
-							}
-						}
-						else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit.get())) {
-							own_shockwave_unit->remove_attack(i_opponent_unit->get());
-						}
-					}
 					i_opponent_unit = m_opponent_units.erase(i_opponent_unit);
 				} else {
 					++i_opponent_unit;
@@ -952,44 +1015,8 @@ void ServerGame::update(const Timer& timer) {
 						}
 					}
 					if (dead_tile) {
-						for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
-							if (WorkerUnit* own_worker_unit = dynamic_cast<WorkerUnit*>(i_own_unit->get())) {
-								if (own_worker_unit->get_exploited() == dead_tile) {
-									own_worker_unit->stop_exploiting();
-								}
-							}
-						}
-						for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
-							if (WorkerUnit* opponent_worker_unit = dynamic_cast<WorkerUnit*>(i_opponent_unit->get())) {
-								if (opponent_worker_unit->get_exploited() == dead_tile) {
-									opponent_worker_unit->stop_exploiting();
-								}
-							}
-						}
-
 						m_map.set_tile(std::unique_ptr<Tile>(new FloorTile(m_map, i_x, i_y)));
 						m_map.update_neighbors_of_tile(i_x, i_y);
-					} else if (BaseTile* base_tile = dynamic_cast<BaseTile*>(&tile)) {
-						if (base_tile->is_dead()) {
-							for (auto i_own_unit = m_own_units.begin(); i_own_unit != m_own_units.end(); ++i_own_unit) {
-								if (LaserUnit* own_laser_unit = dynamic_cast<LaserUnit*>(i_own_unit->get())) {
-									if (own_laser_unit->get_shooting_target() == base_tile) {
-										own_laser_unit->stop_shooting();
-									}
-								} else if (ShockwaveUnit* own_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_own_unit->get())) {
-									own_shockwave_unit->remove_attack(base_tile);
-								}
-							}
-							for (auto i_opponent_unit = m_opponent_units.begin(); i_opponent_unit != m_opponent_units.end(); ++i_opponent_unit) {
-								if (LaserUnit* opponent_laser_unit = dynamic_cast<LaserUnit*>(i_opponent_unit->get())) {
-									if (opponent_laser_unit->get_shooting_target() == base_tile) {
-										opponent_laser_unit->stop_shooting();
-									} else if (ShockwaveUnit* opponent_shockwave_unit = dynamic_cast<ShockwaveUnit*>(i_opponent_unit->get())) {
-										opponent_shockwave_unit->remove_attack(base_tile);
-									}
-								}
-							}
-						}
 					}
 				}
 			}

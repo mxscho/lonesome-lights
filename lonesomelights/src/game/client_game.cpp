@@ -596,9 +596,9 @@ void ClientGame::update(const Timer& timer) {
 						
 						if (!m_is_won) {
 							if (base_tile->get_x() == c_own_base_x && base_tile->get_y() == c_own_base_y) { 
-								m_won_id = 0;
-							} else {
 								m_won_id = 1;
+							} else {
+								m_won_id = 0;
 							}
 							m_is_won = true;
 						}
